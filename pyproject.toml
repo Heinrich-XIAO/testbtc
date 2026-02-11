@@ -1,18 +1,9 @@
 [project]
-name = "btc-tools"
+name = "testbtc"
 version = "0.1.0"
-description = "Async helpers for collecting and modeling per-second BTC data."
+description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.11"
-license = { text = "MIT" }
-authors = [ { name = "Heinrich" } ]
+requires-python = ">=3.12"
 dependencies = [
-    "httpx>=0.26",
-    "numpy>=1.26",
-    "pandas>=2.2",
-    "torch>=2.1",
-    "uvloop>=0.17",
+    "requests>=2.32.5",
 ]
-[project.scripts]
-btc-collector = "btc_tools.cli:collect_main"
-btc-trainer = "btc_tools.cli:train_main"
