@@ -1,6 +1,7 @@
 """Track yes-token trade averages via py-clob-client."""
 from __future__ import annotations
 
+import argparse
 import json
 import os
 import time
@@ -19,6 +20,9 @@ CLOB_HOST = "https://clob.polymarket.com"
 DEFAULT_MARKETS_TO_SAMPLE = 10
 DEFAULT_ITERATIONS = 60
 DEFAULT_INTERVAL_SECONDS = 1.0
+DEFAULT_VOLATILITY_DURATION_SECONDS = 5.0
+DEFAULT_VOLATILITY_INTERVAL_SECONDS = 1.0
+DEFAULT_CANDIDATE_MULTIPLIER = 3
 EXPORT_DIR = Path("py_clob_samples")
 EXPORT_FILENAME_TEMPLATE = "py_clob_samples_{timestamp}.json"
 
@@ -127,6 +131,64 @@ def average_last_yes_trades(
     return averages
 
 
+def _measure_volatility(
+    client: ClobClient,
+    tokens: List[MarketToken],
+    duration_seconds: float,
+    interval_seconds: float,
+) -> Dict[str, float]:
+    if duration_seconds <= 0:
+        duration_seconds = interval_seconds if interval_seconds > 0 else DEFAULT_VOLATILITY_DURATION_SECONDS
+    if interval_seconds <= 0:
+        interval_seconds = DEFAULT_VOLATILITY_INTERVAL_SECONDS
+
+    stats: Dict[str, dict[str, float]] = {
+        token.token_id: {"min": float("inf"), "max": float("-inf"), "seen": False}
+        for token in tokens
+    }
+    end_time = time.time() + duration_seconds
+
+    while time.time() < end_time:
+        loop_start = time.time()
+        averages = average_last_yes_trades(client, tokens)
+        for token_id, avg in averages.items():
+            state = stats.get(token_id)
+            if state is None or avg is None:
+                continue
+            state["seen"] = True
+            state["min"] = min(state["min"], avg)
+            state["max"] = max(state["max"], avg)
+        elapsed = time.time() - loop_start
+        sleep_time = interval_seconds - elapsed
+        if sleep_time > 0:
+            time.sleep(sleep_time)
+
+    volatility: Dict[str, float] = {}
+    for token_id, state in stats.items():
+        if not state["seen"]:
+            volatility[token_id] = 0.0
+            continue
+        volatility[token_id] = max(0.0, state["max"] - state["min"])
+    return volatility
+
+
+def _fetch_market_changes(market_ids: List[str]) -> Dict[str, float]:
+    if not market_ids:
+        return {}
+    params = {"marketIds": ",".join(market_ids), "closed": "false"}
+    response = requests.get(MARKETS_API_URL, params=params, timeout=15)
+    response.raise_for_status()
+    changes: Dict[str, float] = {}
+    for market in response.json():
+        market_id = str(market.get("id"))
+        change = market.get("oneHourPriceChange")
+        try:
+            changes[market_id] = float(change) if change is not None else 0.0
+        except (TypeError, ValueError):
+            continue
+    return changes
+
+
 def dump_history(tokens: List[MarketToken]) -> Path:
     EXPORT_DIR.mkdir(parents=True, exist_ok=True)
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
@@ -145,17 +207,113 @@ def dump_history(tokens: List[MarketToken]) -> Path:
     return path
 
 
-def main() -> None:
-    limit = _int_env("PY_CLOB_MARKETS", DEFAULT_MARKETS_TO_SAMPLE)
-    iterations = _int_env("PY_CLOB_ITERATIONS", DEFAULT_ITERATIONS)
-    interval_seconds = _float_env("PY_CLOB_INTERVAL_SECONDS", DEFAULT_INTERVAL_SECONDS)
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Sample yes-token averages with optional volatility-based filtering."
+    )
+    parser.add_argument(
+        "-m",
+        "--markets",
+        type=int,
+        default=None,
+        help="Markets to sample (env: PY_CLOB_MARKETS, default: 10)",
+    )
+    parser.add_argument(
+        "-i",
+        "--iterations",
+        type=int,
+        default=None,
+        help="Sampling iterations (env: PY_CLOB_ITERATIONS, default: 60)",
+    )
+    parser.add_argument(
+        "-s",
+        "--interval-seconds",
+        type=float,
+        default=None,
+        help="Delay between samples (env: PY_CLOB_INTERVAL_SECONDS, default: 1.0)",
+    )
+    parser.add_argument(
+        "--volatility-duration-seconds",
+        type=float,
+        default=None,
+        help="Seconds to measure volatility before sampling (env: PY_CLOB_VOLATILITY_DURATION_SECONDS, default: 5.0)",
+    )
+    parser.add_argument(
+        "--volatility-interval-seconds",
+        type=float,
+        default=None,
+        help="Cadence when measuring volatility (env: PY_CLOB_VOLATILITY_INTERVAL_SECONDS, default: 1.0)",
+    )
+    parser.add_argument(
+        "--candidate-multiplier",
+        type=int,
+        default=None,
+        help="Candidates per final market (env: PY_CLOB_CANDIDATE_MULTIPLIER, default: 3)",
+    )
+    return parser.parse_args()
 
-    tokens = select_markets(limit)
+
+def main() -> None:
+    args = _parse_args()
+    limit = max(
+        1,
+        args.markets if args.markets is not None else _int_env("PY_CLOB_MARKETS", DEFAULT_MARKETS_TO_SAMPLE),
+    )
+    iterations = max(
+        1,
+        args.iterations if args.iterations is not None else _int_env("PY_CLOB_ITERATIONS", DEFAULT_ITERATIONS),
+    )
+    interval_seconds = max(
+        0.0,
+        args.interval_seconds
+        if args.interval_seconds is not None
+        else _float_env("PY_CLOB_INTERVAL_SECONDS", DEFAULT_INTERVAL_SECONDS),
+    )
+    candidate_multiplier = max(
+        1,
+        args.candidate_multiplier
+        if args.candidate_multiplier is not None
+        else _int_env("PY_CLOB_CANDIDATE_MULTIPLIER", DEFAULT_CANDIDATE_MULTIPLIER),
+    )
+    candidate_limit = max(limit * candidate_multiplier, limit)
+
+    tokens = select_markets(candidate_limit)
     if not tokens:
         print("No markets/tokens found.")
         return
 
     client = ClobClient(CLOB_HOST)
+    volatility_duration = (
+        args.volatility_duration_seconds
+        if args.volatility_duration_seconds is not None
+        else _float_env("PY_CLOB_VOLATILITY_DURATION_SECONDS", DEFAULT_VOLATILITY_DURATION_SECONDS)
+    )
+    volatility_interval = (
+        args.volatility_interval_seconds
+        if args.volatility_interval_seconds is not None
+        else _float_env("PY_CLOB_VOLATILITY_INTERVAL_SECONDS", DEFAULT_VOLATILITY_INTERVAL_SECONDS)
+    )
+    print(
+        f"Measuring volatility for {len(tokens)} candidates over {volatility_duration:.1f}s..."
+    )
+    volatility = _measure_volatility(client, tokens, volatility_duration, volatility_interval)
+    market_ids = [token.market_id for token in tokens if token.market_id]
+    market_changes = _fetch_market_changes(market_ids)
+    ranked = sorted(
+        tokens,
+        key=lambda token: (
+            volatility.get(token.token_id, 0.0),
+            market_changes.get(token.market_id, 0.0),
+        ),
+        reverse=True,
+    )
+    tokens = ranked[:limit]
+    if volatility:
+        max_vol = max(volatility.get(token.token_id, 0.0) for token in tokens)
+        print(f"Selected {len(tokens)} markets (max volatility {max_vol:.6f}).")
+    else:
+        print(f"Selected {len(tokens)} markets (no volatility captured).")
+
     print(
         f"Sampling {len(tokens)} yes-token averages every "
         f"{interval_seconds:.1f}s for {iterations} iterations."
