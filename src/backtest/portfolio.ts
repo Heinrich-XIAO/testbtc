@@ -18,7 +18,7 @@ export class Portfolio {
     const fee = totalCost * this.feeRate;
     const totalWithFee = totalCost + fee;
 
-    if (totalWithFee > this.capital) {
+    if (totalWithFee > this.capital + 0.001) {
       return {
         success: false,
         tokenId,

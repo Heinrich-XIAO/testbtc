@@ -1,13 +1,13 @@
 export interface OptimizationConfig {
   maxIterations: number;
   convergenceThreshold: number;
+  learningRate: number;
 }
 
 export interface ParamConfig {
   min: number;
   max: number;
   stepSize: number;
-  learningRate: number;
 }
 
 export interface OptimizationHistory {

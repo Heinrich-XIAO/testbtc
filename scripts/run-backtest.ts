@@ -1,11 +1,49 @@
 import { BacktestEngine, loadStoredData } from '../src/backtest/engine';
 import { SimpleMAStrategy } from '../src/strategies/example';
 import type { BacktestConfig } from '../src/types';
+import * as fs from 'fs';
+import * as path from 'path';
 
 const DEFAULT_DATA_FILE = 'data/polymarket-data.bson';
 
+function loadSavedParams(): any | null {
+  const paramsPath = path.join(process.cwd(), 'src', 'strategies', 'example.params.json');
+  if (!fs.existsSync(paramsPath)) return null;
+
+  try {
+    const content = fs.readFileSync(paramsPath, 'utf-8');
+    return JSON.parse(content);
+  } catch {
+    return null;
+  }
+}
+
+function showHelp() {
+  console.log(`
+Usage: bun run scripts/run-backtest.ts [options]
+
+Options:
+  --data <file>         Data file path (default: data/polymarket-data.bson)
+  --capital <n>         Initial capital in USD (default: 1000)
+  --fee <percent>       Fee rate as percentage (default: 0)
+  --fast <n>            Fast MA period (default: 50, or from optimized params)
+  --slow <n>            Slow MA period (default: 200, or from optimized params)
+  --stop-loss <percent> Stop loss as percentage (default: 2, or from optimized params)
+  --risk-percent <n>    Risk percent as percentage (default: 95, or from optimized params)
+  --trailing-stop       Enable trailing stop (default: false, or from optimized params)
+  --verbose             Show detailed trade history
+  --help, -h            Show this help
+`);
+}
+
 async function main() {
   const args = process.argv.slice(2);
+
+  if (args.includes('--help') || args.includes('-h')) {
+    showHelp();
+    process.exit(0);
+  }
+
   const dataIndex = args.indexOf('--data');
   const dataFile = dataIndex >= 0 ? args[dataIndex + 1] : DEFAULT_DATA_FILE;
 
@@ -15,14 +53,22 @@ async function main() {
   const feeIndex = args.indexOf('--fee');
   const feeRate = feeIndex >= 0 ? parseFloat(args[feeIndex + 1]) / 100 : 0;
 
+  const savedParams = loadSavedParams();
+
   const fastIndex = args.indexOf('--fast');
-  const fastPeriod = fastIndex >= 0 ? parseInt(args[fastIndex + 1]) : 50;
+  const fastPeriod = fastIndex >= 0 ? parseInt(args[fastIndex + 1]) : (savedParams?.fast_period ?? 50);
 
   const slowIndex = args.indexOf('--slow');
-  const slowPeriod = slowIndex >= 0 ? parseInt(args[slowIndex + 1]) : 200;
+  const slowPeriod = slowIndex >= 0 ? parseInt(args[slowIndex + 1]) : (savedParams?.slow_period ?? 200);
 
   const stopLossIndex = args.indexOf('--stop-loss');
-  const stopLoss = stopLossIndex >= 0 ? parseFloat(args[stopLossIndex + 1]) / 100 : 0.02;
+  const stopLoss = stopLossIndex >= 0 ? parseFloat(args[stopLossIndex + 1]) / 100 : (savedParams?.stop_loss ?? 0.02);
+
+  const riskPercentIndex = args.indexOf('--risk-percent');
+  const riskPercent = riskPercentIndex >= 0 ? parseFloat(args[riskPercentIndex + 1]) / 100 : (savedParams?.risk_percent ?? 0.95);
+
+  const trailingStopIndex = args.indexOf('--trailing-stop');
+  const trailingStop = trailingStopIndex >= 0 ? (args[trailingStopIndex + 1] === 'true') : (savedParams?.trailing_stop === 1);
 
   console.log('Polymarket Backtest Runner');
   console.log('==========================');
@@ -32,6 +78,8 @@ async function main() {
   console.log(`Fast MA: ${fastPeriod}`);
   console.log(`Slow MA: ${slowPeriod}`);
   console.log(`Stop loss: ${stopLoss * 100}%`);
+  console.log(`Risk percent: ${riskPercent * 100}%`);
+  console.log(`Trailing stop: ${trailingStop}`);
   console.log('');
 
   try {
@@ -45,8 +93,8 @@ async function main() {
       fast_period: fastPeriod,
       slow_period: slowPeriod,
       stop_loss: stopLoss,
-      trailing_stop: false,
-      risk_percent: 0.95,
+      trailing_stop: trailingStop,
+      risk_percent: riskPercent,
     });
 
     const config: Partial<BacktestConfig> = {

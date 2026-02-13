@@ -1,5 +1,7 @@
 import type { Strategy, BacktestContext, Bar, StrategyParams, OrderResult } from '../types';
 import { SimpleMovingAverage, CrossOver } from '../types';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export interface SimpleMAStrategyParams extends StrategyParams {
   fast_period: number;
@@ -7,6 +9,39 @@ export interface SimpleMAStrategyParams extends StrategyParams {
   stop_loss: number;
   trailing_stop: boolean;
   risk_percent: number;
+}
+
+const defaultParams: SimpleMAStrategyParams = {
+  fast_period: 50,
+  slow_period: 200,
+  stop_loss: 0.02,
+  trailing_stop: false,
+  risk_percent: 0.10,
+};
+
+function loadSavedParams(): Partial<SimpleMAStrategyParams> | null {
+  const paramsPath = path.join(__dirname, 'example.params.json');
+  if (!fs.existsSync(paramsPath)) return null;
+
+  try {
+    const content = fs.readFileSync(paramsPath, 'utf-8');
+    const saved = JSON.parse(content);
+    const params: Partial<SimpleMAStrategyParams> = {};
+
+    for (const [key, value] of Object.entries(saved)) {
+      if (key !== 'metadata' && key in defaultParams) {
+        if (key === 'trailing_stop' && typeof value === 'number') {
+          params[key as keyof SimpleMAStrategyParams] = value === 1;
+        } else if (typeof value === 'number') {
+          params[key as keyof SimpleMAStrategyParams] = value;
+        }
+      }
+    }
+
+    return params;
+  } catch {
+    return null;
+  }
 }
 
 export class SimpleMAStrategy implements Strategy {
@@ -17,12 +52,15 @@ export class SimpleMAStrategy implements Strategy {
   private buyPrice: Map<string, number> = new Map();
 
   constructor(params: Partial<SimpleMAStrategyParams> = {}) {
+    const savedParams = loadSavedParams();
+    const mergedParams = { ...defaultParams, ...savedParams, ...params };
+
     this.params = {
-      fast_period: params.fast_period ?? 50,
-      slow_period: params.slow_period ?? 200,
-      stop_loss: params.stop_loss ?? 0.02,
-      trailing_stop: params.trailing_stop ?? false,
-      risk_percent: params.risk_percent ?? 0.10,
+      fast_period: mergedParams.fast_period,
+      slow_period: mergedParams.slow_period,
+      stop_loss: mergedParams.stop_loss,
+      trailing_stop: mergedParams.trailing_stop,
+      risk_percent: mergedParams.risk_percent,
     };
     this.fastMA = new SimpleMovingAverage(this.params.fast_period);
     this.slowMA = new SimpleMovingAverage(this.params.slow_period);
@@ -70,16 +108,21 @@ export class SimpleMAStrategy implements Strategy {
       }
     } else {
       if (crossoverValue !== undefined && crossoverValue > 0) {
-        const cash = ctx.getCapital() * this.params.risk_percent;
+        // Account for 0.2% trading fee when sizing position
+        // Use 99.5% of intended cash to ensure we have enough for fees
+        const feeBuffer = 0.995;
+        const cash = ctx.getCapital() * this.params.risk_percent * feeBuffer;
         const size = cash / bar.close;
 
-        console.log(`[${new Date(bar.timestamp * 1000).toISOString()}] MA crossover BUY signal for ${bar.tokenId.slice(0, 8)}... at ${bar.close.toFixed(4)}, size: ${size.toFixed(2)}`);
+        if (size > 0 && cash <= ctx.getCapital()) {
+          console.log(`[${new Date(bar.timestamp * 1000).toISOString()}] MA crossover BUY signal for ${bar.tokenId.slice(0, 8)}... at ${bar.close.toFixed(4)}, size: ${size.toFixed(2)}`);
 
-        const result = ctx.buy(bar.tokenId, size);
-        if (result.success) {
-          this.buyPrice.set(bar.tokenId, bar.close);
-        } else {
-          console.error(`  Order failed: ${result.error}`);
+          const result = ctx.buy(bar.tokenId, size);
+          if (result.success) {
+            this.buyPrice.set(bar.tokenId, bar.close);
+          } else {
+            console.error(`  Order failed: ${result.error}`);
+          }
         }
       }
     }

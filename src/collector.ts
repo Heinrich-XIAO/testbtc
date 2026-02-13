@@ -9,6 +9,7 @@ export interface CollectorOptions {
   minVolume?: number;
   fidelity?: number;
   interval?: string;
+  months?: number;
 }
 
 export async function fetchMarkets(options: CollectorOptions = {}): Promise<Market[]> {
@@ -137,7 +138,11 @@ export async function collectData(options: CollectorOptions = {}): Promise<Store
 
   console.log(`Fetching price history for ${allTokenIds.length} tokens...`);
 
-  const batchSize = 5;
+  const cutoffTimestamp = options.months 
+    ? Math.floor(Date.now() / 1000) - (options.months * 30 * 24 * 60 * 60)
+    : 0;
+
+  const batchSize = 20;
   for (let i = 0; i < allTokenIds.length; i += batchSize) {
     const batch = allTokenIds.slice(i, i + batchSize);
     const batchNum = Math.floor(i / batchSize) + 1;
@@ -154,8 +159,13 @@ export async function collectData(options: CollectorOptions = {}): Promise<Store
 
     for (const { tokenId, history } of results) {
       if (history.length > 0) {
-        priceHistory.set(tokenId, history);
-        totalPricePoints += history.length;
+        const filteredHistory = options.months 
+          ? history.filter(point => point.t >= cutoffTimestamp)
+          : history;
+        if (filteredHistory.length > 0) {
+          priceHistory.set(tokenId, filteredHistory);
+          totalPricePoints += filteredHistory.length;
+        }
       }
     }
 

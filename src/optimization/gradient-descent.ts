@@ -23,6 +23,7 @@ export class GradientDescentOptimizer {
     this.config = {
       maxIterations: config.maxIterations ?? 100,
       convergenceThreshold: config.convergenceThreshold ?? 1e-4,
+      learningRate: config.learningRate ?? 0.1,
     };
   }
 
@@ -115,13 +116,22 @@ export class GradientDescentOptimizer {
     const gradients: Record<string, number> = {};
     const baseObjective = this.runBacktest(params);
 
-    for (const key of Object.keys(this.paramConfigs)) {
-      const config = this.paramConfigs[key];
-      const perturbedParams = { ...params };
-      perturbedParams[key] = Math.min(params[key] + config.stepSize, config.max);
-      
-      const perturbedObjective = this.runBacktest(perturbedParams);
-      gradients[key] = (perturbedObjective - baseObjective) / config.stepSize;
+    const originalLog = console.log;
+    if (!this.quiet) {
+      console.log = () => {};
+    }
+
+    try {
+      for (const key of Object.keys(this.paramConfigs)) {
+        const config = this.paramConfigs[key];
+        const perturbedParams = { ...params };
+        perturbedParams[key] = Math.min(params[key] + config.stepSize, config.max);
+
+        const perturbedObjective = this.runBacktest(perturbedParams);
+        gradients[key] = (perturbedObjective - baseObjective) / config.stepSize;
+      }
+    } finally {
+      console.log = originalLog;
     }
 
     return gradients;
@@ -131,8 +141,7 @@ export class GradientDescentOptimizer {
     const newParams: Record<string, number> = {};
 
     for (const key of Object.keys(params)) {
-      const config = this.paramConfigs[key];
-      newParams[key] = params[key] - config.learningRate * gradients[key];
+      newParams[key] = params[key] - this.config.learningRate * gradients[key];
     }
 
     return this.enforceConstraints(newParams);
