@@ -1,6 +1,7 @@
 import type { Strategy, StoredData, PricePoint } from '../types';
 import { BacktestEngine } from '../backtest/engine';
 import type { OptimizationConfig, ParamConfig, OptimizationResult, OptimizationHistory } from './types';
+import cliProgress from 'cli-progress';
 
 interface Individual {
   params: Record<string, number>;
@@ -77,6 +78,17 @@ export class DifferentialEvolutionOptimizer {
       console.log(`  F: ${this.F}, CR: ${this.CR}`);
     }
 
+    const progressBar = !this.quiet ? new cliProgress.SingleBar({
+      format: 'Generation {bar} {percentage}% | Gen: {value}/{total} | Best Sharpe: {sharpe}',
+      barCompleteChar: '\u2588',
+      barIncompleteChar: '\u2591',
+      hideCursor: true,
+    }) : null;
+
+    if (progressBar) {
+      progressBar.start(this.config.maxIterations, 0, { sharpe: '0.0000' });
+    }
+
     for (let generation = 0; generation < this.config.maxIterations; generation++) {
       const evaluationPromises: Promise<{ index: number; trial: Record<string, number>; trialFitness: number; improved: boolean }>[] = [];
 
@@ -109,6 +121,11 @@ export class DifferentialEvolutionOptimizer {
 
       population = newPopulation;
 
+      // Update progress bar
+      if (progressBar) {
+        progressBar.update(generation + 1, { sharpe: bestInGeneration.fitness.toFixed(4) });
+      }
+
       // Save best for history
       history.push({
         iteration: generation,
@@ -140,6 +157,10 @@ export class DifferentialEvolutionOptimizer {
     const bestIndividual = population.reduce((best, current) => 
       current.fitness > best.fitness ? current : best
     );
+
+    if (progressBar) {
+      progressBar.stop();
+    }
 
     return {
       finalParams: bestIndividual.params,
