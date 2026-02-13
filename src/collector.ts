@@ -231,13 +231,99 @@ export async function collectData(options: CollectorOptions = {}): Promise<Store
 export async function saveToBson(data: StoredData, filePath: string): Promise<void> {
   const BSON = await import('bson');
   const fs = await import('fs');
+  const path = await import('path');
 
-  const serialized = BSON.serialize(data);
-  fs.writeFileSync(filePath, Buffer.from(serialized));
+  const MAX_BSON_SIZE = 16 * 1024 * 1024; // 16MB limit
+  const dir = path.dirname(filePath);
+  const baseName = path.basename(filePath, '.bson');
 
-  const stats = fs.statSync(filePath);
-  console.log(`Data saved to ${filePath}`);
-  console.log(`File size: ${(stats.size / 1024 / 1024).toFixed(2)} MB`);
+  // Write metadata separately
+  const metadata = {
+    collectionMetadata: data.collectionMetadata,
+    totalChunks: 0
+  };
+
+  // Split markets into chunks
+  const marketChunks: Market[][] = [];
+  let currentChunk: Market[] = [];
+  let currentSize = 0;
+
+  for (const market of data.markets) {
+    const marketSize = BSON.calculateObjectSize(market);
+    if (currentSize + marketSize > MAX_BSON_SIZE / 2 && currentChunk.length > 0) {
+      marketChunks.push(currentChunk);
+      currentChunk = [];
+      currentSize = 0;
+    }
+    currentChunk.push(market);
+    currentSize += marketSize;
+  }
+  if (currentChunk.length > 0) {
+    marketChunks.push(currentChunk);
+  }
+
+  // Split price history into chunks
+  const priceChunks: Map<string, PricePoint[]>[] = [];
+  let currentPriceChunk = new Map<string, PricePoint[]>();
+  currentSize = 0;
+
+  for (const [tokenId, history] of data.priceHistory) {
+    const entrySize = BSON.calculateObjectSize({ [tokenId]: history });
+    if (currentSize + entrySize > MAX_BSON_SIZE / 2 && currentPriceChunk.size > 0) {
+      priceChunks.push(currentPriceChunk);
+      currentPriceChunk = new Map();
+      currentSize = 0;
+    }
+    currentPriceChunk.set(tokenId, history);
+    currentSize += entrySize;
+  }
+  if (currentPriceChunk.size > 0) {
+    priceChunks.push(currentPriceChunk);
+  }
+
+  // Update metadata with chunk counts
+  metadata.totalChunks = marketChunks.length + priceChunks.length + 1; // +1 for metadata
+
+  // Write all chunks
+  const chunkFiles: string[] = [];
+
+  // Write metadata chunk
+  const metadataFile = path.join(dir, `${baseName}.metadata.bson`);
+  fs.writeFileSync(metadataFile, Buffer.from(BSON.serialize(metadata)));
+  chunkFiles.push(metadataFile);
+
+  // Write market chunks
+  for (let i = 0; i < marketChunks.length; i++) {
+    const chunkFile = path.join(dir, `${baseName}.markets.${i}.bson`);
+    fs.writeFileSync(chunkFile, Buffer.from(BSON.serialize({ markets: marketChunks[i] })));
+    chunkFiles.push(chunkFile);
+  }
+
+  // Write price history chunks
+  for (let i = 0; i < priceChunks.length; i++) {
+    const chunkFile = path.join(dir, `${baseName}.prices.${i}.bson`);
+    fs.writeFileSync(chunkFile, Buffer.from(BSON.serialize({ priceHistory: Object.fromEntries(priceChunks[i]) })));
+    chunkFiles.push(chunkFile);
+  }
+
+  // Write manifest file
+  const manifest = {
+    metadata: `${baseName}.metadata.bson`,
+    markets: marketChunks.map((_, i) => `${baseName}.markets.${i}.bson`),
+    priceHistory: priceChunks.map((_, i) => `${baseName}.prices.${i}.bson`)
+  };
+  fs.writeFileSync(filePath, JSON.stringify(manifest));
+
+  // Calculate total size
+  let totalSize = 0;
+  for (const chunkFile of chunkFiles) {
+    const stats = fs.statSync(chunkFile);
+    totalSize += stats.size;
+  }
+
+  console.log(`Data saved to ${chunkFiles.length} chunks in ${dir}`);
+  console.log(`Manifest: ${filePath}`);
+  console.log(`Total size: ${(totalSize / 1024 / 1024).toFixed(2)} MB`);
   console.log(`Total markets: ${data.collectionMetadata.totalMarkets}`);
   console.log(`Total price points: ${data.collectionMetadata.totalPricePoints}`);
 }

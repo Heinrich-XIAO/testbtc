@@ -343,8 +343,62 @@ export class BacktestEngine {
 
 export function loadStoredData(filePath: string): StoredData {
   const fs = require('fs');
+  const path = require('path');
   const BSON = require('bson');
 
+  // Check if it's a manifest file (new chunked format)
+  const content = fs.readFileSync(filePath, 'utf8');
+  let manifest: { metadata: string; markets: string[]; priceHistory: string[] } | null = null;
+  
+  try {
+    manifest = JSON.parse(content);
+  } catch {
+    // Not JSON, assume old BSON format
+  }
+
+  if (manifest && manifest.metadata) {
+    // New chunked format - load from manifest
+    const dir = path.dirname(filePath);
+    
+    // Load metadata
+    const metadataBuffer = fs.readFileSync(path.join(dir, manifest.metadata));
+    const metadata = BSON.deserialize(metadataBuffer);
+    
+    // Load markets from chunks
+    const markets: Market[] = [];
+    for (const chunkFile of manifest.markets) {
+      const chunkBuffer = fs.readFileSync(path.join(dir, chunkFile));
+      const chunk = BSON.deserialize(chunkBuffer);
+      if (chunk.markets) {
+        markets.push(...chunk.markets);
+      }
+    }
+    
+    // Load price history from chunks
+    const priceHistory = new Map<string, PricePoint[]>();
+    for (const chunkFile of manifest.priceHistory) {
+      const chunkBuffer = fs.readFileSync(path.join(dir, chunkFile));
+      const chunk = BSON.deserialize(chunkBuffer);
+      if (chunk.priceHistory) {
+        for (const [key, value] of Object.entries(chunk.priceHistory)) {
+          priceHistory.set(key, value as PricePoint[]);
+        }
+      }
+    }
+    
+    return {
+      markets,
+      priceHistory,
+      collectionMetadata: metadata.collectionMetadata ?? {
+        collectedAt: '',
+        version: '1.0.0',
+        totalMarkets: markets.length,
+        totalPricePoints: Array.from(priceHistory.values()).reduce((sum, h) => sum + h.length, 0),
+      },
+    };
+  }
+
+  // Old format - single BSON file
   const buffer = fs.readFileSync(filePath);
   const raw = BSON.deserialize(buffer);
 
