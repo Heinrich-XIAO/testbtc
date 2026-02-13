@@ -218,6 +218,7 @@ program
         randomSamples,
       });
 
+      optimizer.setQuiet(true);
       const result = await optimizer.optimize(attempt === 1 ? null : bestParams);
       console.log(kleur.cyan('  DE running...'));
       
