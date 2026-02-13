@@ -117,7 +117,7 @@ program
     if (options.listStrategies) {
       console.log(kleur.cyan('Available strategies:'));
       for (const [name, config] of Object.entries(strategies)) {
-        console.log(`  ${kleur.green(name)} -> ${config.outputFile}`);
+        console.log('  ' + kleur.green(name) + ' -> ' + config.outputFile);
       }
       process.exit(0);
     }
@@ -126,8 +126,8 @@ program
     const strategyConfig = strategies[strategyName];
     
     if (!strategyConfig) {
-      console.error(kleur.red(`Unknown strategy: ${strategyName}`));
-      console.log(kleur.yellow('Available strategies:'), Object.keys(strategies).join(', '));
+      console.error(kleur.red('Unknown strategy: ' + strategyName));
+      console.log(kleur.yellow('Available strategies:') + ' ' + Object.keys(strategies).join(', '));
       process.exit(1);
     }
     
@@ -140,21 +140,36 @@ program
     const minTestReturn = parseFloat(options.minTestReturn);
     const attempts = parseInt(options.attempts);
 
-    console.log(kleur.cyan('Strategy:'), strategyName);
-    console.log(kleur.cyan('Loading data from:'), dataFile);
+    console.log(kleur.cyan('Strategy:') + ' ' + strategyName);
+    console.log(kleur.cyan('Loading data from:') + ' ' + dataFile);
     const fullData = loadStoredData(dataFile);
-    console.log(`Loaded ${fullData.markets.length} markets`);
+    console.log('Loaded ' + fullData.markets.length + ' markets');
     
     console.log(kleur.yellow('\nSplitting data: 70% train, 30% test...'));
-    const { train, test } = splitData(fullData, 0.7);
+    const { train: trainSplit, test: testSplit } = splitData(fullData, 0.7);
+    
+    const maxTokens = 500;
+    const trainTokens = Array.from(trainSplit.priceHistory.keys()).slice(0, maxTokens);
+    const trainSampled = new Map(trainTokens.map(k => [k, trainSplit.priceHistory.get(k)!]));
+    const testTokens = Array.from(testSplit.priceHistory.keys()).slice(0, maxTokens);
+    const testSampled = new Map(testTokens.map(k => [k, testSplit.priceHistory.get(k)!]));
+    
+    const train: StoredData = {
+      ...fullData,
+      priceHistory: trainSampled,
+    };
+    const test: StoredData = {
+      ...fullData,
+      priceHistory: testSampled,
+    };
     
     let totalTrainPoints = 0;
     let totalTestPoints = 0;
     for (const history of train.priceHistory.values()) totalTrainPoints += history.length;
     for (const history of test.priceHistory.values()) totalTestPoints += history.length;
     
-    console.log(`Train: ${totalTrainPoints} price points, Test: ${totalTestPoints} price points`);
-    console.log(`Max generations: ${maxIterations}, Attempts: ${attempts}`);
+    console.log('Train: ' + totalTrainPoints + ' price points, Test: ' + totalTestPoints + ' price points (' + maxTokens + ' tokens)');
+    console.log('Max generations: ' + maxIterations + ', Attempts: ' + attempts);
 
     console.log('\n' + kleur.bold(kleur.magenta('='.repeat(60))));
     console.log(kleur.bold(kleur.magenta('Differential Evolution Optimization')));
@@ -165,7 +180,7 @@ program
     let bestParams: Record<string, number> | null = null;
 
     for (let attempt = 1; attempt <= attempts; attempt++) {
-      console.log(kleur.yellow(`\nAttempt ${attempt}/${attempts}...`));
+      console.log(kleur.yellow('\nAttempt ' + attempt + '/' + attempts + '...'));
       
       const optimizer = new DifferentialEvolutionOptimizer(train, StrategyClass, paramConfigs, {
         maxIterations,
@@ -178,19 +193,19 @@ program
       
       const testMetrics = testParams(test, StrategyClass, result.finalParams);
       
-      console.log(`  Train Score: ${result.bestSharpe.toFixed(4)}`);
-      console.log(`  Test Return: $${testMetrics.return.toFixed(2)}`);
-      console.log(`  Test Sharpe: ${testMetrics.sharpe.toFixed(4)}`);
-      console.log(`  Trades: ${testMetrics.trades}`);
+      console.log('  Train Score: ' + result.bestSharpe.toFixed(4));
+      console.log('  Test Return: $' + testMetrics.return.toFixed(2));
+      console.log('  Test Sharpe: ' + testMetrics.sharpe.toFixed(4));
+      console.log('  Trades: ' + testMetrics.trades);
       
       if (testMetrics.return > bestTestReturn) {
         bestTestReturn = testMetrics.return;
         bestResult = result;
         bestParams = result.finalParams;
-        console.log(kleur.green(`  ★ NEW BEST`));
+        console.log(kleur.green('  ★ NEW BEST'));
         
         if (testMetrics.return >= minTestReturn) {
-          console.log(kleur.green(`\n✓ Reached target test return of $${minTestReturn}`));
+          console.log(kleur.green('\n✓ Reached target test return of $' + minTestReturn));
           break;
         }
       }
@@ -212,22 +227,22 @@ program
     for (const [key, value] of Object.entries(bestParams)) {
       const config = paramConfigs[key];
       if (config.stepSize === 1 && config.min === 0 && config.max === 1) {
-        console.log(`  ${key}: ${value === 1 ? 'true' : 'false'}`);
+        console.log('  ' + key + ': ' + (value === 1 ? 'true' : 'false'));
       } else if (key === 'stop_loss' || key === 'risk_percent') {
-        console.log(`  ${key}: ${value.toFixed(4)} (${(value * 100).toFixed(2)}%)`);
+        console.log('  ' + key + ': ' + value.toFixed(4) + ' (' + (value * 100).toFixed(2) + '%)');
       } else {
-        console.log(`  ${key}: ${value}`);
+        console.log('  ' + key + ': ' + value);
       }
     }
     
     console.log('\nPerformance:');
-    console.log(`  Test Return: $${finalTestMetrics.return.toFixed(2)}`);
-    console.log(`  Test Sharpe: ${finalTestMetrics.sharpe.toFixed(4)}`);
-    console.log(`  Test Trades: ${finalTestMetrics.trades}`);
-    console.log(`  Full Return: $${fullMetrics.return.toFixed(2)}`);
-    console.log(`  Full Sharpe: ${fullMetrics.sharpe.toFixed(4)}`);
-    console.log(`  Iterations: ${bestResult.iterations}`);
-    console.log(`  Converged: ${bestResult.converged ? 'Yes' : 'No'}`);
+    console.log('  Test Return: $' + finalTestMetrics.return.toFixed(2));
+    console.log('  Test Sharpe: ' + finalTestMetrics.sharpe.toFixed(4));
+    console.log('  Test Trades: ' + finalTestMetrics.trades);
+    console.log('  Full Return: $' + fullMetrics.return.toFixed(2));
+    console.log('  Full Sharpe: ' + fullMetrics.sharpe.toFixed(4));
+    console.log('  Iterations: ' + bestResult.iterations);
+    console.log('  Converged: ' + (bestResult.converged ? 'Yes' : 'No'));
 
     const output = {
       ...bestParams,
@@ -239,7 +254,7 @@ program
     
     const outputPath = path.join(process.cwd(), 'src', 'strategies', outputFile);
     fs.writeFileSync(outputPath, JSON.stringify(output, null, 2));
-    console.log(kleur.green(`\n✓ Parameters saved to ${outputFile}`));
+    console.log(kleur.green('\n✓ Parameters saved to ' + outputFile));
   });
 
 program.parse();
