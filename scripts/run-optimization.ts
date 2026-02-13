@@ -174,7 +174,7 @@ program
       });
 
       optimizer.setQuiet(true);
-      const result = optimizer.optimize(attempt === 1 ? null : bestParams);
+      const result = await optimizer.optimize(attempt === 1 ? null : bestParams);
       
       const testMetrics = testParams(test, StrategyClass, result.finalParams);
       

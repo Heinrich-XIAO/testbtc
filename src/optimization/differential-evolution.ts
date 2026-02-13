@@ -40,7 +40,7 @@ export class DifferentialEvolutionOptimizer {
     this.dim = this.paramNames.length;
     
     // DE parameters (standard values)
-    this.populationSize = Math.max(20, 4 * this.dim);
+    this.populationSize = Math.max(10, this.dim + 1); // Standard DE: Np = dim + 1 (min 10)
     this.F = 0.8;
     this.CR = 0.9;
   }
@@ -49,7 +49,7 @@ export class DifferentialEvolutionOptimizer {
     this.quiet = quiet;
   }
 
-  optimize(initialParams?: Record<string, number> | null): OptimizationResult {
+  async optimize(initialParams?: Record<string, number> | null): Promise<OptimizationResult> {
     const history: OptimizationHistory[] = [];
     let converged = false;
 
@@ -78,64 +78,28 @@ export class DifferentialEvolutionOptimizer {
     }
 
     for (let generation = 0; generation < this.config.maxIterations; generation++) {
-      const newPopulation: Individual[] = [];
-      let bestInGeneration = population[0];
-      let improved = false;
+      const evaluationPromises: Promise<{ index: number; trial: Record<string, number>; trialFitness: number; improved: boolean }>[] = [];
 
       for (let i = 0; i < this.populationSize; i++) {
-        // Select three random distinct individuals different from i
-        const candidates = population.map((_, idx) => idx).filter(idx => idx !== i);
-        const [r1, r2, r3] = this.shuffleArray(candidates).slice(0, 3);
+        evaluationPromises.push(this.evaluateIndividual(population, i));
+      }
 
-        // Mutation: v = x_r1 + F * (x_r2 - x_r3)
-        const mutant: Record<string, number> = {};
-        for (const key of this.paramNames) {
-          const config = this.paramConfigs[key];
-          const xr1 = population[r1].params[key];
-          const xr2 = population[r2].params[key];
-          const xr3 = population[r3].params[key];
-          
-          let mutantValue = xr1 + this.F * (xr2 - xr3);
-          
-          // Ensure mutant is within bounds (reflection)
-          if (mutantValue < config.min) {
-            mutantValue = config.min + Math.random() * (config.max - config.min);
-          } else if (mutantValue > config.max) {
-            mutantValue = config.min + Math.random() * (config.max - config.min);
-          }
-          
-          // Apply step size rounding
-          if (config.stepSize >= 1) {
-            mutantValue = Math.round(mutantValue / config.stepSize) * config.stepSize;
-          }
-          
-          mutant[key] = mutantValue;
-        }
+      const results = await Promise.all(evaluationPromises);
+      
+      const newPopulation: Individual[] = [];
+      let bestInGeneration = population[0];
+      let improvedInGen = false;
 
-        // Crossover: binomial crossover
-        const trial: Record<string, number> = {};
-        const jrand = Math.floor(Math.random() * this.dim);
+      for (const result of results) {
+        const { index, trial, trialFitness, improved } = result;
         
-        let j = 0;
-        for (const key of this.paramNames) {
-          if (Math.random() < this.CR || j === jrand) {
-            trial[key] = mutant[key];
-          } else {
-            trial[key] = population[i].params[key];
-          }
-          j++;
-        }
-
-        // Selection
-        const trialFitness = this.evaluate(trial);
-        
-        if (trialFitness >= population[i].fitness) {
+        if (trialFitness >= population[index].fitness) {
           newPopulation.push({ params: trial, fitness: trialFitness });
-          if (trialFitness > population[i].fitness) {
-            improved = true;
+          if (trialFitness > population[index].fitness) {
+            improvedInGen = true;
           }
         } else {
-          newPopulation.push(population[i]);
+          newPopulation.push(population[index]);
         }
 
         if (trialFitness > bestInGeneration.fitness) {
@@ -157,7 +121,7 @@ export class DifferentialEvolutionOptimizer {
       }
 
       // Check convergence
-      if (!improved && generation > 20) {
+      if (!improvedInGen && generation > 20) {
         const recentHistory = history.slice(-20);
         const maxFit = Math.max(...recentHistory.map(h => h.sharpeRatio));
         const minFit = Math.min(...recentHistory.map(h => h.sharpeRatio));
@@ -217,6 +181,61 @@ export class DifferentialEvolutionOptimizer {
     } finally {
       console.log = originalLog;
     }
+  }
+
+  private async evaluateIndividual(population: Individual[], i: number): Promise<{ index: number; trial: Record<string, number>; trialFitness: number; improved: boolean }> {
+    // Select three random distinct individuals different from i
+    const candidates = population.map((_, idx) => idx).filter(idx => idx !== i);
+    const [r1, r2, r3] = this.shuffleArray(candidates).slice(0, 3);
+
+    // Mutation: v = x_r1 + F * (x_r2 - x_r3)
+    const mutant: Record<string, number> = {};
+    for (const key of this.paramNames) {
+      const config = this.paramConfigs[key];
+      const xr1 = population[r1].params[key];
+      const xr2 = population[r2].params[key];
+      const xr3 = population[r3].params[key];
+      
+      let mutantValue = xr1 + this.F * (xr2 - xr3);
+      
+      // Ensure mutant is within bounds (reflection)
+      if (mutantValue < config.min) {
+        mutantValue = config.min + Math.random() * (config.max - config.min);
+      } else if (mutantValue > config.max) {
+        mutantValue = config.min + Math.random() * (config.max - config.min);
+      }
+      
+      // Apply step size rounding
+      if (config.stepSize >= 1) {
+        mutantValue = Math.round(mutantValue / config.stepSize) * config.stepSize;
+      }
+      
+      mutant[key] = mutantValue;
+    }
+
+    // Crossover: binomial crossover
+    const trial: Record<string, number> = {};
+    const jrand = Math.floor(Math.random() * this.dim);
+    
+    let j = 0;
+    for (const key of this.paramNames) {
+      if (Math.random() < this.CR || j === jrand) {
+        trial[key] = mutant[key];
+      } else {
+        trial[key] = population[i].params[key];
+      }
+      j++;
+    }
+
+    // Selection
+    const trialFitness = this.evaluate(trial);
+    
+    return {
+      index: i,
+      trial,
+      trialFitness,
+      improved: trialFitness > population[i].fitness,
+    };
   }
 
   private shuffleArray<T>(array: T[]): T[] {
