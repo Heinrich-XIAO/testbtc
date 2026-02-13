@@ -207,6 +207,7 @@ program
 
     for (let attempt = 1; attempt <= attempts; attempt++) {
       console.log(kleur.yellow('\nAttempt ' + attempt + '/' + attempts + '...'));
+      console.log(kleur.cyan('  Random search (20 samples)...'));
       
       const optimizer = new DifferentialEvolutionOptimizer(train, StrategyClass, paramConfigs, {
         maxIterations,
@@ -216,6 +217,7 @@ program
 
       optimizer.setQuiet(true);
       const result = await optimizer.optimize(attempt === 1 ? null : bestParams);
+      console.log(kleur.cyan('  DE running...'));
       
       const testMetrics = testParams(test, StrategyClass, result.finalParams);
       
