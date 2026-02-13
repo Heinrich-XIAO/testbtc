@@ -142,6 +142,10 @@ program
       for (const [k, v] of Object.entries(historyData.bestParams)) {
         if (k !== 'metadata') console.log('  ' + k + ': ' + v);
       }
+      console.log('\nPerformance:');
+      console.log('  Test Return: ' + historyData.finalMetrics.testReturn.toFixed(2) + ' (' + (historyData.finalMetrics.testReturn / 10).toFixed(1) + '%)');
+      console.log('  Test Sharpe: ' + historyData.finalMetrics.testSharpe.toFixed(4));
+      console.log('  Test Trades: ' + historyData.finalMetrics.testTrades);
       process.exit(0);
     }
     
