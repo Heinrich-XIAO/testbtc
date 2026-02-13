@@ -108,7 +108,6 @@ program
   .name('optimize')
   .description('Differential Evolution Optimization for Trading Strategy')
   .option('-l, --list-strategies', 'List available strategies')
-  .option('-p, --plot', 'Plot optimization history')
   .option('-s, --strategy <name>', 'Strategy to optimize', 'simple_ma')
   .option('-i, --max-iterations <number>', 'Maximum generations', '100')
   .option('-d, --data <file>', 'Data file path', 'data/polymarket-data.bson')
@@ -270,6 +269,14 @@ program
     console.log('  Full Sharpe: ' + fullMetrics.sharpe.toFixed(4));
     console.log('  Iterations: ' + bestResult.iterations);
     console.log('  Converged: ' + (bestResult.converged ? 'Yes' : 'No'));
+
+    console.log(kleur.cyan('\nOptimization Progress\n'));
+    console.log('Generation | Sharpe Ratio');
+    console.log('-'.repeat(30));
+    for (const entry of bestResult.history) {
+      console.log(String(entry.iteration).padStart(10) + ' | ' + entry.sharpeRatio.toFixed(4));
+    }
+    console.log('-'.repeat(30));
 
     const output = {
       ...bestParams,

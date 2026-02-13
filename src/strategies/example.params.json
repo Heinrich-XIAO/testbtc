@@ -1,11 +1,11 @@
 {
-  "fast_period": 90,
-  "slow_period": 280,
-  "stop_loss": 0.05408246023136212,
+  "fast_period": 60,
+  "slow_period": 120,
+  "stop_loss": 0.12563017659284045,
   "trailing_stop": 0,
-  "risk_percent": 0.1395188127590956,
+  "risk_percent": 0.20706773070157092,
   "metadata": {
-    "best_test_return": 23.988696706194332,
-    "optimized_at": "2026-02-13T20:16:11.239Z"
+    "best_test_return": 4.386166715194008,
+    "optimized_at": "2026-02-13T20:21:26.083Z"
   }
 }
