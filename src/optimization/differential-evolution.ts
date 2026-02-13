@@ -71,16 +71,41 @@ export class DifferentialEvolutionOptimizer {
 
     randomSamples.sort((a, b) => b.fitness - a.fitness);
     
+    const topCount = Math.max(2, Math.ceil(numRandomSamples * 0.2));
+    const topSamples = randomSamples.slice(0, topCount);
+
     if (!this.quiet) {
       console.log(`  Best random: ${randomSamples[0].fitness.toFixed(4)}`);
+      console.log(`  Top 20%: ${topCount} samples, running 3 generations of evolution...`);
     }
 
-    let population: Individual[] = [];
-    
-    population.push({ ...randomSamples[0] });
-    if (this.populationSize > 1) {
-      population.push({ ...randomSamples[1] });
+    let population: Individual[] = topSamples.map(s => ({ ...s }));
+
+    const initialPopSize = this.populationSize;
+    this.populationSize = Math.max(topCount + 2, initialPopSize);
+
+    while (population.length < this.populationSize) {
+      const params = this.sampleRandomParams();
+      population.push({
+        params,
+        fitness: this.evaluate(params),
+      });
     }
+
+    for (let gen = 0; gen < 3; gen++) {
+      population = this.evolveGeneration(population);
+    }
+
+    population.sort((a, b) => b.fitness - a.fitness);
+    const finalists = population.slice(0, 2);
+
+    if (!this.quiet) {
+      console.log(`  Finalists: ${finalists[0].fitness.toFixed(4)}, ${finalists[1].fitness.toFixed(4)}`);
+      console.log(`DE: Running differential evolution on finalists...`);
+    }
+
+    population = finalists.map(s => ({ ...s }));
+    this.populationSize = Math.max(10, this.dim + 1);
 
     while (population.length < this.populationSize) {
       const params = this.sampleRandomParams();
@@ -91,7 +116,6 @@ export class DifferentialEvolutionOptimizer {
     }
 
     if (!this.quiet) {
-      console.log(`DE: Starting differential evolution...`);
       console.log(`  Dimensions: ${this.dim}, Population: ${this.populationSize}`);
       console.log(`  F: ${this.F}, CR: ${this.CR}`);
     }
@@ -241,6 +265,61 @@ export class DifferentialEvolutionOptimizer {
     } finally {
       console.log = originalLog;
     }
+  }
+
+  private evolveGeneration(population: Individual[]): Individual[] {
+    const newPopulation: Individual[] = [];
+    const popSize = population.length;
+
+    for (let i = 0; i < popSize; i++) {
+      const candidates = population.map((_, idx) => idx).filter(idx => idx !== i);
+      const [r1, r2, r3] = this.shuffleArray(candidates).slice(0, 3);
+
+      const mutant: Record<string, number> = {};
+      for (const key of this.paramNames) {
+        const config = this.paramConfigs[key];
+        const xr1 = population[r1].params[key];
+        const xr2 = population[r2].params[key];
+        const xr3 = population[r3].params[key];
+        
+        let mutantValue = xr1 + this.F * (xr2 - xr3);
+        
+        if (mutantValue < config.min) {
+          mutantValue = config.min;
+        } else if (mutantValue > config.max) {
+          mutantValue = config.max;
+        }
+        
+        if (config.stepSize >= 1) {
+          mutantValue = Math.round(mutantValue / config.stepSize) * config.stepSize;
+        }
+        
+        mutant[key] = mutantValue;
+      }
+
+      const trial: Record<string, number> = {};
+      const jrand = Math.floor(Math.random() * this.dim);
+      
+      let j = 0;
+      for (const key of this.paramNames) {
+        if (Math.random() < this.CR || j === jrand) {
+          trial[key] = mutant[key];
+        } else {
+          trial[key] = population[i].params[key];
+        }
+        j++;
+      }
+
+      const trialFitness = this.evaluate(trial);
+      
+      if (trialFitness >= population[i].fitness) {
+        newPopulation.push({ params: trial, fitness: trialFitness });
+      } else {
+        newPopulation.push(population[i]);
+      }
+    }
+
+    return newPopulation;
   }
 
   private shuffleArray<T>(array: T[]): T[] {
