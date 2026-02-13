@@ -53,13 +53,30 @@ export class DifferentialEvolutionOptimizer {
     const history: OptimizationHistory[] = [];
     let converged = false;
 
+    if (!this.quiet) {
+      console.log(`DE: Random search phase (20 samples)...`);
+    }
+
+    const randomSamples: Individual[] = [];
+    for (let i = 0; i < 20; i++) {
+      const params = this.sampleRandomParams();
+      randomSamples.push({
+        params,
+        fitness: this.evaluate(params),
+      });
+    }
+
+    randomSamples.sort((a, b) => b.fitness - a.fitness);
+    
+    if (!this.quiet) {
+      console.log(`  Best random: ${randomSamples[0].fitness.toFixed(4)}`);
+    }
+
     let population: Individual[] = [];
     
-    if (initialParams) {
-      population.push({
-        params: { ...initialParams },
-        fitness: this.evaluate(initialParams),
-      });
+    population.push({ ...randomSamples[0] });
+    if (this.populationSize > 1) {
+      population.push({ ...randomSamples[1] });
     }
 
     while (population.length < this.populationSize) {
@@ -71,7 +88,7 @@ export class DifferentialEvolutionOptimizer {
     }
 
     if (!this.quiet) {
-      console.log(`DE: Starting optimization...`);
+      console.log(`DE: Starting differential evolution...`);
       console.log(`  Dimensions: ${this.dim}, Population: ${this.populationSize}`);
       console.log(`  F: ${this.F}, CR: ${this.CR}`);
     }
