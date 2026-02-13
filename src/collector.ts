@@ -1,4 +1,5 @@
 import type { Market, PricePoint, StoredData, MarketToken } from './types';
+import cliProgress from 'cli-progress';
 
 const GAMMA_API = 'https://gamma-api.polymarket.com';
 const CLOB_API = 'https://clob.polymarket.com';
@@ -14,21 +15,51 @@ export interface CollectorOptions {
 
 export async function fetchMarkets(options: CollectorOptions = {}): Promise<Market[]> {
   const { limit = 100, active = true } = options;
+  const allMarkets: any[] = [];
+  const batchSize = 500;
+  let offset = 0;
 
-  const params = new URLSearchParams();
-  params.set('limit', String(limit));
-  if (active) {
-    params.set('active', 'true');
-    params.set('closed', 'false');
+  const progressBar = new cliProgress.SingleBar({
+    format: 'Fetching markets |{bar}| {percentage}% | {value}/{total} markets',
+    barCompleteChar: '\u2588',
+    barIncompleteChar: '\u2591',
+    hideCursor: true
+  });
+  progressBar.start(limit, 0);
+
+  while (allMarkets.length < limit) {
+    const params = new URLSearchParams();
+    params.set('limit', String(Math.min(batchSize, limit - allMarkets.length)));
+    params.set('offset', String(offset));
+    if (active) {
+      params.set('active', 'true');
+      params.set('closed', 'false');
+    }
+
+    const response = await fetch(`${GAMMA_API}/markets?${params}`);
+
+    if (!response.ok) {
+      progressBar.stop();
+      throw new Error(`Failed to fetch markets: ${response.statusText}`);
+    }
+
+    const data = (await response.json()) as any[];
+    
+    if (data.length === 0) {
+      break; // No more markets available
+    }
+
+    allMarkets.push(...data);
+    offset += data.length;
+    progressBar.update(allMarkets.length);
+    
+    if (data.length < batchSize) {
+      break; // Got fewer than requested, so we're done
+    }
   }
 
-  const response = await fetch(`${GAMMA_API}/markets?${params}`);
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch markets: ${response.statusText}`);
-  }
-
-  const data = (await response.json()) as any[];
+  progressBar.stop();
+  const data = allMarkets.slice(0, limit);
 
   return data.map((m: any): Market => {
     let tokens: any[] = [];
@@ -120,9 +151,7 @@ export async function fetchPriceHistory(
 }
 
 export async function collectData(options: CollectorOptions = {}): Promise<StoredData> {
-  console.log('Fetching markets from Gamma API...');
   const markets = await fetchMarkets(options);
-  console.log(`Found ${markets.length} markets`);
 
   const priceHistory = new Map<string, PricePoint[]>();
   let totalPricePoints = 0;
@@ -136,19 +165,26 @@ export async function collectData(options: CollectorOptions = {}): Promise<Store
     }
   }
 
-  console.log(`Fetching price history for ${allTokenIds.length} tokens...`);
+  console.log(`\nFetching price history for ${allTokenIds.length} tokens...`);
 
   const cutoffTimestamp = options.months 
     ? Math.floor(Date.now() / 1000) - (options.months * 30 * 24 * 60 * 60)
     : 0;
 
   const batchSize = 20;
+  const totalBatches = Math.ceil(allTokenIds.length / batchSize);
+
+  const progressBar = new cliProgress.SingleBar({
+    format: 'Price history |{bar}| {percentage}% | Batch {value}/{total}',
+    barCompleteChar: '\u2588',
+    barIncompleteChar: '\u2591',
+    hideCursor: true
+  });
+  progressBar.start(totalBatches, 0);
+
   for (let i = 0; i < allTokenIds.length; i += batchSize) {
     const batch = allTokenIds.slice(i, i + batchSize);
     const batchNum = Math.floor(i / batchSize) + 1;
-    const totalBatches = Math.ceil(allTokenIds.length / batchSize);
-
-    console.log(`Processing batch ${batchNum}/${totalBatches}...`);
 
     const promises = batch.map(async (tokenId) => {
       const history = await fetchPriceHistory(tokenId, options);
@@ -169,10 +205,14 @@ export async function collectData(options: CollectorOptions = {}): Promise<Store
       }
     }
 
+    progressBar.update(batchNum);
+
     if (batchNum < totalBatches) {
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
   }
+
+  progressBar.stop();
 
   const storedData: StoredData = {
     markets,

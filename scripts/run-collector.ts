@@ -29,7 +29,13 @@ async function main() {
   const output = outputIndex >= 0 ? args[outputIndex + 1] : DEFAULT_OUTPUT;
 
   const monthsIndex = args.indexOf('--months');
-  const months = monthsIndex >= 0 ? parseInt(args[monthsIndex + 1]) : undefined;
+  let months: number | undefined = undefined;
+  if (monthsIndex >= 0) {
+    const monthsValue = args[monthsIndex + 1];
+    if (monthsValue && monthsValue.toLowerCase() !== 'all') {
+      months = parseInt(monthsValue);
+    }
+  }
 
   console.log('Polymarket Data Collector');
   console.log('=========================');
