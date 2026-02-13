@@ -20,6 +20,7 @@ export interface OptimizationHistory {
 export interface OptimizationResult {
   finalParams: Record<string, number>;
   bestSharpe: number;
+  bestReturn: number;
   history: OptimizationHistory[];
   iterations: number;
   converged: boolean;

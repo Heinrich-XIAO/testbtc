@@ -224,9 +224,8 @@ program
       
       const testMetrics = testParams(test, StrategyClass, result.finalParams);
       
-      console.log('  Train Score: ' + result.bestSharpe.toFixed(4));
-      console.log('  Test Return: $' + testMetrics.return.toFixed(2));
-      console.log('  Test Sharpe: ' + testMetrics.sharpe.toFixed(4));
+      console.log('  Train: Sharpe ' + result.bestSharpe.toFixed(4) + ' | Return $' + result.bestReturn.toFixed(2));
+      console.log('  Test:  Sharpe ' + testMetrics.sharpe.toFixed(4) + ' | Return $' + testMetrics.return.toFixed(2));
       console.log('  Trades: ' + testMetrics.trades);
       
       if (testMetrics.return > bestTestReturn) {

@@ -6,6 +6,7 @@ import cliProgress from 'cli-progress';
 interface Individual {
   params: Record<string, number>;
   fitness: number;
+  return: number;
 }
 
 export class DifferentialEvolutionOptimizer {
@@ -63,9 +64,11 @@ export class DifferentialEvolutionOptimizer {
     const randomSamples: Individual[] = [];
     for (let i = 0; i < numRandomSamples; i++) {
       const params = this.sampleRandomParams();
+      const evalResult = this.evaluate(params);
       randomSamples.push({
         params,
-        fitness: this.evaluate(params),
+        fitness: evalResult.fitness,
+        return: evalResult.return,
       });
     }
 
@@ -86,9 +89,11 @@ export class DifferentialEvolutionOptimizer {
 
     while (population.length < this.populationSize) {
       const params = this.sampleRandomParams();
+      const evalResult = this.evaluate(params);
       population.push({
         params,
-        fitness: this.evaluate(params),
+        fitness: evalResult.fitness,
+        return: evalResult.return,
       });
     }
 
@@ -109,9 +114,11 @@ export class DifferentialEvolutionOptimizer {
 
     while (population.length < this.populationSize) {
       const params = this.sampleRandomParams();
+      const evalResult = this.evaluate(params);
       population.push({
         params,
-        fitness: this.evaluate(params),
+        fitness: evalResult.fitness,
+        return: evalResult.return,
       });
     }
 
@@ -175,10 +182,11 @@ export class DifferentialEvolutionOptimizer {
           j++;
         }
 
-        const trialFitness = this.evaluate(trial);
+        const trialResult = this.evaluate(trial);
+        const trialFitness = trialResult.fitness;
         
         if (trialFitness >= population[i].fitness) {
-          newPopulation.push({ params: trial, fitness: trialFitness });
+          newPopulation.push({ params: trial, fitness: trialFitness, return: trialResult.return });
           if (trialFitness > population[i].fitness) {
             improvedInGen = true;
           }
@@ -187,7 +195,7 @@ export class DifferentialEvolutionOptimizer {
         }
 
         if (trialFitness > bestInGeneration.fitness) {
-          bestInGeneration = { params: trial, fitness: trialFitness };
+          bestInGeneration = { params: trial, fitness: trialFitness, return: trialResult.return };
         }
       }
 
@@ -229,6 +237,7 @@ export class DifferentialEvolutionOptimizer {
     return {
       finalParams: bestIndividual.params,
       bestSharpe: bestIndividual.fitness,
+      bestReturn: bestIndividual.return,
       history,
       iterations: history.length,
       converged,
@@ -248,7 +257,7 @@ export class DifferentialEvolutionOptimizer {
     return params;
   }
 
-  private evaluate(params: Record<string, number>): number {
+  private evaluate(params: Record<string, number>): { fitness: number; return: number } {
     const strategy = new this.strategyClass(params);
     const engine = new BacktestEngine(this.data, strategy, { feeRate: 0.002 });
 
@@ -261,7 +270,7 @@ export class DifferentialEvolutionOptimizer {
       const result = engine.run();
       const minTrades = 5;
       const tradePenalty = result.totalTrades < minTrades ? result.totalTrades / minTrades : 1;
-      return result.sharpeRatio * tradePenalty;
+      return { fitness: result.sharpeRatio * tradePenalty, return: result.totalReturn };
     } finally {
       console.log = originalLog;
     }
@@ -310,10 +319,11 @@ export class DifferentialEvolutionOptimizer {
         j++;
       }
 
-      const trialFitness = this.evaluate(trial);
+      const trialResult = this.evaluate(trial);
+      const trialFitness = trialResult.fitness;
       
       if (trialFitness >= population[i].fitness) {
-        newPopulation.push({ params: trial, fitness: trialFitness });
+        newPopulation.push({ params: trial, fitness: trialFitness, return: trialResult.return });
       } else {
         newPopulation.push(population[i]);
       }
