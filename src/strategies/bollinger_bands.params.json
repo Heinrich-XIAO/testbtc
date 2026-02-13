@@ -1,12 +1,12 @@
 {
   "period": 20,
-  "std_dev_multiplier": 2.0,
-  "stop_loss": 0.03,
-  "trailing_stop": 1,
-  "risk_percent": 0.15,
+  "std_dev_multiplier": 1.97963107444537,
+  "stop_loss": 0.07100576897673394,
+  "trailing_stop": 0,
+  "risk_percent": 0.09327246048815756,
   "mean_reversion": 1,
   "metadata": {
-    "description": "Bollinger Bands mean reversion strategy - buys when price touches lower band, sells when price touches upper band",
-    "optimized": false
+    "best_test_return": 502.5140863095944,
+    "optimized_at": "2026-02-13T20:11:27.543Z"
   }
 }

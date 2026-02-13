@@ -108,6 +108,7 @@ program
   .name('optimize')
   .description('Differential Evolution Optimization for Trading Strategy')
   .option('-l, --list-strategies', 'List available strategies')
+  .option('-p, --plot', 'Plot optimization history')
   .option('-s, --strategy <name>', 'Strategy to optimize', 'simple_ma')
   .option('-i, --max-iterations <number>', 'Maximum generations', '100')
   .option('-d, --data <file>', 'Data file path', 'data/polymarket-data.bson')
@@ -118,6 +119,28 @@ program
       console.log(kleur.cyan('Available strategies:'));
       for (const [name, config] of Object.entries(strategies)) {
         console.log('  ' + kleur.green(name) + ' -> ' + config.outputFile);
+      }
+      process.exit(0);
+    }
+    
+    if (options.plot) {
+      const historyPath = path.join(process.cwd(), 'data', 'optimization-history.json');
+      if (!fs.existsSync(historyPath)) {
+        console.error(kleur.red('No optimization history found. Run optimize first.'));
+        process.exit(1);
+      }
+      const historyData = JSON.parse(fs.readFileSync(historyPath, 'utf-8'));
+      
+      console.log(kleur.cyan('Optimization Progress\n'));
+      console.log('Generation | Sharpe Ratio');
+      console.log('-'.repeat(30));
+      for (const entry of historyData.history) {
+        console.log(String(entry.iteration).padStart(10) + ' | ' + entry.sharpeRatio.toFixed(4));
+      }
+      console.log('-'.repeat(30));
+      console.log('\nBest params:');
+      for (const [k, v] of Object.entries(historyData.bestParams)) {
+        if (k !== 'metadata') console.log('  ' + k + ': ' + v);
       }
       process.exit(0);
     }
@@ -255,6 +278,22 @@ program
     const outputPath = path.join(process.cwd(), 'src', 'strategies', outputFile);
     fs.writeFileSync(outputPath, JSON.stringify(output, null, 2));
     console.log(kleur.green('\n✓ Parameters saved to ' + outputFile));
+
+    const historyPath = path.join(process.cwd(), 'data', 'optimization-history.json');
+    const historyData = {
+      strategy: strategyName,
+      bestParams,
+      history: bestResult.history,
+      finalMetrics: {
+        testReturn: finalTestMetrics.return,
+        testSharpe: finalTestMetrics.sharpe,
+        testTrades: finalTestMetrics.trades,
+        fullReturn: fullMetrics.return,
+        fullSharpe: fullMetrics.sharpe,
+      },
+    };
+    fs.writeFileSync(historyPath, JSON.stringify(historyData, null, 2));
+    console.log(kleur.green('✓ History saved to optimization-history.json'));
   });
 
 program.parse();
