@@ -2,6 +2,7 @@ export interface OptimizationConfig {
   maxIterations: number;
   convergenceThreshold: number;
   learningRate: number;
+  randomSamples: number;
 }
 
 export interface ParamConfig {

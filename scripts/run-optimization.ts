@@ -110,6 +110,7 @@ program
   .option('-l, --list-strategies', 'List available strategies')
   .option('-s, --strategy <name>', 'Strategy to optimize', 'simple_ma')
   .option('-i, --max-iterations <number>', 'Maximum generations', '100')
+  .option('-r, --random-samples <number>', 'Initial random samples', '50')
   .option('-d, --data <file>', 'Data file path', 'data/polymarket-data.bson')
   .option('-m, --min-test-return <number>', 'Minimum test return to accept', '10')
   .option('-a, --attempts <number>', 'Number of optimization attempts', '5')
@@ -162,6 +163,7 @@ program
     const outputFile = strategyConfig.outputFile;
     
     const maxIterations = parseInt(options.maxIterations);
+    const randomSamples = parseInt(options.randomSamples);
     const dataFile = options.data;
     const minTestReturn = parseFloat(options.minTestReturn);
     const attempts = parseInt(options.attempts);
@@ -207,12 +209,13 @@ program
 
     for (let attempt = 1; attempt <= attempts; attempt++) {
       console.log(kleur.yellow('\nAttempt ' + attempt + '/' + attempts + '...'));
-      console.log(kleur.cyan('  Random search (20 samples)...'));
+      console.log(kleur.cyan('  Random search (' + randomSamples + ' samples)...'));
       
       const optimizer = new DifferentialEvolutionOptimizer(train, StrategyClass, paramConfigs, {
         maxIterations,
         convergenceThreshold: 1e-6,
         learningRate: 1.0,
+        randomSamples,
       });
 
       optimizer.setQuiet(true);

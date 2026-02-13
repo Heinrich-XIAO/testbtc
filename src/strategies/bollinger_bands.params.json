@@ -1,12 +1,12 @@
 {
   "period": 20,
-  "std_dev_multiplier": 1.9897977611690267,
-  "stop_loss": 0.07648039212984087,
-  "trailing_stop": 0,
-  "risk_percent": 0.2708044085342236,
+  "std_dev_multiplier": 1.9626305136505426,
+  "stop_loss": 0.039793546739496956,
+  "trailing_stop": 1,
+  "risk_percent": 0.2999992569547459,
   "mean_reversion": 1,
   "metadata": {
-    "best_test_return": 14.225503966280144,
-    "optimized_at": "2026-02-13T20:25:40.214Z"
+    "best_test_return": 15.759125350987233,
+    "optimized_at": "2026-02-13T20:40:02.285Z"
   }
 }

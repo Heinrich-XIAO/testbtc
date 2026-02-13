@@ -35,6 +35,7 @@ export class DifferentialEvolutionOptimizer {
       maxIterations: config.maxIterations ?? 100,
       convergenceThreshold: config.convergenceThreshold ?? 1e-6,
       learningRate: config.learningRate ?? 1.0,
+      randomSamples: config.randomSamples ?? 50,
     };
     
     this.paramNames = Object.keys(paramConfigs);
@@ -53,12 +54,14 @@ export class DifferentialEvolutionOptimizer {
     const history: OptimizationHistory[] = [];
     let converged = false;
 
+    const numRandomSamples = this.config.randomSamples;
+
     if (!this.quiet) {
-      console.log(`DE: Random search phase (20 samples)...`);
+      console.log(`DE: Random search phase (` + numRandomSamples + ` samples)...`);
     }
 
     const randomSamples: Individual[] = [];
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < numRandomSamples; i++) {
       const params = this.sampleRandomParams();
       randomSamples.push({
         params,
