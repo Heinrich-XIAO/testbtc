@@ -1,1 +1,6 @@
 market_samples/
+node_modules/
+data/
+.DS_Store
+telemetry-id
+*.bson
