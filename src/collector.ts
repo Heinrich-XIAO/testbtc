@@ -171,7 +171,7 @@ export async function collectData(options: CollectorOptions = {}): Promise<Store
     ? Math.floor(Date.now() / 1000) - (options.months * 30 * 24 * 60 * 60)
     : 0;
 
-  const batchSize = 20;
+  const batchSize = 30;
   const totalBatches = Math.ceil(allTokenIds.length / batchSize);
 
   const progressBar = new cliProgress.SingleBar({
