@@ -107,12 +107,21 @@ const program = new Command();
 program
   .name('optimize')
   .description('Differential Evolution Optimization for Trading Strategy')
+  .option('-l, --list-strategies', 'List available strategies')
   .option('-s, --strategy <name>', 'Strategy to optimize', 'simple_ma')
   .option('-i, --max-iterations <number>', 'Maximum generations', '100')
   .option('-d, --data <file>', 'Data file path', 'data/polymarket-data.bson')
   .option('-m, --min-test-return <number>', 'Minimum test return to accept', '10')
   .option('-a, --attempts <number>', 'Number of optimization attempts', '5')
   .action(async (options) => {
+    if (options.listStrategies) {
+      console.log(kleur.cyan('Available strategies:'));
+      for (const [name, config] of Object.entries(strategies)) {
+        console.log(`  ${kleur.green(name)} -> ${config.outputFile}`);
+      }
+      process.exit(0);
+    }
+    
     const strategyName = options.strategy;
     const strategyConfig = strategies[strategyName];
     
