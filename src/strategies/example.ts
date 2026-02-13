@@ -22,7 +22,7 @@ export class SimpleMAStrategy implements Strategy {
       slow_period: params.slow_period ?? 200,
       stop_loss: params.stop_loss ?? 0.02,
       trailing_stop: params.trailing_stop ?? false,
-      risk_percent: params.risk_percent ?? 0.95,
+      risk_percent: params.risk_percent ?? 0.10,
     };
     this.fastMA = new SimpleMovingAverage(this.params.fast_period);
     this.slowMA = new SimpleMovingAverage(this.params.slow_period);

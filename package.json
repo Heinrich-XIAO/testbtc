@@ -5,6 +5,7 @@
   "scripts": {
     "collect": "bun run scripts/run-collector.ts",
     "backtest": "bun run scripts/run-backtest.ts",
+    "optimize": "bun run scripts/run-optimization.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

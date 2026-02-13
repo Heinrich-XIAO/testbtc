@@ -17,7 +17,7 @@ async function main() {
   console.log('');
 
   try {
-    const data = await collectData({ limit, active: true, fidelity: 60, interval: 'max' });
+    const data = await collectData({ limit, active: true, interval: '1d' });
     await saveToBson(data, output);
     console.log('\nCollection complete!');
   } catch (error) {
