@@ -2,6 +2,7 @@ import { Command } from 'commander';
 import kleur from 'kleur';
 import { loadStoredData } from '../src/backtest/engine';
 import { SimpleMAStrategy, type SimpleMAStrategyParams } from '../src/strategies/example';
+import { BollingerBandsStrategy, type BollingerBandsStrategyParams } from '../src/strategies/bollinger_bands';
 import { DifferentialEvolutionOptimizer } from '../src/optimization';
 import type { ParamConfig, OptimizationResult } from '../src/optimization/types';
 import type { StoredData, PricePoint } from '../src/types';
@@ -11,12 +12,30 @@ import * as path from 'path';
 
 kleur.enabled = true;
 
-const paramConfigs: Record<string, ParamConfig> = {
-  fast_period: { min: 5, max: 100, stepSize: 10 },
-  slow_period: { min: 20, max: 300, stepSize: 20 },
-  stop_loss: { min: 0.01, max: 0.2, stepSize: 0.02 },
-  trailing_stop: { min: 0, max: 1, stepSize: 1 },
-  risk_percent: { min: 0.1, max: 1.0, stepSize: 0.2 },
+const strategies: Record<string, { class: any; params: Record<string, ParamConfig>; outputFile: string }> = {
+  simple_ma: {
+    class: SimpleMAStrategy,
+    params: {
+      fast_period: { min: 5, max: 100, stepSize: 10 },
+      slow_period: { min: 20, max: 300, stepSize: 20 },
+      stop_loss: { min: 0.01, max: 0.2, stepSize: 0.02 },
+      trailing_stop: { min: 0, max: 1, stepSize: 1 },
+      risk_percent: { min: 0.1, max: 1.0, stepSize: 0.2 },
+    },
+    outputFile: 'example.params.json',
+  },
+  bollinger_bands: {
+    class: BollingerBandsStrategy,
+    params: {
+      period: { min: 10, max: 50, stepSize: 5 },
+      std_dev_multiplier: { min: 1.5, max: 3.0, stepSize: 0.5 },
+      stop_loss: { min: 0.01, max: 0.1, stepSize: 0.02 },
+      trailing_stop: { min: 0, max: 1, stepSize: 1 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+      mean_reversion: { min: 0, max: 1, stepSize: 1 },
+    },
+    outputFile: 'bollinger_bands.params.json',
+  },
 };
 
 function splitData(data: StoredData, trainRatio: number = 0.7): { train: StoredData; test: StoredData } {
@@ -68,8 +87,8 @@ function splitData(data: StoredData, trainRatio: number = 0.7): { train: StoredD
   };
 }
 
-function testParams(data: StoredData, params: Record<string, number>): { return: number; sharpe: number; trades: number } {
-  const strategy = new SimpleMAStrategy(params);
+function testParams(data: StoredData, strategyClass: any, params: Record<string, number>): { return: number; sharpe: number; trades: number } {
+  const strategy = new strategyClass(params);
   const engine = new BacktestEngine(data, strategy, { feeRate: 0.002 });
   
   const originalLog = console.log;
@@ -88,16 +107,31 @@ const program = new Command();
 program
   .name('optimize')
   .description('Differential Evolution Optimization for Trading Strategy')
+  .option('-s, --strategy <name>', 'Strategy to optimize', 'simple_ma')
   .option('-i, --max-iterations <number>', 'Maximum generations', '100')
   .option('-d, --data <file>', 'Data file path', 'data/polymarket-data.bson')
   .option('-m, --min-test-return <number>', 'Minimum test return to accept', '10')
   .option('-a, --attempts <number>', 'Number of optimization attempts', '5')
   .action(async (options) => {
+    const strategyName = options.strategy;
+    const strategyConfig = strategies[strategyName];
+    
+    if (!strategyConfig) {
+      console.error(kleur.red(`Unknown strategy: ${strategyName}`));
+      console.log(kleur.yellow('Available strategies:'), Object.keys(strategies).join(', '));
+      process.exit(1);
+    }
+    
+    const StrategyClass = strategyConfig.class;
+    const paramConfigs = strategyConfig.params;
+    const outputFile = strategyConfig.outputFile;
+    
     const maxIterations = parseInt(options.maxIterations);
     const dataFile = options.data;
     const minTestReturn = parseFloat(options.minTestReturn);
     const attempts = parseInt(options.attempts);
 
+    console.log(kleur.cyan('Strategy:'), strategyName);
     console.log(kleur.cyan('Loading data from:'), dataFile);
     const fullData = loadStoredData(dataFile);
     console.log(`Loaded ${fullData.markets.length} markets`);
@@ -124,7 +158,7 @@ program
     for (let attempt = 1; attempt <= attempts; attempt++) {
       console.log(kleur.yellow(`\nAttempt ${attempt}/${attempts}...`));
       
-      const optimizer = new DifferentialEvolutionOptimizer(train, SimpleMAStrategy, paramConfigs, {
+      const optimizer = new DifferentialEvolutionOptimizer(train, StrategyClass, paramConfigs, {
         maxIterations,
         convergenceThreshold: 1e-6,
         learningRate: 1.0,
@@ -133,7 +167,7 @@ program
       optimizer.setQuiet(true);
       const result = optimizer.optimize(attempt === 1 ? null : bestParams);
       
-      const testMetrics = testParams(test, result.finalParams);
+      const testMetrics = testParams(test, StrategyClass, result.finalParams);
       
       console.log(`  Train Score: ${result.bestSharpe.toFixed(4)}`);
       console.log(`  Test Return: $${testMetrics.return.toFixed(2)}`);
@@ -158,8 +192,8 @@ program
       process.exit(1);
     }
 
-    const finalTestMetrics = testParams(test, bestParams);
-    const fullMetrics = testParams(fullData, bestParams);
+    const finalTestMetrics = testParams(test, StrategyClass, bestParams);
+    const fullMetrics = testParams(fullData, StrategyClass, bestParams);
 
     console.log('\n' + kleur.bold(kleur.cyan('='.repeat(60))));
     console.log(kleur.bold(kleur.cyan('FINAL RESULTS')));
@@ -194,9 +228,9 @@ program
       },
     };
     
-    const outputPath = path.join(process.cwd(), 'src', 'strategies', 'example.params.json');
+    const outputPath = path.join(process.cwd(), 'src', 'strategies', outputFile);
     fs.writeFileSync(outputPath, JSON.stringify(output, null, 2));
-    console.log(kleur.green('\n✓ Parameters saved to example.params.json'));
+    console.log(kleur.green(`\n✓ Parameters saved to ${outputFile}`));
   });
 
 program.parse();
