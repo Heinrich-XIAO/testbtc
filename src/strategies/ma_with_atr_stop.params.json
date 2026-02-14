@@ -1,0 +1,11 @@
+{
+  "fast_period": 20,
+  "slow_period": 50,
+  "atr_period": 7,
+  "atr_multiplier": 1.5,
+  "risk_percent": 0.2,
+  "metadata": {
+    "best_sharpe": 1.0010887528496597,
+    "optimized_at": "2026-02-13T21:35:03.006Z"
+  }
+}

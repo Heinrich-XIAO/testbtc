@@ -68,11 +68,11 @@ async function main() {
   const riskPercentIndex = args.indexOf('--risk-percent');
   const riskPercent = riskPercentIndex >= 0 ? parseFloat(args[riskPercentIndex + 1]) / 100 : (savedParams?.risk_percent ?? 0.15);
 
-  const trailingStopIndex = args.indexOf('--trailing-stop');
-  const trailingStop = trailingStopIndex >= 0 ? (args[trailingStopIndex + 1] === 'true') : (savedParams?.trailing_stop === 1);
+  const hasTrailingStopArg = args.includes('--trailing-stop');
+  const trailingStop = hasTrailingStopArg ? (args[args.indexOf('--trailing-stop') + 1] === 'true') : (savedParams?.trailing_stop === 1 || savedParams?.trailing_stop === true || savedParams?.trailing_stop === undefined);
 
-  const meanReversionIndex = args.indexOf('--mean-reversion');
-  const meanReversion = meanReversionIndex >= 0 ? (args[meanReversionIndex + 1] === 'true') : (savedParams?.mean_reversion === 1);
+  const hasMeanReversionArg = args.includes('--mean-reversion');
+  const meanReversion = hasMeanReversionArg ? (args[args.indexOf('--mean-reversion') + 1] === 'true') : (savedParams?.mean_reversion === 1 || savedParams?.mean_reversion === true || savedParams?.mean_reversion === undefined);
 
   console.log('Bollinger Bands Backtest Runner');
   console.log('===============================');
@@ -94,7 +94,7 @@ async function main() {
     console.log(`Price history for ${data.priceHistory.size} tokens`);
     console.log('');
 
-    const strategy = new BollingerBandsStrategy({
+    const strategy = new BollingerBandsStrategy(savedParams ?? {
       period,
       std_dev_multiplier: stdDev,
       stop_loss: stopLoss,

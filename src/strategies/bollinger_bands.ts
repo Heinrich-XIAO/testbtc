@@ -1,5 +1,5 @@
 import type { Strategy, BacktestContext, Bar, StrategyParams, OrderResult } from '../types';
-import { SimpleMovingAverage } from '../types';
+import { SimpleMovingAverage, RSI, ATR } from '../types';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -10,6 +10,16 @@ export interface BollingerBandsStrategyParams extends StrategyParams {
   trailing_stop: boolean;
   risk_percent: number;
   mean_reversion: boolean;
+  take_profit: number;
+  take_profit_enabled: boolean;
+  rsi_period: number;
+  rsi_enabled: boolean;
+  rsi_oversold: number;
+  rsi_overbought: number;
+  atr_enabled: boolean;
+  atr_multiplier: number;
+  breakout_enabled: boolean;
+  breakout_threshold: number;
 }
 
 const defaultParams: BollingerBandsStrategyParams = {
@@ -19,6 +29,16 @@ const defaultParams: BollingerBandsStrategyParams = {
   trailing_stop: true,
   risk_percent: 0.15,
   mean_reversion: true,
+  take_profit: 0.05,
+  take_profit_enabled: false,
+  rsi_period: 14,
+  rsi_enabled: false,
+  rsi_oversold: 30,
+  rsi_overbought: 70,
+  atr_enabled: false,
+  atr_multiplier: 2.0,
+  breakout_enabled: false,
+  breakout_threshold: 0.02,
 };
 
 function loadSavedParams(): Partial<BollingerBandsStrategyParams> | null {
@@ -30,9 +50,11 @@ function loadSavedParams(): Partial<BollingerBandsStrategyParams> | null {
     const saved = JSON.parse(content);
     const params: Partial<BollingerBandsStrategyParams> = {};
 
+    const booleanParams = ['trailing_stop', 'mean_reversion', 'take_profit_enabled', 'rsi_enabled', 'atr_enabled', 'breakout_enabled'];
+
     for (const [key, value] of Object.entries(saved)) {
       if (key !== 'metadata' && key in defaultParams) {
-        if (key === 'trailing_stop' || key === 'mean_reversion') {
+        if (booleanParams.includes(key)) {
           if (typeof value === 'number') {
             params[key as keyof BollingerBandsStrategyParams] = value === 1;
           } else if (typeof value === 'boolean') {
@@ -83,6 +105,8 @@ export class BollingerBandsStrategy implements Strategy {
   params: BollingerBandsStrategyParams;
   private sma: SimpleMovingAverage;
   private stdDev: StandardDeviation;
+  private rsi: RSI;
+  private atr: ATR;
   private prices: number[] = [];
   private buyPrice: Map<string, number> = new Map();
   private highestPrice: Map<string, number> = new Map();
@@ -98,9 +122,21 @@ export class BollingerBandsStrategy implements Strategy {
       trailing_stop: mergedParams.trailing_stop,
       risk_percent: mergedParams.risk_percent,
       mean_reversion: mergedParams.mean_reversion,
+      take_profit: mergedParams.take_profit,
+      take_profit_enabled: mergedParams.take_profit_enabled,
+      rsi_period: mergedParams.rsi_period,
+      rsi_enabled: mergedParams.rsi_enabled,
+      rsi_oversold: mergedParams.rsi_oversold,
+      rsi_overbought: mergedParams.rsi_overbought,
+      atr_enabled: mergedParams.atr_enabled,
+      atr_multiplier: mergedParams.atr_multiplier,
+      breakout_enabled: mergedParams.breakout_enabled,
+      breakout_threshold: mergedParams.breakout_threshold,
     };
     this.sma = new SimpleMovingAverage(this.params.period);
     this.stdDev = new StandardDeviation(this.params.period);
+    this.rsi = new RSI(this.params.rsi_period);
+    this.atr = new ATR(this.params.period);
   }
 
   private getBollingerBands(): { middle: number | undefined; upper: number | undefined; lower: number | undefined } {
@@ -126,11 +162,17 @@ export class BollingerBandsStrategy implements Strategy {
     console.log(`  Trailing stop: ${this.params.trailing_stop}`);
     console.log(`  Risk percent: ${this.params.risk_percent * 100}%`);
     console.log(`  Mean reversion mode: ${this.params.mean_reversion}`);
+    console.log(`  Take profit: ${this.params.take_profit_enabled ? `${this.params.take_profit * 100}%` : 'disabled'}`);
+    console.log(`  RSI: ${this.params.rsi_enabled ? `period=${this.params.rsi_period}, oversold=${this.params.rsi_oversold}, overbought=${this.params.rsi_overbought}` : 'disabled'}`);
+    console.log(`  ATR: ${this.params.atr_enabled ? `multiplier=${this.params.atr_multiplier}` : 'disabled'}`);
+    console.log(`  Breakout: ${this.params.breakout_enabled ? `threshold=${this.params.breakout_threshold * 100}%` : 'disabled'}`);
   }
 
   onNext(ctx: BacktestContext, bar: Bar): void {
     this.sma.update(bar.close);
     this.stdDev.update(bar.close);
+    this.rsi.update(bar.close);
+    this.atr.update(bar.high, bar.low, bar.close);
     this.prices.push(bar.close);
     
     if (this.prices.length > this.params.period) {
@@ -139,6 +181,8 @@ export class BollingerBandsStrategy implements Strategy {
 
     const position = ctx.getPosition(bar.tokenId);
     const bands = this.getBollingerBands();
+    const rsiValue = this.rsi.get(0);
+    const atrValue = this.atr.get(0);
 
     if (position && position.size > 0) {
       const buyPrice = this.buyPrice.get(bar.tokenId);
@@ -168,34 +212,81 @@ export class BollingerBandsStrategy implements Strategy {
             return;
           }
         }
-      }
 
-      if (bands.upper !== undefined && this.params.mean_reversion) {
-        if (bar.close >= bands.upper) {
-          console.log(`[${new Date(bar.timestamp * 1000).toISOString()}] Bollinger Bands SELL signal (price at upper band) for ${bar.tokenId.slice(0, 8)}... at ${bar.close.toFixed(4)}`);
-          ctx.close(bar.tokenId);
-          this.buyPrice.delete(bar.tokenId);
-          this.highestPrice.delete(bar.tokenId);
+        if (this.params.take_profit_enabled && bands.upper !== undefined) {
+          const tpPrice = buyPrice * (1 + this.params.take_profit);
+          if (bar.close >= tpPrice || bar.close >= bands.upper) {
+            console.log(`[${new Date(bar.timestamp * 1000).toISOString()}] Take profit triggered for ${bar.tokenId.slice(0, 8)}... at ${bar.close.toFixed(4)}`);
+            ctx.close(bar.tokenId);
+            this.buyPrice.delete(bar.tokenId);
+            this.highestPrice.delete(bar.tokenId);
+            return;
+          }
+        }
+
+        if (bands.upper !== undefined && this.params.mean_reversion) {
+          let shouldSell = bar.close >= bands.upper;
+          
+          if (this.params.rsi_enabled && rsiValue !== undefined) {
+            shouldSell = shouldSell && rsiValue >= this.params.rsi_overbought;
+          }
+          
+          if (shouldSell) {
+            console.log(`[${new Date(bar.timestamp * 1000).toISOString()}] Bollinger Bands SELL signal (price at upper band) for ${bar.tokenId.slice(0, 8)}... at ${bar.close.toFixed(4)}${rsiValue !== undefined ? `, RSI: ${rsiValue.toFixed(2)}` : ''}`);
+            ctx.close(bar.tokenId);
+            this.buyPrice.delete(bar.tokenId);
+            this.highestPrice.delete(bar.tokenId);
+          }
         }
       }
     } else {
-      if (bands.lower !== undefined && bands.upper !== undefined && this.params.mean_reversion) {
+      let shouldBuy = false;
+      let buyReason = '';
+
+      if (this.params.breakout_enabled && bands.upper !== undefined) {
+        const breakoutPrice = bands.upper * (1 + this.params.breakout_threshold);
+        if (bar.close >= breakoutPrice) {
+          shouldBuy = true;
+          buyReason = `breakout above upper band`;
+        }
+      }
+
+      if (!shouldBuy && this.params.mean_reversion && bands.lower !== undefined && bands.upper !== undefined) {
         if (bar.close <= bands.lower) {
-          const feeBuffer = 0.995;
-          const cash = ctx.getCapital() * this.params.risk_percent * feeBuffer;
-          const size = cash / bar.close;
+          shouldBuy = true;
+          buyReason = `price at lower band`;
+        }
+      }
 
-          if (size > 0 && cash <= ctx.getCapital()) {
-            console.log(`[${new Date(bar.timestamp * 1000).toISOString()}] Bollinger Bands BUY signal (price at lower band) for ${bar.tokenId.slice(0, 8)}... at ${bar.close.toFixed(4)}, size: ${size.toFixed(2)}`);
-            console.log(`  Bands - Lower: ${bands.lower.toFixed(4)}, Middle: ${bands.middle?.toFixed(4)}, Upper: ${bands.upper.toFixed(4)}`);
+      if (shouldBuy && this.params.rsi_enabled && rsiValue !== undefined) {
+        shouldBuy = rsiValue <= this.params.rsi_oversold;
+        if (shouldBuy) {
+          buyReason += `, RSI oversold (${rsiValue.toFixed(2)})`;
+        }
+      }
 
-            const result = ctx.buy(bar.tokenId, size);
-            if (result.success) {
-              this.buyPrice.set(bar.tokenId, bar.close);
-              this.highestPrice.set(bar.tokenId, bar.close);
-            } else {
-              console.error(`  Order failed: ${result.error}`);
-            }
+      if (shouldBuy) {
+        const feeBuffer = 0.995;
+        let cash = ctx.getCapital() * this.params.risk_percent * feeBuffer;
+
+        if (this.params.atr_enabled && atrValue !== undefined && this.params.atr_multiplier > 0 && atrValue > 0) {
+          const atrRisk = atrValue * this.params.atr_multiplier;
+          const maxSizeByATR = (ctx.getCapital() * this.params.risk_percent) / atrRisk;
+          cash = Math.min(cash, maxSizeByATR * bar.close * feeBuffer);
+        }
+
+        const size = cash / bar.close;
+
+        if (size > 0 && cash <= ctx.getCapital()) {
+          console.log(`[${new Date(bar.timestamp * 1000).toISOString()}] BUY signal (${buyReason}) for ${bar.tokenId.slice(0, 8)}... at ${bar.close.toFixed(4)}, size: ${size.toFixed(2)}`);
+          console.log(`  Bands - Lower: ${bands.lower?.toFixed(4)}, Middle: ${bands.middle?.toFixed(4)}, Upper: ${bands.upper?.toFixed(4)}${atrValue !== undefined ? `, ATR: ${atrValue.toFixed(4)}` : ''}`);
+
+          const result = ctx.buy(bar.tokenId, size);
+          if (result.success) {
+            this.buyPrice.set(bar.tokenId, bar.close);
+            this.highestPrice.set(bar.tokenId, bar.close);
+          } else {
+            console.error(`  Order failed: ${result.error}`);
           }
         }
       }

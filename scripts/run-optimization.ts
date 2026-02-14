@@ -87,19 +87,51 @@ function splitData(data: StoredData, trainRatio: number = 0.7): { train: StoredD
   };
 }
 
-function testParams(data: StoredData, strategyClass: any, params: Record<string, number>): { return: number; sharpe: number; trades: number } {
-  const strategy = new strategyClass(params);
-  const engine = new BacktestEngine(data, strategy, { feeRate: 0.002 });
-  
-  const originalLog = console.log;
-  console.log = () => {};
-  
-  try {
-    const result = engine.run();
-    return { return: result.totalReturn, sharpe: result.sharpeRatio, trades: result.totalTrades };
-  } finally {
-    console.log = originalLog;
+function testParams(data: StoredData, strategyClass: any, params: Record<string, number>): { return: number; sharpe: number; trades: number; stdDev: number } {
+  return testParamsBatched(data, strategyClass, params, 50);
+}
+
+function testParamsBatched(data: StoredData, strategyClass: any, params: Record<string, number>, batchSize: number): { return: number; sharpe: number; trades: number; stdDev: number } {
+  const tokens = Array.from(data.priceHistory.keys());
+  const batches: string[][] = [];
+  for (let i = 0; i < tokens.length; i += batchSize) {
+    batches.push(tokens.slice(i, i + batchSize));
   }
+  
+  let totalReturn = 0;
+  let totalTrades = 0;
+  const batchReturns: number[] = [];
+  
+  for (const batchTokens of batches) {
+    const batchData: StoredData = {
+      ...data,
+      priceHistory: new Map(batchTokens.map(t => [t, data.priceHistory.get(t)!])),
+    };
+    
+    const strategy = new strategyClass(params);
+    const engine = new BacktestEngine(batchData, strategy, { feeRate: 0.002 });
+    
+    const originalLog = console.log;
+    console.log = () => {};
+    
+    try {
+      const result = engine.run();
+      totalReturn += result.totalReturn;
+      totalTrades += result.totalTrades;
+      batchReturns.push(result.totalReturn);
+    } finally {
+      console.log = originalLog;
+    }
+  }
+  
+  let stdDev = 0;
+  if (batchReturns.length > 1) {
+    const mean = batchReturns.reduce((a, b) => a + b, 0) / batchReturns.length;
+    const variance = batchReturns.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / batchReturns.length;
+    stdDev = Math.sqrt(variance);
+  }
+  
+  return { return: totalReturn, sharpe: 0, trades: totalTrades, stdDev };
 }
 
 const program = new Command();
@@ -174,13 +206,28 @@ program
     console.log('Loaded ' + fullData.markets.length + ' markets');
     
     console.log(kleur.yellow('\nSplitting data: 70% train, 30% test...'));
-    const { train: trainSplit, test: testSplit } = splitData(fullData, 0.7);
     
     const maxTokens = 500;
-    const trainTokens = Array.from(trainSplit.priceHistory.keys()).slice(0, maxTokens);
-    const trainSampled = new Map(trainTokens.map(k => [k, trainSplit.priceHistory.get(k)!]));
-    const testTokens = Array.from(testSplit.priceHistory.keys()).slice(0, maxTokens);
-    const testSampled = new Map(testTokens.map(k => [k, testSplit.priceHistory.get(k)!]));
+    const allTokens = Array.from(fullData.priceHistory.keys());
+    
+    function seededShuffle<T>(array: T[], seed: number): T[] {
+      const result = [...array];
+      for (let i = result.length - 1; i > 0; i--) {
+        seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+        const j = seed % (i + 1);
+        [result[i], result[j]] = [result[j], result[i]];
+      }
+      return result;
+    }
+    
+    const shuffledTokens = seededShuffle(allTokens, 42);
+    const selectedTokens = maxTokens ? shuffledTokens.slice(0, maxTokens) : shuffledTokens;
+    
+    const trainTokens = selectedTokens.slice(0, Math.floor(selectedTokens.length * 0.7));
+    const testTokens = selectedTokens.slice(Math.floor(selectedTokens.length * 0.7));
+    
+    const trainSampled = new Map(trainTokens.map(k => [k, fullData.priceHistory.get(k)!]));
+    const testSampled = new Map(testTokens.map(k => [k, fullData.priceHistory.get(k)!]));
     
     const train: StoredData = {
       ...fullData,
@@ -189,6 +236,10 @@ program
     const test: StoredData = {
       ...fullData,
       priceHistory: testSampled,
+    };
+    const full: StoredData = {
+      ...fullData,
+      priceHistory: new Map([...trainSampled, ...testSampled]),
     };
     
     let totalTrainPoints = 0;
@@ -247,7 +298,8 @@ program
     }
 
     const finalTestMetrics = testParams(test, StrategyClass, bestParams);
-    const fullMetrics = testParams(fullData, StrategyClass, bestParams);
+    const fullMetrics = testParams(full, StrategyClass, bestParams);
+    const trainMetrics = testParams(train, StrategyClass, bestParams);
 
     console.log('\n' + kleur.bold(kleur.cyan('='.repeat(60))));
     console.log(kleur.bold(kleur.cyan('FINAL RESULTS')));
@@ -266,10 +318,12 @@ program
     }
     
     console.log('\nPerformance:');
-    console.log('  Test Return: $' + finalTestMetrics.return.toFixed(2));
+    console.log('  Train Return: $' + trainMetrics.return.toFixed(2) + ' stdDev:$' + trainMetrics.stdDev.toFixed(2));
+    console.log('  Train Sharpe: ' + trainMetrics.sharpe.toFixed(4));
+    console.log('  Test Return: $' + finalTestMetrics.return.toFixed(2) + ' stdDev:$' + finalTestMetrics.stdDev.toFixed(2));
     console.log('  Test Sharpe: ' + finalTestMetrics.sharpe.toFixed(4));
     console.log('  Test Trades: ' + finalTestMetrics.trades);
-    console.log('  Full Return: $' + fullMetrics.return.toFixed(2));
+    console.log('  Full Return: $' + fullMetrics.return.toFixed(2) + ' stdDev:$' + fullMetrics.stdDev.toFixed(2));
     console.log('  Full Sharpe: ' + fullMetrics.sharpe.toFixed(4));
     console.log('  Iterations: ' + bestResult.iterations);
     console.log('  Converged: ' + (bestResult.converged ? 'Yes' : 'No'));
@@ -300,10 +354,14 @@ program
       bestParams,
       history: bestResult.history,
       finalMetrics: {
+        trainReturn: trainMetrics.return,
+        trainStdDev: trainMetrics.stdDev,
         testReturn: finalTestMetrics.return,
+        testStdDev: finalTestMetrics.stdDev,
         testSharpe: finalTestMetrics.sharpe,
         testTrades: finalTestMetrics.trades,
         fullReturn: fullMetrics.return,
+        fullStdDev: fullMetrics.stdDev,
         fullSharpe: fullMetrics.sharpe,
       },
     };

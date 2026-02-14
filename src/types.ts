@@ -216,3 +216,100 @@ export class CrossOver extends Indicator {
     this.prevDiff = diff;
   }
 }
+
+export class RSI extends Indicator {
+  private period: number;
+  private prices: number[] = [];
+  private gains: number[] = [];
+  private losses: number[] = [];
+  private avgGain: number = 0;
+  private avgLoss: number = 0;
+  private initialized: boolean = false;
+  
+  constructor(period: number) {
+    super();
+    this.period = period;
+  }
+  
+  update(price: number): void {
+    this.prices.push(price);
+    if (this.prices.length > this.period) {
+      this.prices.shift();
+    }
+    
+    if (this.prices.length >= 2) {
+      const change = this.prices[this.prices.length - 1] - this.prices[this.prices.length - 2];
+      const gain = change > 0 ? change : 0;
+      const loss = change < 0 ? -change : 0;
+      
+      this.gains.push(gain);
+      this.losses.push(loss);
+      
+      if (this.gains.length > this.period) {
+        this.gains.shift();
+        this.losses.shift();
+      }
+      
+      if (!this.initialized && this.gains.length === this.period) {
+        this.avgGain = this.gains.reduce((a, b) => a + b, 0) / this.period;
+        this.avgLoss = this.losses.reduce((a, b) => a + b, 0) / this.period;
+        this.initialized = true;
+      } else if (this.initialized) {
+        this.avgGain = (this.avgGain * (this.period - 1) + gain) / this.period;
+        this.avgLoss = (this.avgLoss * (this.period - 1) + loss) / this.period;
+      }
+      
+      if (this.initialized && this.avgLoss === 0) {
+        this.push(100);
+      } else if (this.initialized) {
+        const rs = this.avgGain / this.avgLoss;
+        const rsi = 100 - (100 / (1 + rs));
+        this.push(rsi);
+      }
+    }
+  }
+}
+
+export class ATR extends Indicator {
+  private period: number;
+  private highs: number[] = [];
+  private lows: number[] = [];
+  private closes: number[] = [];
+  private prevClose: number | null = null;
+  private trValues: number[] = [];
+  
+  constructor(period: number) {
+    super();
+    this.period = period;
+  }
+  
+  update(high: number, low: number, close: number): void {
+    this.highs.push(high);
+    this.lows.push(low);
+    this.closes.push(close);
+    
+    if (this.highs.length > this.period) {
+      this.highs.shift();
+      this.lows.shift();
+      this.closes.shift();
+    }
+    
+    if (this.closes.length >= 2) {
+      const tr = Math.max(
+        this.highs[this.highs.length - 1] - this.lows[this.lows.length - 1],
+        Math.abs(this.highs[this.highs.length - 1] - this.closes[this.closes.length - 2]),
+        Math.abs(this.lows[this.lows.length - 1] - this.closes[this.closes.length - 2])
+      );
+      
+      this.trValues.push(tr);
+      if (this.trValues.length > this.period) {
+        this.trValues.shift();
+      }
+      
+      if (this.trValues.length === this.period) {
+        const atr = this.trValues.reduce((a, b) => a + b, 0) / this.period;
+        this.push(atr);
+      }
+    }
+  }
+}
