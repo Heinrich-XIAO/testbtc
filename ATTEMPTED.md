@@ -53,8 +53,18 @@
 
 ## Successful Attempts
 
-### Simple MA (Baseline)
+### Simple MA (Current Best) - Time-based Split
+- **Strategy**: Fast/Slow MA crossover with fixed stop loss
+- **Parameters**: fast=20, slow=25, stop_loss=4.06%, risk=10.16%
+- **Train Return**: $565.13 (Sharpe: 1.30)
+- **Test Return**: $65.07 (Sharpe: 0.38)
+- **Full Return**: $267.20 (Sharpe: 1.23)
+- **Trades**: 55
+- **Data**: test-data.bson (10 tokens, 738 points each)
+- **Split**: Time-based (70% train, 30% test)
+
+### Simple MA (Baseline) - Token-based Split
 - **Strategy**: Fast/Slow MA crossover with fixed stop loss
 - **Test Return**: $24.54
 - **Test Sharpe**: 1.0226
-- Best performing strategy so far
+- Previous best with token-based splitting

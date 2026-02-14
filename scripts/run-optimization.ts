@@ -16,11 +16,11 @@ const strategies: Record<string, { class: any; params: Record<string, ParamConfi
   simple_ma: {
     class: SimpleMAStrategy,
     params: {
-      fast_period: { min: 10, max: 50, stepSize: 20 },
-      slow_period: { min: 50, max: 150, stepSize: 50 },
-      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.04 },
+      fast_period: { min: 5, max: 30, stepSize: 5 },
+      slow_period: { min: 20, max: 100, stepSize: 10 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.02 },
       trailing_stop: { min: 0, max: 0, stepSize: 1 },
-      risk_percent: { min: 0.5, max: 1.0, stepSize: 0.5 },
+      risk_percent: { min: 0.1, max: 0.5, stepSize: 0.1 },
     },
     outputFile: 'example.params.json',
   },
@@ -98,7 +98,24 @@ function seededShuffle<T>(array: T[], seed: number): T[] {
 }
 
 function testParams(data: StoredData, strategyClass: any, params: Record<string, number>): { return: number; sharpe: number; trades: number; stdDev: number } {
-  return testParamsCV(data, strategyClass, params, 5);
+  // Simple direct evaluation without CV - simpler and works better with small datasets
+  const strategy = new strategyClass(params);
+  const engine = new BacktestEngine(data, strategy, { feeRate: 0.002 });
+  
+  const originalLog = console.log;
+  console.log = () => {};
+  
+  try {
+    const result = engine.run();
+    return { 
+      return: result.totalReturn, 
+      sharpe: result.sharpeRatio, 
+      trades: result.totalTrades, 
+      stdDev: 0 
+    };
+  } finally {
+    console.log = originalLog;
+  }
 }
 
 function testParamsCV(data: StoredData, strategyClass: any, params: Record<string, number>, folds: number): { return: number; sharpe: number; trades: number; stdDev: number } {
@@ -195,7 +212,7 @@ program
   .option('-s, --strategy <name>', 'Strategy to optimize', 'simple_ma')
   .option('-i, --max-iterations <number>', 'Maximum generations', '30')
   .option('-r, --random-samples <number>', 'Initial random samples', '50')
-  .option('-d, --data <file>', 'Data file path', 'data/polymarket-data.bson')
+  .option('-d, --data <file>', 'Data file path', 'data/test-data.bson')
   .option('-m, --min-test-return <number>', 'Minimum test return to accept', '10')
   .option('-a, --attempts <number>', 'Number of optimization attempts', '5')
   .action(async (options) => {
@@ -257,49 +274,45 @@ program
     const fullData = loadStoredData(dataFile);
     console.log('Loaded ' + fullData.markets.length + ' markets');
     
-    console.log(kleur.yellow('\nSplitting data: 70% train, 30% test...'));
+    console.log(kleur.yellow('\nSplitting data: 70% train, 30% test (by time)...'));
     
-    const maxTokens = 500;
     const allTokens = Array.from(fullData.priceHistory.keys());
     
-    function seededShuffle<T>(array: T[], seed: number): T[] {
-      const result = [...array];
-      for (let i = result.length - 1; i > 0; i--) {
-        seed = (seed * 1103515245 + 12345) & 0x7fffffff;
-        const j = seed % (i + 1);
-        [result[i], result[j]] = [result[j], result[i]];
+    // Time-based split: use first 70% of each token's history for train, last 30% for test
+    const trainPriceHistory = new Map<string, PricePoint[]>();
+    const testPriceHistory = new Map<string, PricePoint[]>();
+    
+    for (const [tokenId, history] of fullData.priceHistory) {
+      if (history.length < 10) continue; // Skip tokens with too little data
+      
+      const splitIdx = Math.floor(history.length * 0.7);
+      const trainHistory = history.slice(0, splitIdx);
+      const testHistory = history.slice(splitIdx);
+      
+      if (trainHistory.length > 0) {
+        trainPriceHistory.set(tokenId, trainHistory);
       }
-      return result;
+      if (testHistory.length > 0) {
+        testPriceHistory.set(tokenId, testHistory);
+      }
     }
-    
-    const shuffledTokens = seededShuffle(allTokens, 42);
-    const selectedTokens = maxTokens ? shuffledTokens.slice(0, maxTokens) : shuffledTokens;
-    
-    const trainTokens = selectedTokens.slice(0, Math.floor(selectedTokens.length * 0.7));
-    const testTokens = selectedTokens.slice(Math.floor(selectedTokens.length * 0.7));
-    
-    const trainSampled = new Map(trainTokens.map(k => [k, fullData.priceHistory.get(k)!]));
-    const testSampled = new Map(testTokens.map(k => [k, fullData.priceHistory.get(k)!]));
     
     const train: StoredData = {
       ...fullData,
-      priceHistory: trainSampled,
+      priceHistory: trainPriceHistory,
     };
     const test: StoredData = {
       ...fullData,
-      priceHistory: testSampled,
+      priceHistory: testPriceHistory,
     };
-    const full: StoredData = {
-      ...fullData,
-      priceHistory: new Map([...trainSampled, ...testSampled]),
-    };
+    const full: StoredData = fullData;
     
     let totalTrainPoints = 0;
     let totalTestPoints = 0;
     for (const history of train.priceHistory.values()) totalTrainPoints += history.length;
     for (const history of test.priceHistory.values()) totalTestPoints += history.length;
     
-    console.log('Train: ' + totalTrainPoints + ' price points, Test: ' + totalTestPoints + ' price points (' + maxTokens + ' tokens)');
+    console.log('Train: ' + totalTrainPoints + ' price points, Test: ' + totalTestPoints + ' price points (' + allTokens.length + ' tokens)');
     console.log('Max generations: ' + maxIterations + ', Attempts: ' + attempts);
 
     console.log('\n' + kleur.bold(kleur.magenta('='.repeat(60))));

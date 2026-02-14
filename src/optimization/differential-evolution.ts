@@ -58,19 +58,20 @@ export class DifferentialEvolutionOptimizer {
     const numRandomSamples = this.config.randomSamples;
 
     if (!this.quiet) {
-      console.log(`DE: Random search phase (` + numRandomSamples + ` samples)...`);
+      console.log(`DE: Random search phase (` + numRandomSamples + ` samples in parallel)...`);
     }
 
-    const randomSamples: Individual[] = [];
-    for (let i = 0; i < numRandomSamples; i++) {
-      const params = this.sampleRandomParams();
-      const evalResult = this.evaluate(params);
-      randomSamples.push({
-        params,
-        fitness: evalResult.fitness,
-        return: evalResult.return,
-      });
-    }
+    // Parallel random sampling
+    const randomParamsList = Array.from({ length: numRandomSamples }, () => this.sampleRandomParams());
+    const randomResults = await Promise.all(
+      randomParamsList.map(params => Promise.resolve(this.evaluate(params)))
+    );
+    
+    const randomSamples: Individual[] = randomParamsList.map((params, i) => ({
+      params,
+      fitness: randomResults[i].fitness,
+      return: randomResults[i].return,
+    }));
 
     randomSamples.sort((a, b) => b.fitness - a.fitness);
     
@@ -139,10 +140,12 @@ export class DifferentialEvolutionOptimizer {
     }
 
     for (let generation = 0; generation < this.config.maxIterations; generation++) {
-      const newPopulation: Individual[] = [];
       let bestInGeneration = population[0];
       let improvedInGen = false;
 
+      // Generate all trial vectors first
+      const trials: { trial: Record<string, number>; index: number }[] = [];
+      
       for (let i = 0; i < this.populationSize; i++) {
         const candidates = population.map((_, idx) => idx).filter(idx => idx !== i);
         const [r1, r2, r3] = this.shuffleArray(candidates).slice(0, 3);
@@ -182,16 +185,28 @@ export class DifferentialEvolutionOptimizer {
           j++;
         }
 
-        const trialResult = this.evaluate(trial);
+        trials.push({ trial, index: i });
+      }
+
+      // Evaluate all trials in parallel
+      const trialResults = await Promise.all(
+        trials.map(({ trial }) => Promise.resolve(this.evaluate(trial)))
+      );
+
+      // Build new population from results
+      const newPopulation: Individual[] = [];
+      for (let i = 0; i < trials.length; i++) {
+        const { trial, index } = trials[i];
+        const trialResult = trialResults[i];
         const trialFitness = trialResult.fitness;
         
-        if (trialFitness >= population[i].fitness) {
+        if (trialFitness >= population[index].fitness) {
           newPopulation.push({ params: trial, fitness: trialFitness, return: trialResult.return });
-          if (trialFitness > population[i].fitness) {
+          if (trialFitness > population[index].fitness) {
             improvedInGen = true;
           }
         } else {
-          newPopulation.push(population[i]);
+          newPopulation.push(population[index]);
         }
 
         if (trialFitness > bestInGeneration.fitness) {

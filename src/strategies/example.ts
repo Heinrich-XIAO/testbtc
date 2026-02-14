@@ -82,9 +82,17 @@ export class SimpleMAStrategy implements Strategy {
     const savedParams = loadSavedParams();
     const mergedParams = { ...defaultParams, ...savedParams, ...params };
 
+    // Ensure fast_period < slow_period
+    let fast = mergedParams.fast_period;
+    let slow = mergedParams.slow_period;
+    if (fast >= slow) {
+      // Swap them if inverted
+      [fast, slow] = [slow, fast];
+    }
+
     this.params = {
-      fast_period: mergedParams.fast_period,
-      slow_period: mergedParams.slow_period,
+      fast_period: fast,
+      slow_period: slow,
       stop_loss: mergedParams.stop_loss,
       trailing_stop: mergedParams.trailing_stop,
       risk_percent: mergedParams.risk_percent,
