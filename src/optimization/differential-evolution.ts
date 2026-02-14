@@ -268,9 +268,16 @@ export class DifferentialEvolutionOptimizer {
 
     try {
       const result = engine.run();
-      const minTrades = 5;
+      const minTrades = 3;
       const tradePenalty = result.totalTrades < minTrades ? result.totalTrades / minTrades : 1;
-      return { fitness: result.sharpeRatio * tradePenalty, return: result.totalReturn };
+      
+      const returnWeight = 0.9;
+      const sharpeWeight = 0.1;
+      
+      const normalizedReturn = result.totalReturn / 100;
+      const fitness = (sharpeWeight * Math.max(0, result.sharpeRatio) + returnWeight * normalizedReturn) * tradePenalty;
+      
+      return { fitness, return: result.totalReturn };
     } finally {
       console.log = originalLog;
     }

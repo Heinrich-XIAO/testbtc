@@ -16,11 +16,11 @@ const strategies: Record<string, { class: any; params: Record<string, ParamConfi
   simple_ma: {
     class: SimpleMAStrategy,
     params: {
-      fast_period: { min: 5, max: 100, stepSize: 10 },
-      slow_period: { min: 20, max: 300, stepSize: 20 },
-      stop_loss: { min: 0.01, max: 0.2, stepSize: 0.02 },
-      trailing_stop: { min: 0, max: 1, stepSize: 1 },
-      risk_percent: { min: 0.1, max: 1.0, stepSize: 0.2 },
+      fast_period: { min: 10, max: 50, stepSize: 20 },
+      slow_period: { min: 50, max: 150, stepSize: 50 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.04 },
+      trailing_stop: { min: 0, max: 0, stepSize: 1 },
+      risk_percent: { min: 0.5, max: 1.0, stepSize: 0.5 },
     },
     outputFile: 'example.params.json',
   },
@@ -87,8 +87,60 @@ function splitData(data: StoredData, trainRatio: number = 0.7): { train: StoredD
   };
 }
 
+function seededShuffle<T>(array: T[], seed: number): T[] {
+  const result = [...array];
+  for (let i = result.length - 1; i > 0; i--) {
+    seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+    const j = seed % (i + 1);
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
 function testParams(data: StoredData, strategyClass: any, params: Record<string, number>): { return: number; sharpe: number; trades: number; stdDev: number } {
-  return testParamsBatched(data, strategyClass, params, 50);
+  return testParamsCV(data, strategyClass, params, 5);
+}
+
+function testParamsCV(data: StoredData, strategyClass: any, params: Record<string, number>, folds: number): { return: number; sharpe: number; trades: number; stdDev: number } {
+  const tokens = Array.from(data.priceHistory.keys());
+  const shuffled = seededShuffle(tokens, 42);
+  const foldSize = Math.floor(shuffled.length / folds);
+  
+  let totalReturn = 0;
+  let totalTrades = 0;
+  const foldReturns: number[] = [];
+  
+  for (let fold = 0; fold < folds; fold++) {
+    const valStart = fold * foldSize;
+    const valEnd = fold === folds - 1 ? shuffled.length : (fold + 1) * foldSize;
+    const valTokens = shuffled.slice(valStart, valEnd);
+    const trainTokens = [...shuffled.slice(0, valStart), ...shuffled.slice(valEnd)];
+    
+    const trainData: StoredData = {
+      ...data,
+      priceHistory: new Map(trainTokens.map(t => [t, data.priceHistory.get(t)!])),
+    };
+    const valData: StoredData = {
+      ...data,
+      priceHistory: new Map(valTokens.map(t => [t, data.priceHistory.get(t)!])),
+    };
+    
+    const trainResult = testParamsBatched(trainData, strategyClass, params, 50);
+    const valResult = testParamsBatched(valData, strategyClass, params, 50);
+    
+    totalReturn += valResult.return;
+    totalTrades += valResult.trades;
+    foldReturns.push(valResult.return);
+  }
+  
+  let stdDev = 0;
+  if (foldReturns.length > 1) {
+    const mean = foldReturns.reduce((a, b) => a + b, 0) / foldReturns.length;
+    const variance = foldReturns.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / foldReturns.length;
+    stdDev = Math.sqrt(variance);
+  }
+  
+  return { return: totalReturn / folds, sharpe: 0, trades: Math.floor(totalTrades / folds), stdDev };
 }
 
 function testParamsBatched(data: StoredData, strategyClass: any, params: Record<string, number>, batchSize: number): { return: number; sharpe: number; trades: number; stdDev: number } {
@@ -141,7 +193,7 @@ program
   .description('Differential Evolution Optimization for Trading Strategy')
   .option('-l, --list-strategies', 'List available strategies')
   .option('-s, --strategy <name>', 'Strategy to optimize', 'simple_ma')
-  .option('-i, --max-iterations <number>', 'Maximum generations', '100')
+  .option('-i, --max-iterations <number>', 'Maximum generations', '30')
   .option('-r, --random-samples <number>', 'Initial random samples', '50')
   .option('-d, --data <file>', 'Data file path', 'data/polymarket-data.bson')
   .option('-m, --min-test-return <number>', 'Minimum test return to accept', '10')
