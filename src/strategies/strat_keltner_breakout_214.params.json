@@ -1,0 +1,12 @@
+{
+  "ema_period": 25,
+  "atr_period": 12,
+  "atr_multiplier": 2.5244537895120853,
+  "stop_loss": 0.03952304865410709,
+  "trailing_stop": 0.021949276699025702,
+  "risk_percent": 0.10661887022457033,
+  "metadata": {
+    "best_test_return": 45.19487339090233,
+    "optimized_at": "2026-02-15T17:11:12.123Z"
+  }
+}

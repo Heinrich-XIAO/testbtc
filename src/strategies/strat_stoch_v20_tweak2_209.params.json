@@ -1,0 +1,16 @@
+{
+  "k_period": 6,
+  "d_period": 2,
+  "oversold_base": 25,
+  "overbought_base": 75,
+  "volatility_period": 10,
+  "level_adjustment_factor": 0.2699033187164222,
+  "momentum_period": 6,
+  "momentum_threshold": 0.017462815453890765,
+  "stop_loss": 0.05119653784849436,
+  "risk_percent": 0.18865902444509822,
+  "metadata": {
+    "best_test_return": 423.7996032280314,
+    "optimized_at": "2026-02-15T17:13:32.877Z"
+  }
+}

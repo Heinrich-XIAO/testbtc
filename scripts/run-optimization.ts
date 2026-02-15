@@ -209,6 +209,14 @@ import { RsiStochCombo205Strategy } from '../src/strategies/strat_rsi_stoch_comb
 import { VolatilityBreakoutStrategy } from '../src/strategies/strat_volatility_breakout_206';
 import { TrendFollowingMAStrategy } from '../src/strategies/strat_trend_following_ma_207';
 import { MeanReversionBandV208Strategy } from '../src/strategies/strat_mean_reversion_band_208';
+import { StochV20Tweak2_209Strategy } from '../src/strategies/strat_stoch_v20_tweak2_209';
+import { MeanReversionBand2_210Strategy } from '../src/strategies/strat_mean_reversion_band2_210';
+import { StochV06Tweak2_211Strategy } from '../src/strategies/strat_stoch_v06_tweak2_211';
+import { MomentumVol212Strategy } from '../src/strategies/strat_momentum_vol_212';
+import { RocAdaptive213Strategy } from '../src/strategies/strat_roc_adaptive_213';
+import { KeltnerBreakout214Strategy } from '../src/strategies/strat_keltner_breakout_214';
+import { MacdStochCombo215Strategy } from '../src/strategies/strat_macd_stoch_combo_215';
+import { SupportResistanceStoch216Strategy } from '../src/strategies/strat_support_resistance_stoch_216';
 import { DifferentialEvolutionOptimizer } from '../src/optimization';
 import type { ParamConfig, OptimizationResult } from '../src/optimization/types';
 import type { StoredData, PricePoint } from '../src/types';
@@ -2681,6 +2689,121 @@ const strategies: Record<string, { class: any; params: Record<string, ParamConfi
       risk_percent: { min: 0.05, max: 0.15, stepSize: 0.05 },
     },
     outputFile: 'strat_mean_reversion_band_208.params.json',
+  },
+  stoch_v20_tweak2_209: {
+    class: StochV20Tweak2_209Strategy,
+    params: {
+      k_period: { min: 5, max: 14, stepSize: 1 },
+      d_period: { min: 2, max: 5, stepSize: 1 },
+      oversold_base: { min: 10, max: 25, stepSize: 5 },
+      overbought_base: { min: 65, max: 80, stepSize: 5 },
+      volatility_period: { min: 5, max: 15, stepSize: 2 },
+      level_adjustment_factor: { min: 0.1, max: 0.5, stepSize: 0.1 },
+      momentum_period: { min: 3, max: 10, stepSize: 1 },
+      momentum_threshold: { min: 0.005, max: 0.02, stepSize: 0.005 },
+      stop_loss: { min: 0.03, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.20, stepSize: 0.05 },
+    },
+    outputFile: 'strat_stoch_v20_tweak2_209.params.json',
+  },
+  mean_reversion_band2_210: {
+    class: MeanReversionBand2_210Strategy,
+    params: {
+      bb_period: { min: 15, max: 30, stepSize: 5 },
+      bb_stddev_mult: { min: 1.5, max: 2.5, stepSize: 0.25 },
+      rsi_period: { min: 12, max: 22, stepSize: 2 },
+      rsi_oversold: { min: 20, max: 35, stepSize: 5 },
+      rsi_overbought: { min: 60, max: 75, stepSize: 5 },
+      momentum_lookback: { min: 3, max: 8, stepSize: 1 },
+      stop_loss: { min: 0.03, max: 0.08, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.05, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.15, stepSize: 0.05 },
+    },
+    outputFile: 'strat_mean_reversion_band2_210.params.json',
+  },
+  stoch_v06_tweak2_211: {
+    class: StochV06Tweak2_211Strategy,
+    params: {
+      k_period: { min: 5, max: 12, stepSize: 1 },
+      d_period: { min: 2, max: 5, stepSize: 1 },
+      oversold: { min: 15, max: 30, stepSize: 5 },
+      overbought: { min: 70, max: 85, stepSize: 5 },
+      stop_loss: { min: 0.03, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.10, max: 0.25, stepSize: 0.05 },
+      ma_period: { min: 20, max: 40, stepSize: 5 },
+      mtf_fast_period: { min: 3, max: 8, stepSize: 1 },
+      mtf_slow_period: { min: 10, max: 20, stepSize: 2 },
+    },
+    outputFile: 'strat_stoch_v06_tweak2_211.params.json',
+  },
+  momentum_vol_212: {
+    class: MomentumVol212Strategy,
+    params: {
+      momentum_period: { min: 3, max: 10, stepSize: 1 },
+      momentum_threshold: { min: 0.01, max: 0.04, stepSize: 0.005 },
+      volatility_period: { min: 8, max: 16, stepSize: 2 },
+      volatility_multiplier: { min: 1.0, max: 2.0, stepSize: 0.2 },
+      stop_loss: { min: 0.03, max: 0.08, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.05, stepSize: 0.01 },
+      risk_percent: { min: 0.10, max: 0.20, stepSize: 0.05 },
+    },
+    outputFile: 'strat_momentum_vol_212.params.json',
+  },
+  roc_adaptive_213: {
+    class: RocAdaptive213Strategy,
+    params: {
+      roc_period: { min: 3, max: 10, stepSize: 1 },
+      volatility_period: { min: 10, max: 20, stepSize: 2 },
+      base_threshold: { min: 0.01, max: 0.03, stepSize: 0.005 },
+      threshold_scale: { min: 1.5, max: 3.0, stepSize: 0.5 },
+      stop_loss: { min: 0.03, max: 0.08, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.05, stepSize: 0.01 },
+      risk_percent: { min: 0.10, max: 0.20, stepSize: 0.05 },
+    },
+    outputFile: 'strat_roc_adaptive_213.params.json',
+  },
+  keltner_breakout_214: {
+    class: KeltnerBreakout214Strategy,
+    params: {
+      ema_period: { min: 15, max: 30, stepSize: 5 },
+      atr_period: { min: 10, max: 18, stepSize: 2 },
+      atr_multiplier: { min: 1.5, max: 3.0, stepSize: 0.25 },
+      stop_loss: { min: 0.03, max: 0.08, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.05, stepSize: 0.01 },
+      risk_percent: { min: 0.10, max: 0.20, stepSize: 0.05 },
+    },
+    outputFile: 'strat_keltner_breakout_214.params.json',
+  },
+  macd_stoch_combo_215: {
+    class: MacdStochCombo215Strategy,
+    params: {
+      macd_fast: { min: 8, max: 16, stepSize: 2 },
+      macd_slow: { min: 20, max: 30, stepSize: 2 },
+      macd_signal: { min: 6, max: 12, stepSize: 2 },
+      stoch_k_period: { min: 10, max: 18, stepSize: 2 },
+      stoch_d_period: { min: 2, max: 5, stepSize: 1 },
+      stoch_oversold: { min: 20, max: 35, stepSize: 5 },
+      stoch_overbought: { min: 65, max: 80, stepSize: 5 },
+      signal_window: { min: 2, max: 5, stepSize: 1 },
+      stop_loss: { min: 0.03, max: 0.08, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.05, stepSize: 0.01 },
+      risk_percent: { min: 0.10, max: 0.20, stepSize: 0.05 },
+    },
+    outputFile: 'strat_macd_stoch_combo_215.params.json',
+  },
+  support_resistance_stoch_216: {
+    class: SupportResistanceStoch216Strategy,
+    params: {
+      lookback: { min: 15, max: 30, stepSize: 5 },
+      bounce_threshold: { min: 0.01, max: 0.03, stepSize: 0.005 },
+      stoch_k_period: { min: 10, max: 18, stepSize: 2 },
+      stoch_d_period: { min: 2, max: 5, stepSize: 1 },
+      stoch_oversold: { min: 20, max: 35, stepSize: 5 },
+      stoch_overbought: { min: 65, max: 80, stepSize: 5 },
+      stop_loss: { min: 0.03, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.10, max: 0.20, stepSize: 0.05 },
+    },
+    outputFile: 'strat_support_resistance_stoch_216.params.json',
   },
 
 };
