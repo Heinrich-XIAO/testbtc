@@ -249,6 +249,14 @@ import { SRRSIConfirm245Strategy } from '../src/strategies/strat_sr_rsi_confirm_
 import { SRAsymmetric246Strategy } from '../src/strategies/strat_sr_asymmetric_246';
 import { SRTrendStrength247Strategy } from '../src/strategies/strat_sr_trend_strength_247';
 import { SRDoubleConfirm248Strategy } from '../src/strategies/strat_sr_double_confirm_248';
+import { SRTrendStrict249Strategy } from '../src/strategies/strat_sr_trend_strict_249';
+import { SRMultiTrend250Strategy } from '../src/strategies/strat_sr_multi_trend_250';
+import { SRAdaptiveTarget251Strategy } from '../src/strategies/strat_sr_adaptive_target_251';
+import { SRMomentumTrend252Strategy } from '../src/strategies/strat_sr_momentum_trend_252';
+import { SRTripleConfirm253Strategy } from '../src/strategies/strat_sr_triple_confirm_253';
+import { SRRangeVol254Strategy } from '../src/strategies/strat_sr_range_vol_254';
+import { SRLongTrend255Strategy } from '../src/strategies/strat_sr_long_trend_255';
+import { SRStrictEntry256Strategy } from '../src/strategies/strat_sr_strict_entry_256';
 import { DifferentialEvolutionOptimizer } from '../src/optimization';
 import type { ParamConfig, OptimizationResult } from '../src/optimization/types';
 import type { StoredData, PricePoint } from '../src/types';
@@ -3368,6 +3376,188 @@ const strategies: Record<string, { class: any; params: Record<string, ParamConfi
       risk_percent: { min: 0.14, max: 0.20, stepSize: 0.03 },
     },
     outputFile: 'strat_sr_double_confirm_248.params.json',
+  },
+
+  sr_trend_strict_249: {
+    class: SRTrendStrict249Strategy,
+    params: {
+      base_lookback: { min: 15, max: 30, stepSize: 5 },
+      min_lookback: { min: 5, max: 12, stepSize: 2 },
+      max_lookback: { min: 28, max: 45, stepSize: 5 },
+      volatility_period: { min: 8, max: 15, stepSize: 2 },
+      bounce_threshold: { min: 0.02, max: 0.05, stepSize: 0.01 },
+      stoch_k_period: { min: 10, max: 18, stepSize: 2 },
+      stoch_d_period: { min: 3, max: 5, stepSize: 1 },
+      stoch_oversold: { min: 18, max: 32, stepSize: 4 },
+      stoch_overbought: { min: 65, max: 78, stepSize: 4 },
+      trend_period: { min: 18, max: 35, stepSize: 5 },
+      trend_threshold: { min: 0.0, max: 0.03, stepSize: 0.01 },
+      stop_loss: { min: 0.06, max: 0.10, stepSize: 0.02 },
+      trailing_stop: { min: 0.04, max: 0.06, stepSize: 0.01 },
+      risk_percent: { min: 0.12, max: 0.20, stepSize: 0.02 },
+    },
+    outputFile: 'strat_sr_trend_strict_249.params.json',
+  },
+
+  sr_multi_trend_250: {
+    class: SRMultiTrend250Strategy,
+    params: {
+      base_lookback: { min: 15, max: 28, stepSize: 4 },
+      min_lookback: { min: 6, max: 12, stepSize: 2 },
+      max_lookback: { min: 28, max: 42, stepSize: 5 },
+      volatility_period: { min: 8, max: 14, stepSize: 2 },
+      bounce_threshold: { min: 0.025, max: 0.045, stepSize: 0.01 },
+      stoch_k_period: { min: 10, max: 18, stepSize: 2 },
+      stoch_d_period: { min: 3, max: 5, stepSize: 1 },
+      stoch_oversold: { min: 20, max: 30, stepSize: 5 },
+      stoch_overbought: { min: 60, max: 72, stepSize: 4 },
+      trend_period: { min: 15, max: 28, stepSize: 4 },
+      trend_threshold: { min: -0.03, max: 0.0, stepSize: 0.01 },
+      stop_loss: { min: 0.05, max: 0.09, stepSize: 0.02 },
+      trailing_stop: { min: 0.04, max: 0.06, stepSize: 0.01 },
+      profit_target: { min: 0.08, max: 0.14, stepSize: 0.02 },
+      max_hold_bars: { min: 25, max: 45, stepSize: 5 },
+      risk_percent: { min: 0.14, max: 0.20, stepSize: 0.02 },
+    },
+    outputFile: 'strat_sr_multi_trend_250.params.json',
+  },
+
+  sr_adaptive_target_251: {
+    class: SRAdaptiveTarget251Strategy,
+    params: {
+      base_lookback: { min: 15, max: 28, stepSize: 4 },
+      min_lookback: { min: 4, max: 10, stepSize: 2 },
+      max_lookback: { min: 32, max: 48, stepSize: 5 },
+      volatility_period: { min: 8, max: 16, stepSize: 2 },
+      base_bounce_threshold: { min: 0.018, max: 0.035, stepSize: 0.005 },
+      vol_bounce_scale: { min: 1.5, max: 2.8, stepSize: 0.4 },
+      stoch_k_period: { min: 10, max: 18, stepSize: 2 },
+      stoch_d_period: { min: 3, max: 5, stepSize: 1 },
+      stoch_oversold: { min: 20, max: 30, stepSize: 5 },
+      stoch_overbought: { min: 65, max: 78, stepSize: 4 },
+      stop_loss: { min: 0.06, max: 0.10, stepSize: 0.02 },
+      trailing_stop: { min: 0.04, max: 0.07, stepSize: 0.01 },
+      profit_target: { min: 0.08, max: 0.16, stepSize: 0.02 },
+      risk_percent: { min: 0.14, max: 0.20, stepSize: 0.02 },
+    },
+    outputFile: 'strat_sr_adaptive_target_251.params.json',
+  },
+
+  sr_momentum_trend_252: {
+    class: SRMomentumTrend252Strategy,
+    params: {
+      base_lookback: { min: 15, max: 28, stepSize: 4 },
+      min_lookback: { min: 6, max: 12, stepSize: 2 },
+      max_lookback: { min: 28, max: 42, stepSize: 5 },
+      volatility_period: { min: 8, max: 14, stepSize: 2 },
+      bounce_threshold: { min: 0.025, max: 0.045, stepSize: 0.01 },
+      stoch_k_period: { min: 10, max: 18, stepSize: 2 },
+      stoch_d_period: { min: 3, max: 5, stepSize: 1 },
+      stoch_oversold: { min: 20, max: 30, stepSize: 5 },
+      stoch_overbought: { min: 65, max: 78, stepSize: 4 },
+      momentum_period: { min: 3, max: 8, stepSize: 1 },
+      momentum_threshold: { min: 0.002, max: 0.01, stepSize: 0.002 },
+      trend_period: { min: 15, max: 28, stepSize: 4 },
+      trend_threshold: { min: -0.02, max: 0.01, stepSize: 0.01 },
+      stop_loss: { min: 0.06, max: 0.10, stepSize: 0.02 },
+      trailing_stop: { min: 0.04, max: 0.07, stepSize: 0.01 },
+      risk_percent: { min: 0.13, max: 0.20, stepSize: 0.02 },
+    },
+    outputFile: 'strat_sr_momentum_trend_252.params.json',
+  },
+
+  sr_triple_confirm_253: {
+    class: SRTripleConfirm253Strategy,
+    params: {
+      base_lookback: { min: 15, max: 28, stepSize: 4 },
+      min_lookback: { min: 6, max: 12, stepSize: 2 },
+      max_lookback: { min: 28, max: 42, stepSize: 5 },
+      volatility_period: { min: 8, max: 14, stepSize: 2 },
+      bounce_threshold: { min: 0.02, max: 0.04, stepSize: 0.01 },
+      stoch_k_period: { min: 10, max: 18, stepSize: 2 },
+      stoch_d_period: { min: 3, max: 5, stepSize: 1 },
+      stoch_oversold: { min: 15, max: 25, stepSize: 5 },
+      stoch_overbought: { min: 70, max: 82, stepSize: 4 },
+      momentum_period: { min: 3, max: 7, stepSize: 2 },
+      momentum_threshold: { min: 0.001, max: 0.006, stepSize: 0.001 },
+      trend_period: { min: 18, max: 32, stepSize: 4 },
+      trend_threshold: { min: -0.02, max: 0.01, stepSize: 0.01 },
+      stop_loss: { min: 0.05, max: 0.09, stepSize: 0.02 },
+      trailing_stop: { min: 0.04, max: 0.06, stepSize: 0.01 },
+      profit_target: { min: 0.10, max: 0.20, stepSize: 0.03 },
+      risk_percent: { min: 0.15, max: 0.22, stepSize: 0.02 },
+    },
+    outputFile: 'strat_sr_triple_confirm_253.params.json',
+  },
+
+  sr_range_vol_254: {
+    class: SRRangeVol254Strategy,
+    params: {
+      base_lookback: { min: 15, max: 28, stepSize: 4 },
+      min_lookback: { min: 6, max: 12, stepSize: 2 },
+      max_lookback: { min: 28, max: 42, stepSize: 5 },
+      volatility_period: { min: 8, max: 14, stepSize: 2 },
+      bounce_threshold: { min: 0.025, max: 0.045, stepSize: 0.01 },
+      stoch_k_period: { min: 10, max: 18, stepSize: 2 },
+      stoch_d_period: { min: 3, max: 5, stepSize: 1 },
+      stoch_oversold: { min: 20, max: 30, stepSize: 5 },
+      stoch_overbought: { min: 65, max: 78, stepSize: 4 },
+      range_period: { min: 6, max: 15, stepSize: 3 },
+      range_multiplier: { min: 1.0, max: 1.6, stepSize: 0.2 },
+      trend_period: { min: 15, max: 28, stepSize: 4 },
+      trend_threshold: { min: -0.03, max: 0.0, stepSize: 0.01 },
+      stop_loss: { min: 0.06, max: 0.10, stepSize: 0.02 },
+      trailing_stop: { min: 0.04, max: 0.07, stepSize: 0.01 },
+      risk_percent: { min: 0.13, max: 0.20, stepSize: 0.02 },
+    },
+    outputFile: 'strat_sr_range_vol_254.params.json',
+  },
+
+  sr_long_trend_255: {
+    class: SRLongTrend255Strategy,
+    params: {
+      base_lookback: { min: 15, max: 28, stepSize: 4 },
+      min_lookback: { min: 6, max: 12, stepSize: 2 },
+      max_lookback: { min: 28, max: 42, stepSize: 5 },
+      volatility_period: { min: 8, max: 14, stepSize: 2 },
+      bounce_threshold: { min: 0.025, max: 0.045, stepSize: 0.01 },
+      stoch_k_period: { min: 10, max: 18, stepSize: 2 },
+      stoch_d_period: { min: 3, max: 5, stepSize: 1 },
+      stoch_oversold: { min: 20, max: 30, stepSize: 5 },
+      stoch_overbought: { min: 65, max: 78, stepSize: 4 },
+      short_trend_period: { min: 6, max: 15, stepSize: 3 },
+      long_trend_period: { min: 30, max: 55, stepSize: 5 },
+      short_trend_threshold: { min: -0.03, max: 0.0, stepSize: 0.01 },
+      long_trend_threshold: { min: -0.08, max: -0.02, stepSize: 0.02 },
+      stop_loss: { min: 0.06, max: 0.10, stepSize: 0.02 },
+      trailing_stop: { min: 0.04, max: 0.07, stepSize: 0.01 },
+      risk_percent: { min: 0.13, max: 0.20, stepSize: 0.02 },
+    },
+    outputFile: 'strat_sr_long_trend_255.params.json',
+  },
+
+  sr_strict_entry_256: {
+    class: SRStrictEntry256Strategy,
+    params: {
+      base_lookback: { min: 15, max: 28, stepSize: 4 },
+      min_lookback: { min: 6, max: 12, stepSize: 2 },
+      max_lookback: { min: 28, max: 42, stepSize: 5 },
+      volatility_period: { min: 8, max: 14, stepSize: 2 },
+      bounce_threshold: { min: 0.018, max: 0.035, stepSize: 0.005 },
+      stoch_k_period: { min: 10, max: 18, stepSize: 2 },
+      stoch_d_period: { min: 3, max: 5, stepSize: 1 },
+      stoch_oversold: { min: 15, max: 25, stepSize: 5 },
+      stoch_overbought: { min: 70, max: 82, stepSize: 4 },
+      trend_period: { min: 15, max: 28, stepSize: 4 },
+      trend_threshold: { min: -0.01, max: 0.02, stepSize: 0.01 },
+      momentum_period: { min: 2, max: 5, stepSize: 1 },
+      momentum_threshold: { min: 0.002, max: 0.008, stepSize: 0.002 },
+      min_bounce_bars: { min: 1, max: 3, stepSize: 1 },
+      stop_loss: { min: 0.05, max: 0.09, stepSize: 0.02 },
+      trailing_stop: { min: 0.04, max: 0.06, stepSize: 0.01 },
+      risk_percent: { min: 0.16, max: 0.24, stepSize: 0.02 },
+    },
+    outputFile: 'strat_sr_strict_entry_256.params.json',
   },
 
 };

@@ -1,5 +1,10 @@
 # Polymarket Trading Agent Guidelines
 
+## Runtime
+
+- **NEVER use `node`** - always use `bun` for running scripts
+- Example: `bun .cache/run-optimization.js` NOT `node .cache/run-optimization.js`
+
 ## Testing Performance
 
 When adding new logic or making changes to the trading strategy:
