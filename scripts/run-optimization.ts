@@ -217,6 +217,14 @@ import { RocAdaptive213Strategy } from '../src/strategies/strat_roc_adaptive_213
 import { KeltnerBreakout214Strategy } from '../src/strategies/strat_keltner_breakout_214';
 import { MacdStochCombo215Strategy } from '../src/strategies/strat_macd_stoch_combo_215';
 import { SupportResistanceStoch216Strategy } from '../src/strategies/strat_support_resistance_stoch_216';
+import { MomentumVolTweak217Strategy } from '../src/strategies/strat_momentum_vol_tweak_217';
+import { SupportResistanceTweak218Strategy } from '../src/strategies/strat_support_resistance_tweak_218';
+import { KeltnerTweak219Strategy } from '../src/strategies/strat_keltner_tweak_219';
+import { DualMomentum220Strategy } from '../src/strategies/strat_dual_momentum_220';
+import { PriceRangeBreakout221Strategy } from '../src/strategies/strat_price_range_breakout_221';
+import { Velocity222Strategy } from '../src/strategies/strat_velocity_222';
+import { TripleEMA223Strategy } from '../src/strategies/strat_triple_ema_223';
+import { MeanRevMomentum224Strategy } from '../src/strategies/strat_mean_rev_momentum_224';
 import { DifferentialEvolutionOptimizer } from '../src/optimization';
 import type { ParamConfig, OptimizationResult } from '../src/optimization/types';
 import type { StoredData, PricePoint } from '../src/types';
@@ -2804,6 +2812,113 @@ const strategies: Record<string, { class: any; params: Record<string, ParamConfi
       risk_percent: { min: 0.10, max: 0.20, stepSize: 0.05 },
     },
     outputFile: 'strat_support_resistance_stoch_216.params.json',
+  },
+  momentum_vol_tweak_217: {
+    class: MomentumVolTweak217Strategy,
+    params: {
+      momentum_period: { min: 5, max: 12, stepSize: 1 },
+      momentum_threshold: { min: 0.02, max: 0.05, stepSize: 0.005 },
+      volatility_period: { min: 12, max: 20, stepSize: 2 },
+      volatility_multiplier: { min: 0.8, max: 1.5, stepSize: 0.1 },
+      ema_period: { min: 15, max: 30, stepSize: 5 },
+      stop_loss: { min: 0.03, max: 0.06, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.05, stepSize: 0.01 },
+      risk_percent: { min: 0.15, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_momentum_vol_tweak_217.params.json',
+  },
+  support_resistance_tweak_218: {
+    class: SupportResistanceTweak218Strategy,
+    params: {
+      lookback: { min: 10, max: 25, stepSize: 5 },
+      bounce_threshold: { min: 0.015, max: 0.04, stepSize: 0.005 },
+      stoch_k_period: { min: 12, max: 20, stepSize: 2 },
+      stoch_d_period: { min: 2, max: 5, stepSize: 1 },
+      stoch_oversold: { min: 20, max: 35, stepSize: 5 },
+      stoch_overbought: { min: 60, max: 75, stepSize: 5 },
+      stop_loss: { min: 0.05, max: 0.10, stepSize: 0.01 },
+      trailing_stop: { min: 0.03, max: 0.06, stepSize: 0.01 },
+      risk_percent: { min: 0.15, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_support_resistance_tweak_218.params.json',
+  },
+  keltner_tweak_219: {
+    class: KeltnerTweak219Strategy,
+    params: {
+      ema_period: { min: 18, max: 35, stepSize: 3 },
+      atr_period: { min: 8, max: 16, stepSize: 2 },
+      atr_multiplier: { min: 2.0, max: 3.5, stepSize: 0.25 },
+      momentum_period: { min: 3, max: 8, stepSize: 1 },
+      momentum_threshold: { min: 0.005, max: 0.02, stepSize: 0.005 },
+      stop_loss: { min: 0.03, max: 0.06, stepSize: 0.01 },
+      trailing_stop: { min: 0.015, max: 0.035, stepSize: 0.005 },
+      risk_percent: { min: 0.08, max: 0.15, stepSize: 0.02 },
+    },
+    outputFile: 'strat_keltner_tweak_219.params.json',
+  },
+  dual_momentum_220: {
+    class: DualMomentum220Strategy,
+    params: {
+      fast_period: { min: 3, max: 8, stepSize: 1 },
+      slow_period: { min: 10, max: 20, stepSize: 2 },
+      volatility_period: { min: 8, max: 15, stepSize: 2 },
+      momentum_threshold: { min: 0.015, max: 0.03, stepSize: 0.005 },
+      vol_adj_factor: { min: 0.3, max: 0.8, stepSize: 0.1 },
+      stop_loss: { min: 0.03, max: 0.07, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.04, stepSize: 0.005 },
+      risk_percent: { min: 0.10, max: 0.20, stepSize: 0.05 },
+    },
+    outputFile: 'strat_dual_momentum_220.params.json',
+  },
+  price_range_breakout_221: {
+    class: PriceRangeBreakout221Strategy,
+    params: {
+      lookback: { min: 10, max: 25, stepSize: 5 },
+      range_threshold: { min: 0.02, max: 0.05, stepSize: 0.01 },
+      breakout_multiplier: { min: 1.1, max: 1.4, stepSize: 0.1 },
+      stop_loss: { min: 0.03, max: 0.07, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.04, stepSize: 0.005 },
+      risk_percent: { min: 0.10, max: 0.20, stepSize: 0.05 },
+    },
+    outputFile: 'strat_price_range_breakout_221.params.json',
+  },
+  velocity_222: {
+    class: Velocity222Strategy,
+    params: {
+      velocity_period: { min: 3, max: 8, stepSize: 1 },
+      acceleration_period: { min: 2, max: 5, stepSize: 1 },
+      velocity_threshold: { min: 0.01, max: 0.025, stepSize: 0.005 },
+      acceleration_threshold: { min: 0.003, max: 0.01, stepSize: 0.002 },
+      stop_loss: { min: 0.03, max: 0.07, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.04, stepSize: 0.005 },
+      risk_percent: { min: 0.10, max: 0.20, stepSize: 0.05 },
+    },
+    outputFile: 'strat_velocity_222.params.json',
+  },
+  triple_ema_223: {
+    class: TripleEMA223Strategy,
+    params: {
+      fast_period: { min: 3, max: 8, stepSize: 1 },
+      medium_period: { min: 10, max: 18, stepSize: 2 },
+      slow_period: { min: 20, max: 35, stepSize: 5 },
+      stop_loss: { min: 0.03, max: 0.07, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.04, stepSize: 0.005 },
+      risk_percent: { min: 0.10, max: 0.20, stepSize: 0.05 },
+    },
+    outputFile: 'strat_triple_ema_223.params.json',
+  },
+  mean_rev_momentum_224: {
+    class: MeanRevMomentum224Strategy,
+    params: {
+      lookback: { min: 15, max: 30, stepSize: 5 },
+      oversold_percentile: { min: 15, max: 30, stepSize: 5 },
+      momentum_period: { min: 2, max: 5, stepSize: 1 },
+      momentum_threshold: { min: 0.003, max: 0.01, stepSize: 0.002 },
+      stop_loss: { min: 0.03, max: 0.07, stepSize: 0.01 },
+      take_profit: { min: 0.06, max: 0.12, stepSize: 0.02 },
+      risk_percent: { min: 0.10, max: 0.20, stepSize: 0.05 },
+    },
+    outputFile: 'strat_mean_rev_momentum_224.params.json',
   },
 
 };

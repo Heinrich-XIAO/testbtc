@@ -1,0 +1,14 @@
+{
+  "fast_period": 5,
+  "slow_period": 18,
+  "volatility_period": 14,
+  "momentum_threshold": 0.01819798050596919,
+  "vol_adj_factor": 0.566508195385622,
+  "stop_loss": 0.053086278699795694,
+  "trailing_stop": 0.03407935870676023,
+  "risk_percent": 0.18448018691838824,
+  "metadata": {
+    "best_test_return": -405.13282841435455,
+    "optimized_at": "2026-02-15T17:19:22.503Z"
+  }
+}

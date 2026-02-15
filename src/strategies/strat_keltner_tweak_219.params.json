@@ -1,0 +1,14 @@
+{
+  "ema_period": 18,
+  "atr_period": 16,
+  "atr_multiplier": 3.2726030264022605,
+  "momentum_period": 3,
+  "momentum_threshold": 0.010170199920230055,
+  "stop_loss": 0.03997469183760098,
+  "trailing_stop": 0.032356471796601144,
+  "risk_percent": 0.12473701781181153,
+  "metadata": {
+    "best_test_return": -12.602805951642495,
+    "optimized_at": "2026-02-15T17:19:33.404Z"
+  }
+}
