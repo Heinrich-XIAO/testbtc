@@ -1,0 +1,270 @@
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.VolatilityBreakoutStrategy = void 0;
+const types_1 = require("../types");
+const fs = __importStar(require("fs"));
+const path = __importStar(require("path"));
+const defaultParams = {
+    atr_period: 14,
+    atr_multiplier: 0.5,
+    lookback: 20,
+    volume_period: 10,
+    stop_loss: 0.04,
+    trailing_stop: 0.03,
+    risk_percent: 0.10,
+};
+function loadSavedParams() {
+    const paramsPath = path.join(__dirname, 'strat_volatility_breakout_206.params.json');
+    if (!fs.existsSync(paramsPath))
+        return null;
+    try {
+        const content = fs.readFileSync(paramsPath, 'utf-8');
+        const saved = JSON.parse(content);
+        const params = {};
+        for (const [key, value] of Object.entries(saved)) {
+            if (key !== 'metadata' && key in defaultParams) {
+                if (typeof value === 'number') {
+                    params[key] = value;
+                }
+            }
+        }
+        return params;
+    }
+    catch {
+        return null;
+    }
+}
+class VolatilityBreakoutStrategy {
+    constructor(params = {}) {
+        // Per-token state using Maps
+        this.atrIndicators = new Map();
+        this.priceHistory = new Map();
+        this.highHistory = new Map();
+        this.lowHistory = new Map();
+        this.volumeHistory = new Map();
+        this.entryPrice = new Map();
+        this.highestPrice = new Map();
+        this.lowestPrice = new Map();
+        this.positionSide = new Map();
+        const savedParams = loadSavedParams();
+        const mergedParams = { ...defaultParams, ...savedParams, ...params };
+        this.params = {
+            atr_period: Math.max(2, Math.floor(mergedParams.atr_period)),
+            atr_multiplier: mergedParams.atr_multiplier,
+            lookback: Math.max(2, Math.floor(mergedParams.lookback)),
+            volume_period: Math.max(2, Math.floor(mergedParams.volume_period)),
+            stop_loss: mergedParams.stop_loss,
+            trailing_stop: mergedParams.trailing_stop,
+            risk_percent: mergedParams.risk_percent,
+        };
+    }
+    onInit(_ctx) {
+        console.log(`Volatility Breakout Strategy initialized with params:`);
+        console.log(`  ATR Period: ${this.params.atr_period}`);
+        console.log(`  ATR Multiplier: ${this.params.atr_multiplier}`);
+        console.log(`  Lookback: ${this.params.lookback}`);
+        console.log(`  Volume Period: ${this.params.volume_period}`);
+        console.log(`  Stop Loss: ${(this.params.stop_loss * 100).toFixed(2)}%`);
+        console.log(`  Trailing Stop: ${(this.params.trailing_stop * 100).toFixed(2)}%`);
+        console.log(`  Risk Percent: ${(this.params.risk_percent * 100).toFixed(2)}%`);
+    }
+    onNext(ctx, bar) {
+        // Initialize per-token state if not exists
+        if (!this.atrIndicators.has(bar.tokenId)) {
+            this.atrIndicators.set(bar.tokenId, new types_1.ATR(this.params.atr_period));
+            this.priceHistory.set(bar.tokenId, []);
+            this.highHistory.set(bar.tokenId, []);
+            this.lowHistory.set(bar.tokenId, []);
+            this.volumeHistory.set(bar.tokenId, []);
+        }
+        const atrIndicator = this.atrIndicators.get(bar.tokenId);
+        const priceHist = this.priceHistory.get(bar.tokenId);
+        const highHist = this.highHistory.get(bar.tokenId);
+        const lowHist = this.lowHistory.get(bar.tokenId);
+        const volumeHist = this.volumeHistory.get(bar.tokenId);
+        // Update ATR indicator
+        atrIndicator.update(bar.high, bar.low, bar.close);
+        const atr = atrIndicator.get(0);
+        // Update price histories
+        priceHist.push(bar.close);
+        highHist.push(bar.high);
+        lowHist.push(bar.low);
+        // Calculate price movement as volume proxy (since Bar doesn't have volume)
+        // In real implementation, replace with actual volume: bar.volume
+        const priceRange = bar.high - bar.low;
+        const volumeProxy = priceRange > 0 ? priceRange : 0;
+        volumeHist.push(volumeProxy);
+        // Maintain lookback window
+        if (priceHist.length > this.params.lookback) {
+            priceHist.shift();
+            highHist.shift();
+            lowHist.shift();
+        }
+        if (volumeHist.length > this.params.volume_period) {
+            volumeHist.shift();
+        }
+        // Need enough data
+        if (priceHist.length < this.params.lookback || atr === undefined) {
+            return;
+        }
+        // Volume confirmation: current volume > average volume
+        const avgVolume = volumeHist.length > 0
+            ? volumeHist.reduce((a, b) => a + b, 0) / volumeHist.length
+            : 0;
+        const volumeConfirmed = volumeProxy > avgVolume;
+        // Calculate breakout levels based on recent high/low
+        const recentHigh = Math.max(...highHist.slice(0, -1));
+        const recentLow = Math.min(...lowHist.slice(0, -1));
+        const longBreakoutLevel = recentHigh + this.params.atr_multiplier * atr;
+        const shortBreakoutLevel = recentLow - this.params.atr_multiplier * atr;
+        const position = ctx.getPosition(bar.tokenId);
+        // Handle existing position
+        if (position && position.size > 0) {
+            const entry = this.entryPrice.get(bar.tokenId);
+            const side = this.positionSide.get(bar.tokenId);
+            if (entry !== undefined && side !== undefined) {
+                // Stop loss
+                if (side === 'long' && bar.close < entry * (1 - this.params.stop_loss)) {
+                    console.log(`[${new Date(bar.timestamp * 1000).toISOString()}] Stop loss (long) for ${bar.tokenId.slice(0, 8)}... at ${bar.close.toFixed(4)}`);
+                    ctx.close(bar.tokenId);
+                    this.clearPositionState(bar.tokenId);
+                    return;
+                }
+                if (side === 'short' && bar.close > entry * (1 + this.params.stop_loss)) {
+                    console.log(`[${new Date(bar.timestamp * 1000).toISOString()}] Stop loss (short) for ${bar.tokenId.slice(0, 8)}... at ${bar.close.toFixed(4)}`);
+                    ctx.close(bar.tokenId);
+                    this.clearPositionState(bar.tokenId);
+                    return;
+                }
+                // Trailing stop for long
+                if (side === 'long') {
+                    const highest = Math.max(this.highestPrice.get(bar.tokenId) ?? entry, bar.close);
+                    this.highestPrice.set(bar.tokenId, highest);
+                    if (bar.close < highest * (1 - this.params.trailing_stop) && bar.close > entry) {
+                        console.log(`[${new Date(bar.timestamp * 1000).toISOString()}] Trailing stop (long) for ${bar.tokenId.slice(0, 8)}... at ${bar.close.toFixed(4)}`);
+                        ctx.close(bar.tokenId);
+                        this.clearPositionState(bar.tokenId);
+                        return;
+                    }
+                }
+                // Trailing stop for short
+                if (side === 'short') {
+                    const lowest = Math.min(this.lowestPrice.get(bar.tokenId) ?? entry, bar.close);
+                    this.lowestPrice.set(bar.tokenId, lowest);
+                    if (bar.close > lowest * (1 + this.params.trailing_stop) && bar.close < entry) {
+                        console.log(`[${new Date(bar.timestamp * 1000).toISOString()}] Trailing stop (short) for ${bar.tokenId.slice(0, 8)}... at ${bar.close.toFixed(4)}`);
+                        ctx.close(bar.tokenId);
+                        this.clearPositionState(bar.tokenId);
+                        return;
+                    }
+                }
+                // Exit on opposite breakout signal
+                if (side === 'long' && bar.close < shortBreakoutLevel && volumeConfirmed) {
+                    console.log(`[${new Date(bar.timestamp * 1000).toISOString()}] Exit long (opposite signal) for ${bar.tokenId.slice(0, 8)}... at ${bar.close.toFixed(4)}`);
+                    ctx.close(bar.tokenId);
+                    this.clearPositionState(bar.tokenId);
+                    return;
+                }
+                if (side === 'short' && bar.close > longBreakoutLevel && volumeConfirmed) {
+                    console.log(`[${new Date(bar.timestamp * 1000).toISOString()}] Exit short (opposite signal) for ${bar.tokenId.slice(0, 8)}... at ${bar.close.toFixed(4)}`);
+                    ctx.close(bar.tokenId);
+                    this.clearPositionState(bar.tokenId);
+                    return;
+                }
+            }
+        }
+        else {
+            // No position - look for entry signals
+            // Only enter if we have volume confirmation
+            if (!volumeConfirmed) {
+                return;
+            }
+            const feeBuffer = 0.995;
+            const cash = ctx.getCapital() * this.params.risk_percent * feeBuffer;
+            // Long entry: price breaks above (high + atr_multiplier * ATR)
+            if (bar.close > longBreakoutLevel) {
+                const size = cash / bar.close;
+                if (size > 0 && cash <= ctx.getCapital()) {
+                    console.log(`[${new Date(bar.timestamp * 1000).toISOString()}] Long breakout for ${bar.tokenId.slice(0, 8)}... at ${bar.close.toFixed(4)}, level: ${longBreakoutLevel.toFixed(4)}, ATR: ${atr.toFixed(4)}`);
+                    const result = ctx.buy(bar.tokenId, size);
+                    if (result.success) {
+                        this.entryPrice.set(bar.tokenId, bar.close);
+                        this.highestPrice.set(bar.tokenId, bar.close);
+                        this.positionSide.set(bar.tokenId, 'long');
+                    }
+                    else {
+                        console.error(`  Order failed: ${result.error}`);
+                    }
+                }
+                return;
+            }
+            // Short entry: price breaks below (low - atr_multiplier * ATR)
+            if (bar.close < shortBreakoutLevel) {
+                const size = cash / bar.close;
+                if (size > 0 && cash <= ctx.getCapital()) {
+                    console.log(`[${new Date(bar.timestamp * 1000).toISOString()}] Short breakout for ${bar.tokenId.slice(0, 8)}... at ${bar.close.toFixed(4)}, level: ${shortBreakoutLevel.toFixed(4)}, ATR: ${atr.toFixed(4)}`);
+                    const result = ctx.sell(bar.tokenId, size);
+                    if (result.success) {
+                        this.entryPrice.set(bar.tokenId, bar.close);
+                        this.lowestPrice.set(bar.tokenId, bar.close);
+                        this.positionSide.set(bar.tokenId, 'short');
+                    }
+                    else {
+                        console.error(`  Order failed: ${result.error}`);
+                    }
+                }
+            }
+        }
+    }
+    clearPositionState(tokenId) {
+        this.entryPrice.delete(tokenId);
+        this.highestPrice.delete(tokenId);
+        this.lowestPrice.delete(tokenId);
+        this.positionSide.delete(tokenId);
+    }
+    onComplete(ctx) {
+        console.log('\nStrategy completed.');
+        const positions = ctx.portfolio.getAllPositions();
+        if (positions.length > 0) {
+            console.log(`Open positions: ${positions.length}`);
+            for (const pos of positions) {
+                const side = this.positionSide.get(pos.tokenId) ?? 'long';
+                console.log(`  ${pos.tokenId.slice(0, 8)}...: ${side} ${pos.size.toFixed(2)} @ ${pos.avgPrice.toFixed(4)}`);
+            }
+        }
+    }
+}
+exports.VolatilityBreakoutStrategy = VolatilityBreakoutStrategy;
