@@ -1,0 +1,11 @@
+{
+  "pivot_period": 30,
+  "bounce_threshold": 0.017741505175193576,
+  "stop_loss": 0.0653075401894584,
+  "trailing_stop": 0.06492958379944232,
+  "risk_percent": 0.1565452487344424,
+  "metadata": {
+    "best_test_return": -5.4726682008536045,
+    "optimized_at": "2026-02-15T17:31:31.995Z"
+  }
+}

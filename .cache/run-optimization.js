@@ -31988,6 +31988,1196 @@ class MeanRevMomentum224Strategy {
   onComplete(_ctx) {}
 }
 
+// src/strategies/strat_sr_adaptive_225.ts
+import * as fs225 from "fs";
+import * as path225 from "path";
+var __dirname = "/Users/heinrich/Documents/testbtc/src/strategies";
+var defaultParams225 = {
+  base_lookback: 15,
+  min_lookback: 8,
+  max_lookback: 30,
+  volatility_period: 12,
+  bounce_threshold: 0.035,
+  stoch_k_period: 14,
+  stoch_d_period: 4,
+  stoch_oversold: 25,
+  stoch_overbought: 65,
+  stop_loss: 0.09,
+  trailing_stop: 0.05,
+  risk_percent: 0.15
+};
+function loadSavedParams225() {
+  const paramsPath = path225.join(__dirname, "strat_sr_adaptive_225.params.json");
+  if (!fs225.existsSync(paramsPath))
+    return null;
+  try {
+    const content = fs225.readFileSync(paramsPath, "utf-8");
+    const saved = JSON.parse(content);
+    const params = {};
+    for (const [key, value] of Object.entries(saved)) {
+      if (key !== "metadata" && key in defaultParams225) {
+        if (typeof value === "number") {
+          params[key] = value;
+        }
+      }
+    }
+    return params;
+  } catch {
+    return null;
+  }
+}
+
+class SRAdaptive225Strategy {
+  params;
+  tokenData = new Map;
+  entryPrice = new Map;
+  highestPrice = new Map;
+  constructor(params = {}) {
+    const savedParams = loadSavedParams225();
+    this.params = { ...defaultParams225, ...savedParams, ...params };
+  }
+  onInit(_ctx) {}
+  getOrCreateData(tokenId) {
+    if (!this.tokenData.has(tokenId)) {
+      this.tokenData.set(tokenId, {
+        prices: [],
+        highs: [],
+        lows: [],
+        kValues: []
+      });
+    }
+    return this.tokenData.get(tokenId);
+  }
+  calcVolatility(prices) {
+    if (prices.length < 2)
+      return 0;
+    const mean2 = prices.reduce((a, b) => a + b, 0) / prices.length;
+    const sqDiffs = prices.reduce((sum, p) => sum + (p - mean2) * (p - mean2), 0);
+    return Math.sqrt(sqDiffs / prices.length) / mean2;
+  }
+  getAdaptiveLookback(data) {
+    if (data.prices.length < this.params.volatility_period) {
+      return this.params.base_lookback;
+    }
+    const recentVol = this.calcVolatility(data.prices.slice(-this.params.volatility_period));
+    const historicalVol = this.calcVolatility(data.prices.slice(-this.params.max_lookback));
+    if (historicalVol === 0)
+      return this.params.base_lookback;
+    const volRatio = recentVol / historicalVol;
+    let adaptiveLookback = Math.round(this.params.base_lookback / volRatio);
+    return Math.max(this.params.min_lookback, Math.min(this.params.max_lookback, adaptiveLookback));
+  }
+  findSupportLevels(data, lookback) {
+    if (data.lows.length < lookback)
+      return [];
+    const recentLows = data.lows.slice(-lookback);
+    const sorted = [...recentLows].sort((a, b) => a - b);
+    return sorted.slice(0, 3);
+  }
+  findResistanceLevel(data, lookback) {
+    if (data.highs.length < lookback)
+      return null;
+    const recentHighs = data.highs.slice(-lookback);
+    return Math.max(...recentHighs);
+  }
+  getStochastic(data) {
+    if (data.prices.length < this.params.stoch_k_period)
+      return null;
+    const slice = data.prices.slice(-this.params.stoch_k_period);
+    const high = Math.max(...slice);
+    const low = Math.min(...slice);
+    const k = high === low ? 50 : (data.prices[data.prices.length - 1] - low) / (high - low) * 100;
+    data.kValues.push(k);
+    if (data.kValues.length > this.params.stoch_d_period)
+      data.kValues.shift();
+    if (data.kValues.length < this.params.stoch_d_period)
+      return null;
+    const d = data.kValues.reduce((a, b) => a + b, 0) / data.kValues.length;
+    return { k, d };
+  }
+  onNext(ctx, bar) {
+    const data = this.getOrCreateData(bar.tokenId);
+    data.prices.push(bar.close);
+    data.highs.push(bar.high);
+    data.lows.push(bar.low);
+    const maxPeriod = this.params.max_lookback + 20;
+    if (data.prices.length > maxPeriod) {
+      data.prices.shift();
+      data.highs.shift();
+      data.lows.shift();
+    }
+    const stoch = this.getStochastic(data);
+    const adaptiveLookback = this.getAdaptiveLookback(data);
+    const supports = this.findSupportLevels(data, adaptiveLookback);
+    const resistance = this.findResistanceLevel(data, adaptiveLookback);
+    if (!stoch || supports.length === 0)
+      return;
+    const position = ctx.getPosition(bar.tokenId);
+    const prevPrice = data.prices.length > 1 ? data.prices[data.prices.length - 2] : bar.close;
+    if (position && position.size > 0) {
+      const entry = this.entryPrice.get(bar.tokenId);
+      const highest = this.highestPrice.get(bar.tokenId) ?? bar.close;
+      if (entry) {
+        if (bar.close > highest) {
+          this.highestPrice.set(bar.tokenId, bar.close);
+        }
+        const newHighest = this.highestPrice.get(bar.tokenId);
+        if (bar.close < entry * (1 - this.params.stop_loss)) {
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+          this.highestPrice.delete(bar.tokenId);
+          return;
+        }
+        if (bar.close < newHighest * (1 - this.params.trailing_stop)) {
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+          this.highestPrice.delete(bar.tokenId);
+          return;
+        }
+        if (resistance !== null && bar.close >= resistance || stoch.k >= this.params.stoch_overbought) {
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+          this.highestPrice.delete(bar.tokenId);
+        }
+      }
+    } else if (bar.close > 0.05 && bar.close < 0.95) {
+      const nearSupport = supports.some((s) => Math.abs(bar.close - s) / s < this.params.bounce_threshold);
+      const bouncing = bar.close > prevPrice;
+      const stochOversold = stoch.k <= this.params.stoch_oversold && stoch.k > stoch.d;
+      if (nearSupport && bouncing && stochOversold) {
+        const cash = ctx.getCapital() * this.params.risk_percent * 0.995;
+        const size = cash / bar.close;
+        if (size > 0 && cash <= ctx.getCapital()) {
+          const result = ctx.buy(bar.tokenId, size);
+          if (result.success) {
+            this.entryPrice.set(bar.tokenId, bar.close);
+            this.highestPrice.set(bar.tokenId, bar.close);
+          }
+        }
+      }
+    }
+  }
+  onComplete(_ctx) {}
+}
+
+// src/strategies/strat_sr_multi_exit_226.ts
+import * as fs226 from "fs";
+import * as path226 from "path";
+var __dirname = "/Users/heinrich/Documents/testbtc/src/strategies";
+var defaultParams226 = {
+  lookback: 15,
+  bounce_threshold: 0.035,
+  stoch_k_period: 14,
+  stoch_d_period: 4,
+  stoch_oversold: 25,
+  stoch_overbought: 65,
+  stop_loss: 0.09,
+  trailing_stop: 0.05,
+  profit_target: 0.15,
+  max_hold_bars: 50,
+  risk_percent: 0.15
+};
+function loadSavedParams226() {
+  const paramsPath = path226.join(__dirname, "strat_sr_multi_exit_226.params.json");
+  if (!fs226.existsSync(paramsPath))
+    return null;
+  try {
+    const content = fs226.readFileSync(paramsPath, "utf-8");
+    const saved = JSON.parse(content);
+    const params = {};
+    for (const [key, value] of Object.entries(saved)) {
+      if (key !== "metadata" && key in defaultParams226) {
+        if (typeof value === "number") {
+          params[key] = value;
+        }
+      }
+    }
+    return params;
+  } catch {
+    return null;
+  }
+}
+
+class SRMultiExit226Strategy {
+  params;
+  tokenData = new Map;
+  entryPrice = new Map;
+  highestPrice = new Map;
+  barsHeld = new Map;
+  constructor(params = {}) {
+    const savedParams = loadSavedParams226();
+    this.params = { ...defaultParams226, ...savedParams, ...params };
+  }
+  onInit(_ctx) {}
+  getOrCreateData(tokenId) {
+    if (!this.tokenData.has(tokenId)) {
+      this.tokenData.set(tokenId, {
+        prices: [],
+        highs: [],
+        lows: [],
+        kValues: []
+      });
+    }
+    return this.tokenData.get(tokenId);
+  }
+  findSupportLevels(data) {
+    if (data.lows.length < this.params.lookback)
+      return [];
+    const recentLows = data.lows.slice(-this.params.lookback);
+    const sorted = [...recentLows].sort((a, b) => a - b);
+    return sorted.slice(0, 3);
+  }
+  findResistanceLevel(data) {
+    if (data.highs.length < this.params.lookback)
+      return null;
+    const recentHighs = data.highs.slice(-this.params.lookback);
+    return Math.max(...recentHighs);
+  }
+  getStochastic(data) {
+    if (data.prices.length < this.params.stoch_k_period)
+      return null;
+    const slice = data.prices.slice(-this.params.stoch_k_period);
+    const high = Math.max(...slice);
+    const low = Math.min(...slice);
+    const k = high === low ? 50 : (data.prices[data.prices.length - 1] - low) / (high - low) * 100;
+    data.kValues.push(k);
+    if (data.kValues.length > this.params.stoch_d_period)
+      data.kValues.shift();
+    if (data.kValues.length < this.params.stoch_d_period)
+      return null;
+    const d = data.kValues.reduce((a, b) => a + b, 0) / data.kValues.length;
+    return { k, d };
+  }
+  closePosition(ctx, tokenId) {
+    ctx.close(tokenId);
+    this.entryPrice.delete(tokenId);
+    this.highestPrice.delete(tokenId);
+    this.barsHeld.delete(tokenId);
+  }
+  onNext(ctx, bar) {
+    const data = this.getOrCreateData(bar.tokenId);
+    data.prices.push(bar.close);
+    data.highs.push(bar.high);
+    data.lows.push(bar.low);
+    const maxPeriod = Math.max(this.params.lookback, this.params.stoch_k_period) + 10;
+    if (data.prices.length > maxPeriod) {
+      data.prices.shift();
+      data.highs.shift();
+      data.lows.shift();
+    }
+    const stoch = this.getStochastic(data);
+    const supports = this.findSupportLevels(data);
+    const resistance = this.findResistanceLevel(data);
+    if (!stoch || supports.length === 0)
+      return;
+    const position = ctx.getPosition(bar.tokenId);
+    const prevPrice = data.prices.length > 1 ? data.prices[data.prices.length - 2] : bar.close;
+    if (position && position.size > 0) {
+      const entry = this.entryPrice.get(bar.tokenId);
+      const highest = this.highestPrice.get(bar.tokenId) ?? bar.close;
+      const bars = this.barsHeld.get(bar.tokenId) ?? 0;
+      this.barsHeld.set(bar.tokenId, bars + 1);
+      if (entry) {
+        if (bar.close > highest) {
+          this.highestPrice.set(bar.tokenId, bar.close);
+        }
+        const newHighest = this.highestPrice.get(bar.tokenId);
+        if (bar.close < entry * (1 - this.params.stop_loss)) {
+          this.closePosition(ctx, bar.tokenId);
+          return;
+        }
+        if (bar.close < newHighest * (1 - this.params.trailing_stop)) {
+          this.closePosition(ctx, bar.tokenId);
+          return;
+        }
+        if (bar.close >= entry * (1 + this.params.profit_target)) {
+          this.closePosition(ctx, bar.tokenId);
+          return;
+        }
+        if (bars >= this.params.max_hold_bars) {
+          this.closePosition(ctx, bar.tokenId);
+          return;
+        }
+        if (resistance !== null && bar.close >= resistance || stoch.k >= this.params.stoch_overbought) {
+          this.closePosition(ctx, bar.tokenId);
+        }
+      }
+    } else if (bar.close > 0.05 && bar.close < 0.95) {
+      const nearSupport = supports.some((s) => Math.abs(bar.close - s) / s < this.params.bounce_threshold);
+      const bouncing = bar.close > prevPrice;
+      const stochOversold = stoch.k <= this.params.stoch_oversold && stoch.k > stoch.d;
+      if (nearSupport && bouncing && stochOversold) {
+        const cash = ctx.getCapital() * this.params.risk_percent * 0.995;
+        const size = cash / bar.close;
+        if (size > 0 && cash <= ctx.getCapital()) {
+          const result = ctx.buy(bar.tokenId, size);
+          if (result.success) {
+            this.entryPrice.set(bar.tokenId, bar.close);
+            this.highestPrice.set(bar.tokenId, bar.close);
+            this.barsHeld.set(bar.tokenId, 0);
+          }
+        }
+      }
+    }
+  }
+  onComplete(_ctx) {}
+}
+
+// src/strategies/strat_sr_momentum_filter_227.ts
+import * as fs227 from "fs";
+import * as path227 from "path";
+var __dirname = "/Users/heinrich/Documents/testbtc/src/strategies";
+var defaultParams227 = {
+  lookback: 15,
+  bounce_threshold: 0.035,
+  stoch_k_period: 14,
+  stoch_d_period: 4,
+  stoch_oversold: 25,
+  stoch_overbought: 65,
+  momentum_period: 5,
+  momentum_min: 0.005,
+  stop_loss: 0.09,
+  trailing_stop: 0.05,
+  risk_percent: 0.15
+};
+function loadSavedParams227() {
+  const paramsPath = path227.join(__dirname, "strat_sr_momentum_filter_227.params.json");
+  if (!fs227.existsSync(paramsPath))
+    return null;
+  try {
+    const content = fs227.readFileSync(paramsPath, "utf-8");
+    const saved = JSON.parse(content);
+    const params = {};
+    for (const [key, value] of Object.entries(saved)) {
+      if (key !== "metadata" && key in defaultParams227) {
+        if (typeof value === "number") {
+          params[key] = value;
+        }
+      }
+    }
+    return params;
+  } catch {
+    return null;
+  }
+}
+
+class SRMomentumFilter227Strategy {
+  params;
+  tokenData = new Map;
+  entryPrice = new Map;
+  highestPrice = new Map;
+  constructor(params = {}) {
+    const savedParams = loadSavedParams227();
+    this.params = { ...defaultParams227, ...savedParams, ...params };
+  }
+  onInit(_ctx) {}
+  getOrCreateData(tokenId) {
+    if (!this.tokenData.has(tokenId)) {
+      this.tokenData.set(tokenId, {
+        prices: [],
+        highs: [],
+        lows: [],
+        kValues: []
+      });
+    }
+    return this.tokenData.get(tokenId);
+  }
+  findSupportLevels(data) {
+    if (data.lows.length < this.params.lookback)
+      return [];
+    const recentLows = data.lows.slice(-this.params.lookback);
+    const sorted = [...recentLows].sort((a, b) => a - b);
+    return sorted.slice(0, 3);
+  }
+  findResistanceLevel(data) {
+    if (data.highs.length < this.params.lookback)
+      return null;
+    const recentHighs = data.highs.slice(-this.params.lookback);
+    return Math.max(...recentHighs);
+  }
+  getStochastic(data) {
+    if (data.prices.length < this.params.stoch_k_period)
+      return null;
+    const slice = data.prices.slice(-this.params.stoch_k_period);
+    const high = Math.max(...slice);
+    const low = Math.min(...slice);
+    const k = high === low ? 50 : (data.prices[data.prices.length - 1] - low) / (high - low) * 100;
+    data.kValues.push(k);
+    if (data.kValues.length > this.params.stoch_d_period)
+      data.kValues.shift();
+    if (data.kValues.length < this.params.stoch_d_period)
+      return null;
+    const d = data.kValues.reduce((a, b) => a + b, 0) / data.kValues.length;
+    return { k, d };
+  }
+  getMomentum(data) {
+    if (data.prices.length < this.params.momentum_period + 1)
+      return 0;
+    const current = data.prices[data.prices.length - 1];
+    const past = data.prices[data.prices.length - 1 - this.params.momentum_period];
+    return (current - past) / past;
+  }
+  onNext(ctx, bar) {
+    const data = this.getOrCreateData(bar.tokenId);
+    data.prices.push(bar.close);
+    data.highs.push(bar.high);
+    data.lows.push(bar.low);
+    const maxPeriod = Math.max(this.params.lookback, this.params.stoch_k_period, this.params.momentum_period) + 10;
+    if (data.prices.length > maxPeriod) {
+      data.prices.shift();
+      data.highs.shift();
+      data.lows.shift();
+    }
+    const stoch = this.getStochastic(data);
+    const supports = this.findSupportLevels(data);
+    const resistance = this.findResistanceLevel(data);
+    const momentum = this.getMomentum(data);
+    if (!stoch || supports.length === 0)
+      return;
+    const position = ctx.getPosition(bar.tokenId);
+    const prevPrice = data.prices.length > 1 ? data.prices[data.prices.length - 2] : bar.close;
+    if (position && position.size > 0) {
+      const entry = this.entryPrice.get(bar.tokenId);
+      const highest = this.highestPrice.get(bar.tokenId) ?? bar.close;
+      if (entry) {
+        if (bar.close > highest) {
+          this.highestPrice.set(bar.tokenId, bar.close);
+        }
+        const newHighest = this.highestPrice.get(bar.tokenId);
+        if (bar.close < entry * (1 - this.params.stop_loss)) {
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+          this.highestPrice.delete(bar.tokenId);
+          return;
+        }
+        if (bar.close < newHighest * (1 - this.params.trailing_stop)) {
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+          this.highestPrice.delete(bar.tokenId);
+          return;
+        }
+        if (resistance !== null && bar.close >= resistance || stoch.k >= this.params.stoch_overbought) {
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+          this.highestPrice.delete(bar.tokenId);
+        }
+      }
+    } else if (bar.close > 0.05 && bar.close < 0.95) {
+      const nearSupport = supports.some((s) => Math.abs(bar.close - s) / s < this.params.bounce_threshold);
+      const bouncing = bar.close > prevPrice;
+      const stochOversold = stoch.k <= this.params.stoch_oversold && stoch.k > stoch.d;
+      const momentumPositive = momentum >= this.params.momentum_min;
+      if (nearSupport && bouncing && stochOversold && momentumPositive) {
+        const cash = ctx.getCapital() * this.params.risk_percent * 0.995;
+        const size = cash / bar.close;
+        if (size > 0 && cash <= ctx.getCapital()) {
+          const result = ctx.buy(bar.tokenId, size);
+          if (result.success) {
+            this.entryPrice.set(bar.tokenId, bar.close);
+            this.highestPrice.set(bar.tokenId, bar.close);
+          }
+        }
+      }
+    }
+  }
+  onComplete(_ctx) {}
+}
+
+// src/strategies/strat_pivot_point_228.ts
+import * as fs228 from "fs";
+import * as path228 from "path";
+var __dirname = "/Users/heinrich/Documents/testbtc/src/strategies";
+var defaultParams228 = {
+  pivot_period: 20,
+  bounce_threshold: 0.025,
+  stop_loss: 0.08,
+  trailing_stop: 0.05,
+  risk_percent: 0.15
+};
+function loadSavedParams228() {
+  const paramsPath = path228.join(__dirname, "strat_pivot_point_228.params.json");
+  if (!fs228.existsSync(paramsPath))
+    return null;
+  try {
+    const content = fs228.readFileSync(paramsPath, "utf-8");
+    const saved = JSON.parse(content);
+    const params = {};
+    for (const [key, value] of Object.entries(saved)) {
+      if (key !== "metadata" && key in defaultParams228) {
+        if (typeof value === "number") {
+          params[key] = value;
+        }
+      }
+    }
+    return params;
+  } catch {
+    return null;
+  }
+}
+
+class PivotPoint228Strategy {
+  params;
+  tokenData = new Map;
+  entryPrice = new Map;
+  highestPrice = new Map;
+  constructor(params = {}) {
+    const savedParams = loadSavedParams228();
+    this.params = { ...defaultParams228, ...savedParams, ...params };
+  }
+  onInit(_ctx) {}
+  getOrCreateData(tokenId) {
+    if (!this.tokenData.has(tokenId)) {
+      this.tokenData.set(tokenId, {
+        highs: [],
+        lows: [],
+        closes: []
+      });
+    }
+    return this.tokenData.get(tokenId);
+  }
+  calculatePivotLevels(data) {
+    if (data.highs.length < this.params.pivot_period)
+      return null;
+    const recentHighs = data.highs.slice(-this.params.pivot_period);
+    const recentLows = data.lows.slice(-this.params.pivot_period);
+    const recentCloses = data.closes.slice(-this.params.pivot_period);
+    const high = Math.max(...recentHighs);
+    const low = Math.min(...recentLows);
+    const close = recentCloses[recentCloses.length - 1];
+    const pivot = (high + low + close) / 3;
+    const s1 = 2 * pivot - high;
+    const s2 = pivot - (high - low);
+    const r1 = 2 * pivot - low;
+    const r2 = pivot + (high - low);
+    return { pivot, s1, s2, r1, r2 };
+  }
+  onNext(ctx, bar) {
+    const data = this.getOrCreateData(bar.tokenId);
+    data.highs.push(bar.high);
+    data.lows.push(bar.low);
+    data.closes.push(bar.close);
+    const maxPeriod = this.params.pivot_period + 10;
+    if (data.highs.length > maxPeriod) {
+      data.highs.shift();
+      data.lows.shift();
+      data.closes.shift();
+    }
+    const levels = this.calculatePivotLevels(data);
+    if (!levels)
+      return;
+    const position = ctx.getPosition(bar.tokenId);
+    const prevClose = data.closes.length > 1 ? data.closes[data.closes.length - 2] : bar.close;
+    if (position && position.size > 0) {
+      const entry = this.entryPrice.get(bar.tokenId);
+      const highest = this.highestPrice.get(bar.tokenId) ?? bar.close;
+      if (entry) {
+        if (bar.close > highest) {
+          this.highestPrice.set(bar.tokenId, bar.close);
+        }
+        const newHighest = this.highestPrice.get(bar.tokenId);
+        if (bar.close < entry * (1 - this.params.stop_loss)) {
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+          this.highestPrice.delete(bar.tokenId);
+          return;
+        }
+        if (bar.close < newHighest * (1 - this.params.trailing_stop)) {
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+          this.highestPrice.delete(bar.tokenId);
+          return;
+        }
+        if (bar.close >= levels.r1) {
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+          this.highestPrice.delete(bar.tokenId);
+        }
+      }
+    } else if (bar.close > 0.05 && bar.close < 0.95) {
+      const nearS1 = Math.abs(bar.close - levels.s1) / levels.s1 < this.params.bounce_threshold;
+      const nearS2 = Math.abs(bar.close - levels.s2) / levels.s2 < this.params.bounce_threshold;
+      const bouncing = bar.close > prevClose;
+      if ((nearS1 || nearS2) && bouncing) {
+        const cash = ctx.getCapital() * this.params.risk_percent * 0.995;
+        const size = cash / bar.close;
+        if (size > 0 && cash <= ctx.getCapital()) {
+          const result = ctx.buy(bar.tokenId, size);
+          if (result.success) {
+            this.entryPrice.set(bar.tokenId, bar.close);
+            this.highestPrice.set(bar.tokenId, bar.close);
+          }
+        }
+      }
+    }
+  }
+  onComplete(_ctx) {}
+}
+
+// src/strategies/strat_range_mean_revert_229.ts
+import * as fs229 from "fs";
+import * as path229 from "path";
+var __dirname = "/Users/heinrich/Documents/testbtc/src/strategies";
+var defaultParams229 = {
+  lookback: 25,
+  range_percentile: 0.1,
+  oversold_percentile: 0.15,
+  overbought_percentile: 0.85,
+  stop_loss: 0.08,
+  trailing_stop: 0.05,
+  risk_percent: 0.15
+};
+function loadSavedParams229() {
+  const paramsPath = path229.join(__dirname, "strat_range_mean_revert_229.params.json");
+  if (!fs229.existsSync(paramsPath))
+    return null;
+  try {
+    const content = fs229.readFileSync(paramsPath, "utf-8");
+    const saved = JSON.parse(content);
+    const params = {};
+    for (const [key, value] of Object.entries(saved)) {
+      if (key !== "metadata" && key in defaultParams229) {
+        if (typeof value === "number") {
+          params[key] = value;
+        }
+      }
+    }
+    return params;
+  } catch {
+    return null;
+  }
+}
+
+class RangeMeanRevert229Strategy {
+  params;
+  tokenData = new Map;
+  entryPrice = new Map;
+  highestPrice = new Map;
+  constructor(params = {}) {
+    const savedParams = loadSavedParams229();
+    this.params = { ...defaultParams229, ...savedParams, ...params };
+  }
+  onInit(_ctx) {}
+  getOrCreateData(tokenId) {
+    if (!this.tokenData.has(tokenId)) {
+      this.tokenData.set(tokenId, { prices: [] });
+    }
+    return this.tokenData.get(tokenId);
+  }
+  isRangeBound(data) {
+    if (data.prices.length < this.params.lookback)
+      return false;
+    const recentPrices = data.prices.slice(-this.params.lookback);
+    const high = Math.max(...recentPrices);
+    const low = Math.min(...recentPrices);
+    const mean2 = recentPrices.reduce((a, b) => a + b, 0) / recentPrices.length;
+    const range = (high - low) / mean2;
+    return range < this.params.range_percentile * 2;
+  }
+  getPercentileRank(data) {
+    if (data.prices.length < this.params.lookback)
+      return 0.5;
+    const recentPrices = data.prices.slice(-this.params.lookback);
+    const currentPrice = data.prices[data.prices.length - 1];
+    const high = Math.max(...recentPrices);
+    const low = Math.min(...recentPrices);
+    if (high === low)
+      return 0.5;
+    return (currentPrice - low) / (high - low);
+  }
+  getMean(data) {
+    if (data.prices.length < this.params.lookback)
+      return data.prices[data.prices.length - 1];
+    const recentPrices = data.prices.slice(-this.params.lookback);
+    return recentPrices.reduce((a, b) => a + b, 0) / recentPrices.length;
+  }
+  onNext(ctx, bar) {
+    const data = this.getOrCreateData(bar.tokenId);
+    data.prices.push(bar.close);
+    const maxPeriod = this.params.lookback + 10;
+    if (data.prices.length > maxPeriod) {
+      data.prices.shift();
+    }
+    const percentileRank = this.getPercentileRank(data);
+    const mean2 = this.getMean(data);
+    const rangeBound = this.isRangeBound(data);
+    const position = ctx.getPosition(bar.tokenId);
+    const prevPrice = data.prices.length > 1 ? data.prices[data.prices.length - 2] : bar.close;
+    if (position && position.size > 0) {
+      const entry = this.entryPrice.get(bar.tokenId);
+      const highest = this.highestPrice.get(bar.tokenId) ?? bar.close;
+      if (entry) {
+        if (bar.close > highest) {
+          this.highestPrice.set(bar.tokenId, bar.close);
+        }
+        const newHighest = this.highestPrice.get(bar.tokenId);
+        if (bar.close < entry * (1 - this.params.stop_loss)) {
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+          this.highestPrice.delete(bar.tokenId);
+          return;
+        }
+        if (bar.close < newHighest * (1 - this.params.trailing_stop)) {
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+          this.highestPrice.delete(bar.tokenId);
+          return;
+        }
+        if (bar.close >= mean2) {
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+          this.highestPrice.delete(bar.tokenId);
+          return;
+        }
+        if (percentileRank >= this.params.overbought_percentile) {
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+          this.highestPrice.delete(bar.tokenId);
+        }
+      }
+    } else if (bar.close > 0.05 && bar.close < 0.95) {
+      const oversold = percentileRank <= this.params.oversold_percentile;
+      const bouncing = bar.close > prevPrice;
+      if (rangeBound && oversold && bouncing) {
+        const cash = ctx.getCapital() * this.params.risk_percent * 0.995;
+        const size = cash / bar.close;
+        if (size > 0 && cash <= ctx.getCapital()) {
+          const result = ctx.buy(bar.tokenId, size);
+          if (result.success) {
+            this.entryPrice.set(bar.tokenId, bar.close);
+            this.highestPrice.set(bar.tokenId, bar.close);
+          }
+        }
+      }
+    }
+  }
+  onComplete(_ctx) {}
+}
+
+// src/strategies/strat_breakout_confirmation_230.ts
+import * as fs230 from "fs";
+import * as path230 from "path";
+var __dirname = "/Users/heinrich/Documents/testbtc/src/strategies";
+var defaultParams230 = {
+  lookback: 20,
+  breakout_threshold: 0.015,
+  volatility_period: 12,
+  volatility_multiplier: 1.2,
+  stop_loss: 0.07,
+  trailing_stop: 0.045,
+  risk_percent: 0.15
+};
+function loadSavedParams230() {
+  const paramsPath = path230.join(__dirname, "strat_breakout_confirmation_230.params.json");
+  if (!fs230.existsSync(paramsPath))
+    return null;
+  try {
+    const content = fs230.readFileSync(paramsPath, "utf-8");
+    const saved = JSON.parse(content);
+    const params = {};
+    for (const [key, value] of Object.entries(saved)) {
+      if (key !== "metadata" && key in defaultParams230) {
+        if (typeof value === "number") {
+          params[key] = value;
+        }
+      }
+    }
+    return params;
+  } catch {
+    return null;
+  }
+}
+
+class BreakoutConfirmation230Strategy {
+  params;
+  tokenData = new Map;
+  entryPrice = new Map;
+  highestPrice = new Map;
+  constructor(params = {}) {
+    const savedParams = loadSavedParams230();
+    this.params = { ...defaultParams230, ...savedParams, ...params };
+  }
+  onInit(_ctx) {}
+  getOrCreateData(tokenId) {
+    if (!this.tokenData.has(tokenId)) {
+      this.tokenData.set(tokenId, { prices: [], highs: [] });
+    }
+    return this.tokenData.get(tokenId);
+  }
+  calcVolatility(prices) {
+    if (prices.length < 2)
+      return 0;
+    const mean2 = prices.reduce((a, b) => a + b, 0) / prices.length;
+    const sqDiffs = prices.reduce((sum, p) => sum + (p - mean2) * (p - mean2), 0);
+    return Math.sqrt(sqDiffs / prices.length) / mean2;
+  }
+  getResistance(data) {
+    if (data.highs.length < this.params.lookback)
+      return null;
+    const recentHighs = data.highs.slice(-this.params.lookback - 1, -1);
+    return Math.max(...recentHighs);
+  }
+  isVolatilityHigh(data) {
+    if (data.prices.length < this.params.volatility_period * 2)
+      return false;
+    const recentVol = this.calcVolatility(data.prices.slice(-this.params.volatility_period));
+    const historicalVol = this.calcVolatility(data.prices.slice(-this.params.volatility_period * 2, -this.params.volatility_period));
+    if (historicalVol === 0)
+      return false;
+    return recentVol > historicalVol * this.params.volatility_multiplier;
+  }
+  onNext(ctx, bar) {
+    const data = this.getOrCreateData(bar.tokenId);
+    data.prices.push(bar.close);
+    data.highs.push(bar.high);
+    const maxPeriod = Math.max(this.params.lookback, this.params.volatility_period * 2) + 10;
+    if (data.prices.length > maxPeriod) {
+      data.prices.shift();
+      data.highs.shift();
+    }
+    const resistance = this.getResistance(data);
+    const highVolatility = this.isVolatilityHigh(data);
+    const position = ctx.getPosition(bar.tokenId);
+    if (position && position.size > 0) {
+      const entry = this.entryPrice.get(bar.tokenId);
+      const highest = this.highestPrice.get(bar.tokenId) ?? bar.close;
+      if (entry) {
+        if (bar.close > highest) {
+          this.highestPrice.set(bar.tokenId, bar.close);
+        }
+        const newHighest = this.highestPrice.get(bar.tokenId);
+        if (bar.close < entry * (1 - this.params.stop_loss)) {
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+          this.highestPrice.delete(bar.tokenId);
+          return;
+        }
+        if (bar.close < newHighest * (1 - this.params.trailing_stop)) {
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+          this.highestPrice.delete(bar.tokenId);
+        }
+      }
+    } else if (bar.close > 0.05 && bar.close < 0.95) {
+      if (resistance !== null) {
+        const breakoutAmount = (bar.close - resistance) / resistance;
+        const isBreakout = breakoutAmount > this.params.breakout_threshold;
+        if (isBreakout && highVolatility) {
+          const cash = ctx.getCapital() * this.params.risk_percent * 0.995;
+          const size = cash / bar.close;
+          if (size > 0 && cash <= ctx.getCapital()) {
+            const result = ctx.buy(bar.tokenId, size);
+            if (result.success) {
+              this.entryPrice.set(bar.tokenId, bar.close);
+              this.highestPrice.set(bar.tokenId, bar.close);
+            }
+          }
+        }
+      }
+    }
+  }
+  onComplete(_ctx) {}
+}
+
+// src/strategies/strat_stoch_rsi_231.ts
+import * as fs231 from "fs";
+import * as path231 from "path";
+var __dirname = "/Users/heinrich/Documents/testbtc/src/strategies";
+var defaultParams231 = {
+  rsi_period: 14,
+  stoch_period: 14,
+  k_smooth: 3,
+  d_smooth: 3,
+  oversold: 20,
+  overbought: 80,
+  stop_loss: 0.08,
+  trailing_stop: 0.05,
+  risk_percent: 0.15
+};
+function loadSavedParams231() {
+  const paramsPath = path231.join(__dirname, "strat_stoch_rsi_231.params.json");
+  if (!fs231.existsSync(paramsPath))
+    return null;
+  try {
+    const content = fs231.readFileSync(paramsPath, "utf-8");
+    const saved = JSON.parse(content);
+    const params = {};
+    for (const [key, value] of Object.entries(saved)) {
+      if (key !== "metadata" && key in defaultParams231) {
+        if (typeof value === "number") {
+          params[key] = value;
+        }
+      }
+    }
+    return params;
+  } catch {
+    return null;
+  }
+}
+
+class StochRSI231Strategy {
+  params;
+  tokenData = new Map;
+  entryPrice = new Map;
+  highestPrice = new Map;
+  constructor(params = {}) {
+    const savedParams = loadSavedParams231();
+    this.params = { ...defaultParams231, ...savedParams, ...params };
+  }
+  onInit(_ctx) {}
+  getOrCreateData(tokenId) {
+    if (!this.tokenData.has(tokenId)) {
+      this.tokenData.set(tokenId, {
+        prices: [],
+        rsiValues: [],
+        kValues: [],
+        dValues: []
+      });
+    }
+    return this.tokenData.get(tokenId);
+  }
+  calculateRSI(data) {
+    if (data.prices.length < this.params.rsi_period + 1)
+      return null;
+    const prices = data.prices.slice(-this.params.rsi_period - 1);
+    let gains = 0;
+    let losses = 0;
+    for (let i = 1;i < prices.length; i++) {
+      const change = prices[i] - prices[i - 1];
+      if (change > 0) {
+        gains += change;
+      } else {
+        losses -= change;
+      }
+    }
+    if (losses === 0)
+      return 100;
+    if (gains === 0)
+      return 0;
+    const rs = gains / this.params.rsi_period / (losses / this.params.rsi_period);
+    return 100 - 100 / (1 + rs);
+  }
+  calculateStochRSI(data) {
+    if (data.rsiValues.length < this.params.stoch_period)
+      return null;
+    const rsiSlice = data.rsiValues.slice(-this.params.stoch_period);
+    const high = Math.max(...rsiSlice);
+    const low = Math.min(...rsiSlice);
+    const current = data.rsiValues[data.rsiValues.length - 1];
+    if (high === low)
+      return null;
+    const rawK = (current - low) / (high - low) * 100;
+    data.kValues.push(rawK);
+    if (data.kValues.length > this.params.k_smooth)
+      data.kValues.shift();
+    if (data.kValues.length < this.params.k_smooth)
+      return null;
+    const k = data.kValues.reduce((a, b) => a + b, 0) / data.kValues.length;
+    data.dValues.push(k);
+    if (data.dValues.length > this.params.d_smooth)
+      data.dValues.shift();
+    if (data.dValues.length < this.params.d_smooth)
+      return null;
+    const d = data.dValues.reduce((a, b) => a + b, 0) / data.dValues.length;
+    return { k, d };
+  }
+  onNext(ctx, bar) {
+    const data = this.getOrCreateData(bar.tokenId);
+    data.prices.push(bar.close);
+    const maxPeriod = this.params.rsi_period + this.params.stoch_period + 20;
+    if (data.prices.length > maxPeriod) {
+      data.prices.shift();
+    }
+    const rsi = this.calculateRSI(data);
+    if (rsi !== null) {
+      data.rsiValues.push(rsi);
+      if (data.rsiValues.length > this.params.stoch_period + 10) {
+        data.rsiValues.shift();
+      }
+    }
+    const stochRSI = this.calculateStochRSI(data);
+    if (!stochRSI)
+      return;
+    const position = ctx.getPosition(bar.tokenId);
+    const prevPrice = data.prices.length > 1 ? data.prices[data.prices.length - 2] : bar.close;
+    if (position && position.size > 0) {
+      const entry = this.entryPrice.get(bar.tokenId);
+      const highest = this.highestPrice.get(bar.tokenId) ?? bar.close;
+      if (entry) {
+        if (bar.close > highest) {
+          this.highestPrice.set(bar.tokenId, bar.close);
+        }
+        const newHighest = this.highestPrice.get(bar.tokenId);
+        if (bar.close < entry * (1 - this.params.stop_loss)) {
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+          this.highestPrice.delete(bar.tokenId);
+          return;
+        }
+        if (bar.close < newHighest * (1 - this.params.trailing_stop)) {
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+          this.highestPrice.delete(bar.tokenId);
+          return;
+        }
+        if (stochRSI.k >= this.params.overbought) {
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+          this.highestPrice.delete(bar.tokenId);
+        }
+      }
+    } else if (bar.close > 0.05 && bar.close < 0.95) {
+      const oversold = stochRSI.k <= this.params.oversold;
+      const crossingUp = stochRSI.k > stochRSI.d;
+      const bouncing = bar.close > prevPrice;
+      if (oversold && crossingUp && bouncing) {
+        const cash = ctx.getCapital() * this.params.risk_percent * 0.995;
+        const size = cash / bar.close;
+        if (size > 0 && cash <= ctx.getCapital()) {
+          const result = ctx.buy(bar.tokenId, size);
+          if (result.success) {
+            this.entryPrice.set(bar.tokenId, bar.close);
+            this.highestPrice.set(bar.tokenId, bar.close);
+          }
+        }
+      }
+    }
+  }
+  onComplete(_ctx) {}
+}
+
+// src/strategies/strat_channel_breakout_232.ts
+import * as fs232 from "fs";
+import * as path232 from "path";
+var __dirname = "/Users/heinrich/Documents/testbtc/src/strategies";
+var defaultParams232 = {
+  channel_period: 20,
+  entry_threshold: 0.01,
+  confirmation_bars: 2,
+  stop_loss: 0.08,
+  trailing_stop: 0.05,
+  risk_percent: 0.15
+};
+function loadSavedParams232() {
+  const paramsPath = path232.join(__dirname, "strat_channel_breakout_232.params.json");
+  if (!fs232.existsSync(paramsPath))
+    return null;
+  try {
+    const content = fs232.readFileSync(paramsPath, "utf-8");
+    const saved = JSON.parse(content);
+    const params = {};
+    for (const [key, value] of Object.entries(saved)) {
+      if (key !== "metadata" && key in defaultParams232) {
+        if (typeof value === "number") {
+          params[key] = value;
+        }
+      }
+    }
+    return params;
+  } catch {
+    return null;
+  }
+}
+
+class ChannelBreakout232Strategy {
+  params;
+  tokenData = new Map;
+  entryPrice = new Map;
+  highestPrice = new Map;
+  constructor(params = {}) {
+    const savedParams = loadSavedParams232();
+    this.params = { ...defaultParams232, ...savedParams, ...params };
+  }
+  onInit(_ctx) {}
+  getOrCreateData(tokenId) {
+    if (!this.tokenData.has(tokenId)) {
+      this.tokenData.set(tokenId, {
+        highs: [],
+        lows: [],
+        closes: [],
+        breakoutBars: 0
+      });
+    }
+    return this.tokenData.get(tokenId);
+  }
+  getChannel(data) {
+    if (data.highs.length < this.params.channel_period)
+      return null;
+    const highs = data.highs.slice(-this.params.channel_period - 1, -1);
+    const lows = data.lows.slice(-this.params.channel_period - 1, -1);
+    const upper = Math.max(...highs);
+    const lower = Math.min(...lows);
+    const mid = (upper + lower) / 2;
+    return { upper, lower, mid };
+  }
+  onNext(ctx, bar) {
+    const data = this.getOrCreateData(bar.tokenId);
+    data.highs.push(bar.high);
+    data.lows.push(bar.low);
+    data.closes.push(bar.close);
+    const maxPeriod = this.params.channel_period + 10;
+    if (data.highs.length > maxPeriod) {
+      data.highs.shift();
+      data.lows.shift();
+      data.closes.shift();
+    }
+    const channel = this.getChannel(data);
+    if (!channel)
+      return;
+    const position = ctx.getPosition(bar.tokenId);
+    if (position && position.size > 0) {
+      const entry = this.entryPrice.get(bar.tokenId);
+      const highest = this.highestPrice.get(bar.tokenId) ?? bar.close;
+      if (entry) {
+        if (bar.close > highest) {
+          this.highestPrice.set(bar.tokenId, bar.close);
+        }
+        const newHighest = this.highestPrice.get(bar.tokenId);
+        if (bar.close < entry * (1 - this.params.stop_loss)) {
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+          this.highestPrice.delete(bar.tokenId);
+          data.breakoutBars = 0;
+          return;
+        }
+        if (bar.close < newHighest * (1 - this.params.trailing_stop)) {
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+          this.highestPrice.delete(bar.tokenId);
+          data.breakoutBars = 0;
+          return;
+        }
+        if (bar.close < channel.mid) {
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+          this.highestPrice.delete(bar.tokenId);
+          data.breakoutBars = 0;
+        }
+      }
+    } else if (bar.close > 0.05 && bar.close < 0.95) {
+      const breakoutAmount = (bar.close - channel.upper) / channel.upper;
+      const isBreakout = breakoutAmount > this.params.entry_threshold;
+      if (isBreakout) {
+        data.breakoutBars++;
+      } else {
+        data.breakoutBars = 0;
+      }
+      if (data.breakoutBars >= this.params.confirmation_bars) {
+        const cash = ctx.getCapital() * this.params.risk_percent * 0.995;
+        const size = cash / bar.close;
+        if (size > 0 && cash <= ctx.getCapital()) {
+          const result = ctx.buy(bar.tokenId, size);
+          if (result.success) {
+            this.entryPrice.set(bar.tokenId, bar.close);
+            this.highestPrice.set(bar.tokenId, bar.close);
+            data.breakoutBars = 0;
+          }
+        }
+      }
+    }
+  }
+  onComplete(_ctx) {}
+}
+
 // src/optimization/differential-evolution.ts
 init_engine();
 var import_cli_progress = __toESM(require_cli_progress(), 1);
@@ -32265,8 +33455,8 @@ DE: Converged after ${generation + 1} generations`);
 }
 // scripts/run-optimization.ts
 init_engine();
-import * as fs225 from "fs";
-import * as path225 from "path";
+import * as fs233 from "fs";
+import * as path233 from "path";
 kleur_default.enabled = true;
 var strategies = {
   simple_ma: {
@@ -34953,6 +36143,122 @@ var strategies = {
       risk_percent: { min: 0.1, max: 0.2, stepSize: 0.05 }
     },
     outputFile: "strat_mean_rev_momentum_224.params.json"
+  },
+  sr_adaptive_225: {
+    class: SRAdaptive225Strategy,
+    params: {
+      base_lookback: { min: 10, max: 25, stepSize: 5 },
+      min_lookback: { min: 5, max: 10, stepSize: 2 },
+      max_lookback: { min: 25, max: 40, stepSize: 5 },
+      volatility_period: { min: 8, max: 16, stepSize: 4 },
+      bounce_threshold: { min: 0.02, max: 0.05, stepSize: 0.01 },
+      stoch_k_period: { min: 10, max: 18, stepSize: 2 },
+      stoch_d_period: { min: 3, max: 5, stepSize: 1 },
+      stoch_oversold: { min: 20, max: 35, stepSize: 5 },
+      stoch_overbought: { min: 60, max: 75, stepSize: 5 },
+      stop_loss: { min: 0.06, max: 0.12, stepSize: 0.02 },
+      trailing_stop: { min: 0.03, max: 0.07, stepSize: 0.01 },
+      risk_percent: { min: 0.1, max: 0.2, stepSize: 0.05 }
+    },
+    outputFile: "strat_sr_adaptive_225.params.json"
+  },
+  sr_multi_exit_226: {
+    class: SRMultiExit226Strategy,
+    params: {
+      lookback: { min: 10, max: 20, stepSize: 5 },
+      bounce_threshold: { min: 0.02, max: 0.05, stepSize: 0.01 },
+      stoch_k_period: { min: 10, max: 18, stepSize: 2 },
+      stoch_d_period: { min: 3, max: 5, stepSize: 1 },
+      stoch_oversold: { min: 20, max: 35, stepSize: 5 },
+      stoch_overbought: { min: 60, max: 75, stepSize: 5 },
+      stop_loss: { min: 0.06, max: 0.12, stepSize: 0.02 },
+      trailing_stop: { min: 0.03, max: 0.07, stepSize: 0.01 },
+      profit_target: { min: 0.1, max: 0.2, stepSize: 0.05 },
+      max_hold_bars: { min: 30, max: 80, stepSize: 10 },
+      risk_percent: { min: 0.1, max: 0.2, stepSize: 0.05 }
+    },
+    outputFile: "strat_sr_multi_exit_226.params.json"
+  },
+  sr_momentum_filter_227: {
+    class: SRMomentumFilter227Strategy,
+    params: {
+      lookback: { min: 10, max: 20, stepSize: 5 },
+      bounce_threshold: { min: 0.02, max: 0.05, stepSize: 0.01 },
+      stoch_k_period: { min: 10, max: 18, stepSize: 2 },
+      stoch_d_period: { min: 3, max: 5, stepSize: 1 },
+      stoch_oversold: { min: 20, max: 35, stepSize: 5 },
+      stoch_overbought: { min: 60, max: 75, stepSize: 5 },
+      momentum_period: { min: 3, max: 8, stepSize: 1 },
+      momentum_min: { min: 0.003, max: 0.01, stepSize: 0.002 },
+      stop_loss: { min: 0.06, max: 0.12, stepSize: 0.02 },
+      trailing_stop: { min: 0.03, max: 0.07, stepSize: 0.01 },
+      risk_percent: { min: 0.1, max: 0.2, stepSize: 0.05 }
+    },
+    outputFile: "strat_sr_momentum_filter_227.params.json"
+  },
+  pivot_point_228: {
+    class: PivotPoint228Strategy,
+    params: {
+      pivot_period: { min: 15, max: 30, stepSize: 5 },
+      bounce_threshold: { min: 0.015, max: 0.04, stepSize: 0.01 },
+      stop_loss: { min: 0.05, max: 0.1, stepSize: 0.02 },
+      trailing_stop: { min: 0.03, max: 0.07, stepSize: 0.01 },
+      risk_percent: { min: 0.1, max: 0.2, stepSize: 0.05 }
+    },
+    outputFile: "strat_pivot_point_228.params.json"
+  },
+  range_mean_revert_229: {
+    class: RangeMeanRevert229Strategy,
+    params: {
+      lookback: { min: 20, max: 35, stepSize: 5 },
+      range_percentile: { min: 0.08, max: 0.15, stepSize: 0.02 },
+      oversold_percentile: { min: 0.1, max: 0.25, stepSize: 0.05 },
+      overbought_percentile: { min: 0.75, max: 0.9, stepSize: 0.05 },
+      stop_loss: { min: 0.05, max: 0.1, stepSize: 0.02 },
+      trailing_stop: { min: 0.03, max: 0.07, stepSize: 0.01 },
+      risk_percent: { min: 0.1, max: 0.2, stepSize: 0.05 }
+    },
+    outputFile: "strat_range_mean_revert_229.params.json"
+  },
+  breakout_confirmation_230: {
+    class: BreakoutConfirmation230Strategy,
+    params: {
+      lookback: { min: 15, max: 25, stepSize: 5 },
+      breakout_threshold: { min: 0.01, max: 0.025, stepSize: 0.005 },
+      volatility_period: { min: 8, max: 16, stepSize: 4 },
+      volatility_multiplier: { min: 1.1, max: 1.5, stepSize: 0.1 },
+      stop_loss: { min: 0.05, max: 0.1, stepSize: 0.02 },
+      trailing_stop: { min: 0.03, max: 0.06, stepSize: 0.01 },
+      risk_percent: { min: 0.1, max: 0.2, stepSize: 0.05 }
+    },
+    outputFile: "strat_breakout_confirmation_230.params.json"
+  },
+  stoch_rsi_231: {
+    class: StochRSI231Strategy,
+    params: {
+      rsi_period: { min: 10, max: 18, stepSize: 2 },
+      stoch_period: { min: 10, max: 18, stepSize: 2 },
+      k_smooth: { min: 2, max: 4, stepSize: 1 },
+      d_smooth: { min: 2, max: 4, stepSize: 1 },
+      oversold: { min: 15, max: 30, stepSize: 5 },
+      overbought: { min: 70, max: 85, stepSize: 5 },
+      stop_loss: { min: 0.05, max: 0.1, stepSize: 0.02 },
+      trailing_stop: { min: 0.03, max: 0.07, stepSize: 0.01 },
+      risk_percent: { min: 0.1, max: 0.2, stepSize: 0.05 }
+    },
+    outputFile: "strat_stoch_rsi_231.params.json"
+  },
+  channel_breakout_232: {
+    class: ChannelBreakout232Strategy,
+    params: {
+      channel_period: { min: 15, max: 30, stepSize: 5 },
+      entry_threshold: { min: 0.005, max: 0.02, stepSize: 0.005 },
+      confirmation_bars: { min: 1, max: 3, stepSize: 1 },
+      stop_loss: { min: 0.05, max: 0.1, stepSize: 0.02 },
+      trailing_stop: { min: 0.03, max: 0.07, stepSize: 0.01 },
+      risk_percent: { min: 0.1, max: 0.2, stepSize: 0.05 }
+    },
+    outputFile: "strat_channel_breakout_232.params.json"
   }
 };
 function seededShuffle(array, seed) {
@@ -34991,12 +36297,12 @@ program2.name("optimize").description("Differential Evolution Optimization for T
     process.exit(0);
   }
   if (options.plot) {
-    const historyPath2 = path225.join(process.cwd(), "data", "optimization-history.json");
-    if (!fs225.existsSync(historyPath2)) {
+    const historyPath2 = path233.join(process.cwd(), "data", "optimization-history.json");
+    if (!fs233.existsSync(historyPath2)) {
       console.error(kleur_default.red("No optimization history found. Run optimize first."));
       process.exit(1);
     }
-    const historyData2 = JSON.parse(fs225.readFileSync(historyPath2, "utf-8"));
+    const historyData2 = JSON.parse(fs233.readFileSync(historyPath2, "utf-8"));
     console.log(kleur_default.cyan(`Optimization Progress
 `));
     console.log("Generation | Sharpe Ratio");
@@ -35165,11 +36471,11 @@ Optimization Progress
       optimized_at: new Date().toISOString()
     }
   };
-  const outputPath = path225.join(process.cwd(), "src", "strategies", outputFile);
-  fs225.writeFileSync(outputPath, JSON.stringify(output, null, 2));
+  const outputPath = path233.join(process.cwd(), "src", "strategies", outputFile);
+  fs233.writeFileSync(outputPath, JSON.stringify(output, null, 2));
   console.log(kleur_default.green(`
 ✓ Parameters saved to ` + outputFile));
-  const historyPath = path225.join(process.cwd(), "data", "optimization-history.json");
+  const historyPath = path233.join(process.cwd(), "data", "optimization-history.json");
   const historyData = {
     strategy: strategyName,
     bestParams,
@@ -35186,7 +36492,7 @@ Optimization Progress
       fullSharpe: fullMetrics.sharpe
     }
   };
-  fs225.writeFileSync(historyPath, JSON.stringify(historyData, null, 2));
+  fs233.writeFileSync(historyPath, JSON.stringify(historyData, null, 2));
   console.log(kleur_default.green("✓ History saved to optimization-history.json"));
 });
 program2.parse();

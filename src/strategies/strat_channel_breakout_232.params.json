@@ -1,0 +1,12 @@
+{
+  "channel_period": 20,
+  "entry_threshold": 0.009769959886976341,
+  "confirmation_bars": 3,
+  "stop_loss": 0.0740044652317344,
+  "trailing_stop": 0.06952668376041868,
+  "risk_percent": 0.1,
+  "metadata": {
+    "best_test_return": -21.43372585669772,
+    "optimized_at": "2026-02-15T17:34:14.701Z"
+  }
+}

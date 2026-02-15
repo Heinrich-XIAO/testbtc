@@ -1,0 +1,15 @@
+{
+  "rsi_period": 16,
+  "stoch_period": 10,
+  "k_smooth": 2,
+  "d_smooth": 3,
+  "oversold": 15,
+  "overbought": 80,
+  "stop_loss": 0.07589544238088135,
+  "trailing_stop": 0.03595262705146407,
+  "risk_percent": 0.19060324251653094,
+  "metadata": {
+    "best_test_return": 6.980115997027951,
+    "optimized_at": "2026-02-15T17:34:07.770Z"
+  }
+}

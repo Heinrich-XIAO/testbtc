@@ -1,0 +1,13 @@
+{
+  "lookback": 25,
+  "range_percentile": 0.14487789336514723,
+  "oversold_percentile": 0.21319829895764045,
+  "overbought_percentile": 0.848702519894784,
+  "stop_loss": 0.08679115238788451,
+  "trailing_stop": 0.04852709954138197,
+  "risk_percent": 0.1977140130293368,
+  "metadata": {
+    "best_test_return": 20.27848313883328,
+    "optimized_at": "2026-02-15T17:34:10.428Z"
+  }
+}

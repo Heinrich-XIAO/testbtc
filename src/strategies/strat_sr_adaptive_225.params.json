@@ -1,0 +1,18 @@
+{
+  "base_lookback": 20,
+  "min_lookback": 8,
+  "max_lookback": 35,
+  "volatility_period": 8,
+  "bounce_threshold": 0.03680457532342224,
+  "stoch_k_period": 14,
+  "stoch_d_period": 4,
+  "stoch_oversold": 25,
+  "stoch_overbought": 65,
+  "stop_loss": 0.08601047878233462,
+  "trailing_stop": 0.06444669401914936,
+  "risk_percent": 0.1577964741420755,
+  "metadata": {
+    "best_test_return": -0.10176041547583736,
+    "optimized_at": "2026-02-15T17:31:53.324Z"
+  }
+}

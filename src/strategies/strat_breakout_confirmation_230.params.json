@@ -1,0 +1,13 @@
+{
+  "lookback": 15,
+  "breakout_threshold": 0.01769346148616469,
+  "volatility_period": 8,
+  "volatility_multiplier": 1.290714732601876,
+  "stop_loss": 0.05907064669997737,
+  "trailing_stop": 0.052432589499063764,
+  "risk_percent": 0.15325219871479512,
+  "metadata": {
+    "best_test_return": 210.24604084915245,
+    "optimized_at": "2026-02-15T17:34:09.648Z"
+  }
+}
