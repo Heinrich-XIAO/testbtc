@@ -1,11 +1,15 @@
 {
-  "rsi_period": 14,
+  "rsi_period": 20,
   "divergence_lookback": 5,
-  "k_period": 14,
-  "d_period": 3,
-  "oversold": 20,
-  "overbought": 80,
-  "signal_window": 3,
-  "stop_loss": 0.05,
-  "risk_percent": 0.1
+  "k_period": 20,
+  "d_period": 2,
+  "oversold": 25,
+  "overbought": 85,
+  "signal_window": 2,
+  "stop_loss": 0.06598360485545503,
+  "risk_percent": 0.15,
+  "metadata": {
+    "best_test_return": 19.68510467920305,
+    "optimized_at": "2026-02-15T16:54:42.345Z"
+  }
 }

@@ -1,13 +1,17 @@
 {
-  "min_k_period": 3,
+  "min_k_period": 4,
   "max_k_period": 14,
   "d_period": 3,
   "percentile_lookback": 20,
   "oversold_percentile": 15,
-  "overbought_percentile": 85,
-  "atr_period": 14,
-  "min_atr_threshold": 0.005,
-  "volatility_scale": 50,
-  "stop_loss": 0.04,
-  "risk_percent": 0.1
+  "overbought_percentile": 80,
+  "atr_period": 10,
+  "min_atr_threshold": 0.0023087865821349177,
+  "volatility_scale": 60,
+  "stop_loss": 0.04088980874711297,
+  "risk_percent": 0.13328869570766055,
+  "metadata": {
+    "best_test_return": 129.0758272869523,
+    "optimized_at": "2026-02-15T16:53:29.732Z"
+  }
 }

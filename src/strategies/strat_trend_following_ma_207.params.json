@@ -1,17 +1,17 @@
 {
   "fast_period": 10,
   "medium_period": 25,
-  "slow_period": 50,
+  "slow_period": 70,
   "adx_period": 14,
-  "adx_threshold": 25,
-  "pullback_threshold": 0.005,
-  "stop_loss": 0.03,
-  "trailing_stop": 0.025,
-  "risk_percent": 0.15,
-  "take_profit_enabled": 0,
-  "take_profit": 0.08,
+  "adx_threshold": 35,
+  "pullback_threshold": 0.006000429225440602,
+  "stop_loss": 0.06227607867777279,
+  "trailing_stop": 0.03163620373007094,
+  "risk_percent": 0.2450896868526708,
+  "take_profit_enabled": 1,
+  "take_profit": 0.11139562695448449,
   "metadata": {
-    "optimized": false,
-    "optimization_date": null
+    "best_test_return": 27.7466897226102,
+    "optimized_at": "2026-02-15T16:50:39.041Z"
   }
 }

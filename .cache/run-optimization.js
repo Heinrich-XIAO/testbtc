@@ -1,4 +1,4 @@
-// @bun
+import { createRequire } from "node:module";
 var __create = Object.create;
 var __getProtoOf = Object.getPrototypeOf;
 var __defProp = Object.defineProperty;
@@ -17,7 +17,7 @@ var __toESM = (mod, isNodeMode, target) => {
 };
 var __commonJS = (cb, mod) => () => (mod || cb((mod = { exports: {} }).exports, mod), mod.exports);
 var __esm = (fn, res) => () => (fn && (res = fn(fn = 0)), res);
-var __require = import.meta.require;
+var __require = /* @__PURE__ */ createRequire(import.meta.url);
 
 // node_modules/commander/lib/error.js
 var require_error = __commonJS((exports) => {
@@ -739,11 +739,11 @@ var require_suggestSimilar = __commonJS((exports) => {
 
 // node_modules/commander/lib/command.js
 var require_command = __commonJS((exports) => {
-  var EventEmitter = __require("events").EventEmitter;
-  var childProcess = __require("child_process");
-  var path = __require("path");
-  var fs = __require("fs");
-  var process2 = __require("process");
+  var EventEmitter = __require("node:events").EventEmitter;
+  var childProcess = __require("node:child_process");
+  var path = __require("node:path");
+  var fs = __require("node:fs");
+  var process2 = __require("node:process");
   var { Argument, humanReadableArgName } = require_argument();
   var { CommanderError } = require_error();
   var { Help, stripColor } = require_help();
@@ -7587,8 +7587,8 @@ var require_legacy = __commonJS((exports, module) => {
 var require_shades_classic = __commonJS((exports, module) => {
   module.exports = {
     format: " {bar} {percentage}% | ETA: {eta}s | {value}/{total}",
-    barCompleteChar: "\u2588",
-    barIncompleteChar: "\u2591"
+    barCompleteChar: "█",
+    barIncompleteChar: "░"
   };
 });
 
@@ -7596,16 +7596,16 @@ var require_shades_classic = __commonJS((exports, module) => {
 var require_shades_grey = __commonJS((exports, module) => {
   module.exports = {
     format: " \x1B[90m{bar}\x1B[0m {percentage}% | ETA: {eta}s | {value}/{total}",
-    barCompleteChar: "\u2588",
-    barIncompleteChar: "\u2591"
+    barCompleteChar: "█",
+    barIncompleteChar: "░"
   };
 });
 
 // node_modules/cli-progress/presets/rect.js
 var require_rect = __commonJS((exports, module) => {
   module.exports = {
-    format: " {bar}\u25A0 {percentage}% | ETA: {eta}s | {value}/{total}",
-    barCompleteChar: "\u25A0",
+    format: " {bar}■ {percentage}% | ETA: {eta}s | {value}/{total}",
+    barCompleteChar: "■",
     barIncompleteChar: " "
   };
 });
@@ -28309,6 +28309,1543 @@ class RsiDV07Strategy {
   onComplete(_ctx) {}
 }
 
+// src/strategies/strat_stoch_v20_tweak_201.ts
+import * as fs201 from "fs";
+import * as path201 from "path";
+var __dirname = "/Users/heinrich/Documents/testbtc/src/strategies";
+var defaultParams201 = {
+  k_period: 8,
+  d_period: 3,
+  oversold_base: 20,
+  overbought_base: 80,
+  volatility_period: 20,
+  level_adjustment_factor: 10,
+  stop_loss: 0.08,
+  risk_percent: 0.15
+};
+function loadSavedParams201() {
+  const paramsPath = path201.join(__dirname, "strat_stoch_v20_tweak_201.params.json");
+  if (!fs201.existsSync(paramsPath))
+    return null;
+  try {
+    const content = fs201.readFileSync(paramsPath, "utf-8");
+    const saved = JSON.parse(content);
+    const params = {};
+    for (const [key, value] of Object.entries(saved)) {
+      if (key !== "metadata" && key in defaultParams201) {
+        if (typeof value === "number") {
+          params[key] = value;
+        }
+      }
+    }
+    return params;
+  } catch {
+    return null;
+  }
+}
+function stddev6(values) {
+  if (values.length < 2)
+    return 0;
+  const mean = values.reduce((a, b) => a + b, 0) / values.length;
+  const sqDiffs = values.reduce((sum, v) => sum + (v - mean) * (v - mean), 0);
+  return Math.sqrt(sqDiffs / values.length);
+}
+
+class StochV20Tweak201Strategy {
+  params;
+  priceHistory = new Map;
+  highHistory = new Map;
+  lowHistory = new Map;
+  kValues = new Map;
+  entryPrice = new Map;
+  constructor(params = {}) {
+    const savedParams = loadSavedParams201();
+    const merged = { ...defaultParams201, ...savedParams, ...params };
+    this.params = merged;
+    this.params.k_period = Math.max(6, Math.min(12, Math.floor(this.params.k_period)));
+    this.params.d_period = Math.max(2, Math.floor(this.params.d_period));
+  }
+  onInit(_ctx) {}
+  getVolatilityAdjustedLevels(tokenId) {
+    const history = this.priceHistory.get(tokenId) || [];
+    if (history.length < this.params.volatility_period) {
+      return {
+        oversold: this.params.oversold_base,
+        overbought: this.params.overbought_base
+      };
+    }
+    const relevantHistory = history.slice(-this.params.volatility_period);
+    const vol = stddev6(relevantHistory);
+    const meanPrice = relevantHistory.reduce((a, b) => a + b, 0) / relevantHistory.length;
+    const volatilityPct = meanPrice > 0 ? vol / meanPrice * 100 : 0;
+    const adjustment = volatilityPct * this.params.level_adjustment_factor / 10;
+    return {
+      oversold: Math.max(5, this.params.oversold_base - adjustment),
+      overbought: Math.min(95, this.params.overbought_base + adjustment)
+    };
+  }
+  onNext(ctx, bar) {
+    if (!this.priceHistory.has(bar.tokenId)) {
+      this.priceHistory.set(bar.tokenId, []);
+      this.highHistory.set(bar.tokenId, []);
+      this.lowHistory.set(bar.tokenId, []);
+      this.kValues.set(bar.tokenId, []);
+    }
+    const history = this.priceHistory.get(bar.tokenId);
+    const highHistory = this.highHistory.get(bar.tokenId);
+    const lowHistory = this.lowHistory.get(bar.tokenId);
+    const kVals = this.kValues.get(bar.tokenId);
+    history.push(bar.close);
+    highHistory.push(bar.high);
+    lowHistory.push(bar.low);
+    const maxPeriod = Math.max(this.params.k_period, this.params.volatility_period);
+    if (history.length > maxPeriod)
+      history.shift();
+    if (highHistory.length > maxPeriod)
+      highHistory.shift();
+    if (lowHistory.length > maxPeriod)
+      lowHistory.shift();
+    if (history.length < this.params.k_period)
+      return;
+    const periodHighs = highHistory.slice(-this.params.k_period);
+    const periodLows = lowHistory.slice(-this.params.k_period);
+    const highest = Math.max(...periodHighs);
+    const lowest = Math.min(...periodLows);
+    const k = highest === lowest ? 50 : (bar.close - lowest) / (highest - lowest) * 100;
+    kVals.push(k);
+    if (kVals.length > this.params.d_period)
+      kVals.shift();
+    if (kVals.length < this.params.d_period)
+      return;
+    const d = kVals.reduce((a, b) => a + b, 0) / kVals.length;
+    const position = ctx.getPosition(bar.tokenId);
+    const { oversold, overbought } = this.getVolatilityAdjustedLevels(bar.tokenId);
+    if (position && position.size > 0) {
+      const entry = this.entryPrice.get(bar.tokenId);
+      if (entry) {
+        if (bar.close < entry * (1 - this.params.stop_loss)) {
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+          return;
+        }
+        if (k >= overbought && k < d) {
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+        }
+      }
+    } else if (bar.close > 0.05 && bar.close < 0.95) {
+      if (k <= oversold && k > d) {
+        const cash = ctx.getCapital() * this.params.risk_percent * 0.995;
+        const size = cash / bar.close;
+        if (size > 0 && cash <= ctx.getCapital()) {
+          const result = ctx.buy(bar.tokenId, size);
+          if (result.success) {
+            this.entryPrice.set(bar.tokenId, bar.close);
+          }
+        }
+      }
+    }
+  }
+  onComplete(_ctx) {}
+}
+
+// src/strategies/strat_stoch_v06_tweak_202.ts
+import * as fs202 from "fs";
+import * as path202 from "path";
+var __dirname = "/Users/heinrich/Documents/testbtc/src/strategies";
+var defaultParams202 = {
+  k_period: 12,
+  d_period: 5,
+  oversold: 15,
+  overbought: 85,
+  stop_loss: 0.05,
+  risk_percent: 0.12,
+  ma_period: 20,
+  use_trend_filter: true,
+  use_mtf_confirmation: true,
+  use_dynamic_sizing: true,
+  mtf_threshold: 0.5
+};
+function loadSavedParams202() {
+  const paramsPath = path202.join(__dirname, "strat_stoch_v06_tweak_202.params.json");
+  if (!fs202.existsSync(paramsPath))
+    return null;
+  try {
+    const content = fs202.readFileSync(paramsPath, "utf-8");
+    const saved = JSON.parse(content);
+    const params = {};
+    for (const [key, value] of Object.entries(saved)) {
+      if (key !== "metadata" && key in defaultParams202) {
+        if (typeof value === "number") {
+          params[key] = value;
+        } else if (typeof value === "boolean") {
+          params[key] = value;
+        }
+      }
+    }
+    return params;
+  } catch {
+    return null;
+  }
+}
+
+class StochV06Tweak202Strategy {
+  params;
+  tokenData = new Map;
+  entryPrice = new Map;
+  constructor(params = {}) {
+    const savedParams = loadSavedParams202() || {};
+    this.params = { ...defaultParams202, ...savedParams, ...params };
+    this.params.k_period = Math.max(3, Math.floor(this.params.k_period));
+    this.params.d_period = Math.max(2, Math.floor(this.params.d_period));
+    this.params.ma_period = Math.max(5, Math.floor(this.params.ma_period));
+  }
+  onInit(_ctx) {}
+  getOrCreateTokenData(tokenId) {
+    if (!this.tokenData.has(tokenId)) {
+      this.tokenData.set(tokenId, {
+        priceHistory: [],
+        kValues: [],
+        slowKValues: [],
+        fastKValues: [],
+        maValues: []
+      });
+    }
+    return this.tokenData.get(tokenId);
+  }
+  calculateStochastic(priceHistory, period) {
+    if (priceHistory.length < period)
+      return null;
+    const relevantHistory = priceHistory.slice(-period);
+    const highest = Math.max(...relevantHistory);
+    const lowest = Math.min(...relevantHistory);
+    if (highest === lowest)
+      return 50;
+    const currentPrice = priceHistory[priceHistory.length - 1];
+    return (currentPrice - lowest) / (highest - lowest) * 100;
+  }
+  calculateMA(priceHistory, period) {
+    if (priceHistory.length < period)
+      return null;
+    const relevantPrices = priceHistory.slice(-period);
+    return relevantPrices.reduce((a, b) => a + b, 0) / period;
+  }
+  calculateSignalStrength(baseK, slowK, fastK, isOversold) {
+    let strength = 1;
+    if (this.params.use_mtf_confirmation && slowK !== null && fastK !== null) {
+      const slowConfirm = isOversold ? slowK <= this.params.oversold : slowK >= this.params.overbought;
+      const fastConfirm = isOversold ? fastK <= this.params.oversold : fastK >= this.params.overbought;
+      if (slowConfirm && fastConfirm) {
+        strength += this.params.mtf_threshold;
+      } else if (slowConfirm || fastConfirm) {
+        strength += this.params.mtf_threshold * 0.5;
+      }
+    }
+    const oversoldDepth = isOversold ? Math.max(0, (this.params.oversold - baseK) / this.params.oversold) : Math.max(0, (baseK - this.params.overbought) / (100 - this.params.overbought));
+    strength += oversoldDepth * 0.5;
+    return Math.min(strength, 2);
+  }
+  onNext(ctx, bar) {
+    const data = this.getOrCreateTokenData(bar.tokenId);
+    data.priceHistory.push(bar.close);
+    const maxPeriod = Math.max(this.params.k_period * 2, this.params.ma_period);
+    if (data.priceHistory.length > maxPeriod * 2) {
+      data.priceHistory.shift();
+    }
+    const baseK = this.calculateStochastic(data.priceHistory, this.params.k_period);
+    if (baseK === null)
+      return;
+    data.kValues.push(baseK);
+    if (data.kValues.length > this.params.d_period) {
+      data.kValues.shift();
+    }
+    if (this.params.use_mtf_confirmation) {
+      const slowK = this.calculateStochastic(data.priceHistory, this.params.k_period * 2);
+      const fastK = this.calculateStochastic(data.priceHistory, Math.max(3, Math.floor(this.params.k_period * 0.5)));
+      if (slowK !== null) {
+        data.slowKValues.push(slowK);
+        if (data.slowKValues.length > this.params.d_period)
+          data.slowKValues.shift();
+      }
+      if (fastK !== null) {
+        data.fastKValues.push(fastK);
+        if (data.fastKValues.length > this.params.d_period)
+          data.fastKValues.shift();
+      }
+    }
+    if (this.params.use_trend_filter) {
+      const ma = this.calculateMA(data.priceHistory, this.params.ma_period);
+      if (ma !== null) {
+        data.maValues.push(ma);
+        if (data.maValues.length > 5)
+          data.maValues.shift();
+      }
+    }
+    if (data.kValues.length < this.params.d_period)
+      return;
+    const d = data.kValues.reduce((a, b) => a + b, 0) / data.kValues.length;
+    const position = ctx.getPosition(bar.tokenId);
+    if (position && position.size > 0) {
+      const entry = this.entryPrice.get(bar.tokenId);
+      if (entry) {
+        if (bar.close < entry * (1 - this.params.stop_loss)) {
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+          return;
+        }
+        if (baseK >= this.params.overbought && baseK < d) {
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+        }
+      }
+    } else if (bar.close > 0.05 && bar.close < 0.95) {
+      let trendOk = true;
+      if (this.params.use_trend_filter && data.maValues.length >= 2) {
+        const maDirection = data.maValues[data.maValues.length - 1] > data.maValues[0];
+        trendOk = maDirection;
+      }
+      if (trendOk && baseK <= this.params.oversold && baseK > d) {
+        const slowK = data.slowKValues.length > 0 ? data.slowKValues[data.slowKValues.length - 1] : null;
+        const fastK = data.fastKValues.length > 0 ? data.fastKValues[data.fastKValues.length - 1] : null;
+        const signalStrength = this.calculateSignalStrength(baseK, slowK, fastK, true);
+        let positionSize = this.params.risk_percent;
+        if (this.params.use_dynamic_sizing) {
+          positionSize = Math.min(this.params.risk_percent * signalStrength, 0.25);
+        }
+        const cash = ctx.getCapital() * positionSize * 0.995;
+        const size = cash / bar.close;
+        if (size > 0 && cash <= ctx.getCapital()) {
+          const result = ctx.buy(bar.tokenId, size);
+          if (result.success) {
+            this.entryPrice.set(bar.tokenId, bar.close);
+          }
+        }
+      }
+    }
+  }
+  onComplete(_ctx) {}
+}
+
+// src/strategies/strat_stoch_v09_tweak_203.ts
+import * as fs203 from "fs";
+import * as path203 from "path";
+var __dirname = "/Users/heinrich/Documents/testbtc/src/strategies";
+var defaultParams203 = {
+  k_period: 10,
+  d_period: 4,
+  oversold: 25,
+  overbought: 75,
+  rsi_period: 14,
+  rsi_oversold_max: 40,
+  rsi_overbought_min: 60,
+  divergence_lookback: 5,
+  enable_divergence: true,
+  enable_rsi_confirm: true,
+  profit_level_1: 0.05,
+  profit_level_2: 0.1,
+  partial_close_pct_1: 0.5,
+  partial_close_pct_2: 0.5,
+  stop_loss: 0.07,
+  risk_percent: 0.15
+};
+function loadSavedParams203() {
+  const paramsPath = path203.join(__dirname, "strat_stoch_v09_tweak_203.params.json");
+  if (!fs203.existsSync(paramsPath))
+    return null;
+  try {
+    const content = fs203.readFileSync(paramsPath, "utf-8");
+    const saved = JSON.parse(content);
+    const params = {};
+    for (const [key, value] of Object.entries(saved)) {
+      if (key !== "metadata" && key in defaultParams203) {
+        if (typeof value === "number" || typeof value === "boolean") {
+          params[key] = value;
+        }
+      }
+    }
+    return params;
+  } catch {
+    return null;
+  }
+}
+
+class StochV09Tweak203Strategy {
+  params;
+  priceHistory = new Map;
+  kValues = new Map;
+  priceKHistory = new Map;
+  rsiMap = new Map;
+  entryPrice = new Map;
+  initialSize = new Map;
+  profitLevel1Hit = new Map;
+  profitLevel2Hit = new Map;
+  constructor(params = {}) {
+    const savedParams = loadSavedParams203();
+    const merged = { ...defaultParams203, ...savedParams || {}, ...params };
+    this.params = merged;
+    this.params.k_period = Math.max(3, Math.floor(this.params.k_period));
+    this.params.d_period = Math.max(2, Math.floor(this.params.d_period));
+    this.params.rsi_period = Math.max(3, Math.floor(this.params.rsi_period));
+    this.params.divergence_lookback = Math.max(3, Math.floor(this.params.divergence_lookback));
+  }
+  onInit(_ctx) {}
+  calculateStochastic(history) {
+    const highest = Math.max(...history);
+    const lowest = Math.min(...history);
+    return highest === lowest ? 50 : (history[history.length - 1] - lowest) / (highest - lowest) * 100;
+  }
+  detectBullishDivergence(priceKHist) {
+    if (priceKHist.length < this.params.divergence_lookback * 2)
+      return false;
+    const lookback = this.params.divergence_lookback;
+    const recent = priceKHist.slice(-lookback);
+    const previous = priceKHist.slice(-lookback * 2, -lookback);
+    const recentLowPrice = Math.min(...recent.map((p) => p.price));
+    const prevLowPrice = Math.min(...previous.map((p) => p.price));
+    const recentLowK = Math.min(...recent.map((p) => p.k));
+    const prevLowK = Math.min(...previous.map((p) => p.k));
+    const priceMakingLowerLows = recentLowPrice < prevLowPrice * 0.99;
+    const stochMakingHigherLows = recentLowK > prevLowK * 1.01;
+    return priceMakingLowerLows && stochMakingHigherLows;
+  }
+  detectBearishDivergence(priceKHist) {
+    if (priceKHist.length < this.params.divergence_lookback * 2)
+      return false;
+    const lookback = this.params.divergence_lookback;
+    const recent = priceKHist.slice(-lookback);
+    const previous = priceKHist.slice(-lookback * 2, -lookback);
+    const recentHighPrice = Math.max(...recent.map((p) => p.price));
+    const prevHighPrice = Math.max(...previous.map((p) => p.price));
+    const recentHighK = Math.max(...recent.map((p) => p.k));
+    const prevHighK = Math.max(...previous.map((p) => p.k));
+    const priceMakingHigherHighs = recentHighPrice > prevHighPrice * 1.01;
+    const stochMakingLowerHighs = recentHighK < prevHighK * 0.99;
+    return priceMakingHigherHighs && stochMakingLowerHighs;
+  }
+  onNext(ctx, bar) {
+    if (!this.priceHistory.has(bar.tokenId)) {
+      this.priceHistory.set(bar.tokenId, []);
+      this.kValues.set(bar.tokenId, []);
+      this.priceKHistory.set(bar.tokenId, []);
+      this.rsiMap.set(bar.tokenId, new RSI(this.params.rsi_period));
+    }
+    const history = this.priceHistory.get(bar.tokenId);
+    const kVals = this.kValues.get(bar.tokenId);
+    const priceKHist = this.priceKHistory.get(bar.tokenId);
+    const rsi = this.rsiMap.get(bar.tokenId);
+    history.push(bar.close);
+    rsi.update(bar.close);
+    if (history.length > this.params.k_period)
+      history.shift();
+    if (history.length < this.params.k_period)
+      return;
+    const k = this.calculateStochastic(history);
+    kVals.push(k);
+    priceKHist.push({ price: bar.close, k });
+    if (kVals.length > this.params.d_period)
+      kVals.shift();
+    if (priceKHist.length > this.params.divergence_lookback * 3)
+      priceKHist.shift();
+    if (kVals.length < this.params.d_period)
+      return;
+    const d = kVals.reduce((a, b) => a + b, 0) / kVals.length;
+    const rsiVal = rsi.get(0);
+    const position = ctx.getPosition(bar.tokenId);
+    if (position && position.size > 0) {
+      const entry = this.entryPrice.get(bar.tokenId);
+      if (!entry)
+        return;
+      if (bar.close < entry * (1 - this.params.stop_loss)) {
+        ctx.close(bar.tokenId);
+        this.entryPrice.delete(bar.tokenId);
+        this.initialSize.delete(bar.tokenId);
+        this.profitLevel1Hit.delete(bar.tokenId);
+        this.profitLevel2Hit.delete(bar.tokenId);
+        return;
+      }
+      const pl1Hit = this.profitLevel1Hit.get(bar.tokenId) || false;
+      const pl2Hit = this.profitLevel2Hit.get(bar.tokenId) || false;
+      const initialPosSize = this.initialSize.get(bar.tokenId) || position.size;
+      if (!pl1Hit && bar.close >= entry * (1 + this.params.profit_level_1)) {
+        const closeSize = initialPosSize * this.params.partial_close_pct_1;
+        if (closeSize > 0 && closeSize < position.size) {
+          ctx.sell(bar.tokenId, closeSize);
+        }
+        this.profitLevel1Hit.set(bar.tokenId, true);
+      }
+      if (pl1Hit && !pl2Hit && bar.close >= entry * (1 + this.params.profit_level_2)) {
+        const remainingSize = position.size;
+        if (remainingSize > 0) {
+          ctx.sell(bar.tokenId, remainingSize);
+        }
+        this.profitLevel2Hit.set(bar.tokenId, true);
+        this.entryPrice.delete(bar.tokenId);
+        this.initialSize.delete(bar.tokenId);
+        return;
+      }
+      const bearishDiv = this.params.enable_divergence && this.detectBearishDivergence(priceKHist);
+      if (k >= this.params.overbought && k < d && !bearishDiv) {
+        ctx.close(bar.tokenId);
+        this.entryPrice.delete(bar.tokenId);
+        this.initialSize.delete(bar.tokenId);
+        this.profitLevel1Hit.delete(bar.tokenId);
+        this.profitLevel2Hit.delete(bar.tokenId);
+      }
+    } else if (bar.close > 0.05 && bar.close < 0.95) {
+      const stochOversold = k <= this.params.oversold && k > d;
+      const bullishDiv = this.params.enable_divergence && this.detectBullishDivergence(priceKHist);
+      const rsiConfirm = !this.params.enable_rsi_confirm || rsiVal !== undefined && rsiVal <= this.params.rsi_oversold_max;
+      if ((stochOversold || bullishDiv) && rsiConfirm) {
+        const cash = ctx.getCapital() * this.params.risk_percent * 0.995;
+        const size = cash / bar.close;
+        if (size > 0 && cash <= ctx.getCapital()) {
+          const result = ctx.buy(bar.tokenId, size);
+          if (result.success) {
+            this.entryPrice.set(bar.tokenId, bar.close);
+            this.initialSize.set(bar.tokenId, size);
+            this.profitLevel1Hit.set(bar.tokenId, false);
+            this.profitLevel2Hit.set(bar.tokenId, false);
+          }
+        }
+      }
+    }
+  }
+  onComplete(_ctx) {}
+}
+
+// src/strategies/strat_stoch_adaptive_204.ts
+import * as fs204 from "fs";
+import * as path204 from "path";
+var __dirname = "/Users/heinrich/Documents/testbtc/src/strategies";
+var defaultParams204 = {
+  min_k_period: 3,
+  max_k_period: 14,
+  d_period: 3,
+  percentile_lookback: 20,
+  oversold_percentile: 15,
+  overbought_percentile: 85,
+  atr_period: 14,
+  min_atr_threshold: 0.005,
+  volatility_scale: 50,
+  stop_loss: 0.04,
+  risk_percent: 0.1
+};
+function loadSavedParams204() {
+  const paramsPath = path204.join(__dirname, "strat_stoch_adaptive_204.params.json");
+  if (!fs204.existsSync(paramsPath))
+    return null;
+  try {
+    const content = fs204.readFileSync(paramsPath, "utf-8");
+    const saved = JSON.parse(content);
+    const params = {};
+    for (const [key, value] of Object.entries(saved)) {
+      if (key !== "metadata" && key in defaultParams204) {
+        if (typeof value === "number") {
+          params[key] = value;
+        }
+      }
+    }
+    return params;
+  } catch {
+    return null;
+  }
+}
+function percentile(values, p) {
+  if (values.length === 0)
+    return 50;
+  const sorted = [...values].sort((a, b) => a - b);
+  const index = p / 100 * (sorted.length - 1);
+  const lower = Math.floor(index);
+  const upper = Math.ceil(index);
+  const weight = index - lower;
+  if (upper >= sorted.length)
+    return sorted[lower];
+  return sorted[lower] * (1 - weight) + sorted[upper] * weight;
+}
+function mean(values) {
+  if (values.length === 0)
+    return 0;
+  return values.reduce((a, b) => a + b, 0) / values.length;
+}
+
+class StochAdaptiveStrategy {
+  params;
+  priceHistory = new Map;
+  kValues = new Map;
+  entryPrice = new Map;
+  atrIndicators = new Map;
+  kHistory = new Map;
+  atrHistory = new Map;
+  constructor(params = {}) {
+    const savedParams = loadSavedParams204();
+    const mergedParams = { ...defaultParams204, ...savedParams, ...params };
+    const minKPeriod = Math.max(2, Math.floor(mergedParams.min_k_period));
+    const maxKPeriod = Math.max(minKPeriod + 1, Math.floor(mergedParams.max_k_period));
+    this.params = {
+      min_k_period: minKPeriod,
+      max_k_period: maxKPeriod,
+      d_period: Math.max(2, Math.floor(mergedParams.d_period)),
+      percentile_lookback: Math.max(5, Math.floor(mergedParams.percentile_lookback)),
+      oversold_percentile: mergedParams.oversold_percentile,
+      overbought_percentile: mergedParams.overbought_percentile,
+      atr_period: Math.max(5, Math.floor(mergedParams.atr_period)),
+      min_atr_threshold: mergedParams.min_atr_threshold,
+      volatility_scale: mergedParams.volatility_scale,
+      stop_loss: mergedParams.stop_loss,
+      risk_percent: mergedParams.risk_percent
+    };
+  }
+  getATR(tokenId) {
+    let atr = this.atrIndicators.get(tokenId);
+    if (!atr) {
+      atr = new ATR(this.params.atr_period);
+      this.atrIndicators.set(tokenId, atr);
+    }
+    return atr;
+  }
+  getAdaptiveKPeriod(tokenId, currentATR, currentPrice) {
+    const atrHistory = this.atrHistory.get(tokenId) || [];
+    if (atrHistory.length < 5) {
+      return Math.floor((this.params.min_k_period + this.params.max_k_period) / 2);
+    }
+    const avgATR = mean(atrHistory);
+    const relVol = avgATR > 0 ? currentATR / avgATR : 1;
+    const volScale = Math.min(1, Math.max(0, (relVol - 0.5) * this.params.volatility_scale));
+    const adaptivePeriod = Math.floor(this.params.max_k_period - (this.params.max_k_period - this.params.min_k_period) * volScale);
+    return Math.max(this.params.min_k_period, Math.min(this.params.max_k_period, adaptivePeriod));
+  }
+  getAdaptiveLevels(tokenId) {
+    const kHistory = this.kHistory.get(tokenId) || [];
+    if (kHistory.length < this.params.percentile_lookback) {
+      return { oversold: 20, overbought: 80 };
+    }
+    const oversold = percentile(kHistory, this.params.oversold_percentile);
+    const overbought = percentile(kHistory, this.params.overbought_percentile);
+    return { oversold, overbought };
+  }
+  checkVolatilityThreshold(tokenId, currentATR, currentPrice) {
+    if (currentPrice <= 0)
+      return false;
+    const relATR = currentATR / currentPrice;
+    return relATR >= this.params.min_atr_threshold;
+  }
+  onInit(_ctx) {}
+  onNext(ctx, bar) {
+    if (!this.priceHistory.has(bar.tokenId)) {
+      this.priceHistory.set(bar.tokenId, []);
+      this.kValues.set(bar.tokenId, []);
+      this.kHistory.set(bar.tokenId, []);
+      this.atrHistory.set(bar.tokenId, []);
+    }
+    const history = this.priceHistory.get(bar.tokenId);
+    const kVals = this.kValues.get(bar.tokenId);
+    const kHistory = this.kHistory.get(bar.tokenId);
+    const atrHistory = this.atrHistory.get(bar.tokenId);
+    const atr = this.getATR(bar.tokenId);
+    atr.update(bar.high, bar.low, bar.close);
+    const currentATR = atr.get(0);
+    if (currentATR !== undefined) {
+      atrHistory.push(currentATR);
+      if (atrHistory.length > this.params.atr_period * 2) {
+        atrHistory.shift();
+      }
+    }
+    const isVolatileEnough = currentATR !== undefined && this.checkVolatilityThreshold(bar.tokenId, currentATR, bar.close);
+    const kPeriod = this.getAdaptiveKPeriod(bar.tokenId, currentATR || 0, bar.close);
+    history.push(bar.close);
+    const maxHistoryLen = Math.max(kPeriod, this.params.max_k_period) + 5;
+    if (history.length > maxHistoryLen) {
+      history.shift();
+    }
+    if (history.length < kPeriod)
+      return;
+    const periodHistory = history.slice(-kPeriod);
+    const highest = Math.max(...periodHistory);
+    const lowest = Math.min(...periodHistory);
+    const k = highest === lowest ? 50 : (bar.close - lowest) / (highest - lowest) * 100;
+    kVals.push(k);
+    if (kVals.length > this.params.d_period) {
+      kVals.shift();
+    }
+    kHistory.push(k);
+    if (kHistory.length > this.params.percentile_lookback) {
+      kHistory.shift();
+    }
+    if (kVals.length < this.params.d_period)
+      return;
+    const d = kVals.reduce((a, b) => a + b, 0) / kVals.length;
+    const levels = this.getAdaptiveLevels(bar.tokenId);
+    const position = ctx.getPosition(bar.tokenId);
+    if (position && position.size > 0) {
+      const entry = this.entryPrice.get(bar.tokenId);
+      if (entry) {
+        if (bar.close < entry * (1 - this.params.stop_loss)) {
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+          return;
+        }
+        if (k >= levels.overbought && k < d) {
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+        }
+      }
+    } else if (bar.close > 0.05 && bar.close < 0.95) {
+      if (!isVolatileEnough)
+        return;
+      if (k <= levels.oversold && k > d) {
+        const cash = ctx.getCapital() * this.params.risk_percent * 0.995;
+        const size = cash / bar.close;
+        if (size > 0 && cash <= ctx.getCapital()) {
+          const result = ctx.buy(bar.tokenId, size);
+          if (result.success) {
+            this.entryPrice.set(bar.tokenId, bar.close);
+          }
+        }
+      }
+    }
+  }
+  onComplete(_ctx) {}
+}
+
+// src/strategies/strat_rsi_stoch_combo_205.ts
+import * as fs205 from "fs";
+import * as path205 from "path";
+var __dirname = "/Users/heinrich/Documents/testbtc/src/strategies";
+var defaultParams205 = {
+  rsi_period: 14,
+  divergence_lookback: 5,
+  k_period: 14,
+  d_period: 3,
+  oversold: 20,
+  overbought: 80,
+  signal_window: 3,
+  stop_loss: 0.05,
+  risk_percent: 0.1
+};
+function loadSavedParams205() {
+  const paramsPath = path205.join(__dirname, "strat_rsi_stoch_combo_205.params.json");
+  if (!fs205.existsSync(paramsPath))
+    return null;
+  try {
+    const content = fs205.readFileSync(paramsPath, "utf-8");
+    const saved = JSON.parse(content);
+    const params = {};
+    for (const [key, value] of Object.entries(saved)) {
+      if (key !== "metadata" && key in defaultParams205) {
+        if (typeof value === "number") {
+          params[key] = value;
+        }
+      }
+    }
+    return params;
+  } catch {
+    return null;
+  }
+}
+
+class RsiStochCombo205Strategy {
+  params;
+  rsiMap = new Map;
+  priceHistory = new Map;
+  rsiHistory = new Map;
+  stochPriceHistory = new Map;
+  kValues = new Map;
+  divergenceSignalBar = new Map;
+  stochSignalBar = new Map;
+  entryPrice = new Map;
+  barCount = new Map;
+  constructor(params = {}) {
+    const savedParams = loadSavedParams205();
+    this.params = { ...defaultParams205, ...savedParams, ...params };
+    this.params.rsi_period = Math.max(3, Math.floor(this.params.rsi_period));
+    this.params.divergence_lookback = Math.max(3, Math.floor(this.params.divergence_lookback));
+    this.params.k_period = Math.max(3, Math.floor(this.params.k_period));
+    this.params.d_period = Math.max(2, Math.floor(this.params.d_period));
+    this.params.signal_window = Math.max(1, Math.floor(this.params.signal_window));
+  }
+  onInit(_ctx) {}
+  onNext(ctx, bar) {
+    const currentBarCount = (this.barCount.get(bar.tokenId) || 0) + 1;
+    this.barCount.set(bar.tokenId, currentBarCount);
+    if (!this.rsiMap.has(bar.tokenId)) {
+      this.rsiMap.set(bar.tokenId, new RSI(this.params.rsi_period));
+      this.priceHistory.set(bar.tokenId, []);
+      this.rsiHistory.set(bar.tokenId, []);
+      this.stochPriceHistory.set(bar.tokenId, []);
+      this.kValues.set(bar.tokenId, []);
+    }
+    const rsi = this.rsiMap.get(bar.tokenId);
+    rsi.update(bar.close);
+    const rsiVal = rsi.get(0);
+    if (rsiVal === undefined)
+      return;
+    const prices = this.priceHistory.get(bar.tokenId);
+    const rsis = this.rsiHistory.get(bar.tokenId);
+    prices.push(bar.close);
+    rsis.push(rsiVal);
+    if (prices.length > this.params.divergence_lookback) {
+      prices.shift();
+      rsis.shift();
+    }
+    const stochHistory = this.stochPriceHistory.get(bar.tokenId);
+    const kVals = this.kValues.get(bar.tokenId);
+    stochHistory.push(bar.close);
+    if (stochHistory.length > this.params.k_period) {
+      stochHistory.shift();
+    }
+    let k;
+    let d;
+    if (stochHistory.length >= this.params.k_period) {
+      const highest = Math.max(...stochHistory);
+      const lowest = Math.min(...stochHistory);
+      k = highest === lowest ? 50 : (bar.close - lowest) / (highest - lowest) * 100;
+      kVals.push(k);
+      if (kVals.length > this.params.d_period) {
+        kVals.shift();
+      }
+      if (kVals.length >= this.params.d_period) {
+        d = kVals.reduce((a, b) => a + b, 0) / kVals.length;
+      }
+    }
+    const position = ctx.getPosition(bar.tokenId);
+    if (position && position.size > 0) {
+      const entry = this.entryPrice.get(bar.tokenId);
+      if (entry) {
+        if (bar.close < entry * (1 - this.params.stop_loss)) {
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+          this.divergenceSignalBar.delete(bar.tokenId);
+          this.stochSignalBar.delete(bar.tokenId);
+          return;
+        }
+        if (rsiVal >= this.params.overbought || k !== undefined && k >= this.params.overbought) {
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+          this.divergenceSignalBar.delete(bar.tokenId);
+          this.stochSignalBar.delete(bar.tokenId);
+        }
+      }
+      return;
+    }
+    if (bar.close > 0.05 && bar.close < 0.95) {
+      let bearishDiv = false;
+      if (prices.length >= this.params.divergence_lookback) {
+        const priceHigh = Math.max(...prices.slice(0, -1));
+        const rsiHigh = Math.max(...rsis.slice(0, -1));
+        bearishDiv = bar.close >= priceHigh && rsiVal < rsiHigh && rsiVal > this.params.overbought;
+      }
+      let bullishDiv = false;
+      if (prices.length >= this.params.divergence_lookback) {
+        const priceLow = Math.min(...prices.slice(0, -1));
+        const rsiLow = Math.min(...rsis.slice(0, -1));
+        bullishDiv = bar.close <= priceLow && rsiVal > rsiLow && rsiVal < this.params.oversold;
+      }
+      let stochOversold = false;
+      let stochOverbought = false;
+      if (k !== undefined && d !== undefined) {
+        stochOversold = k <= this.params.oversold && k > d;
+        stochOverbought = k >= this.params.overbought && k < d;
+      }
+      const window = this.params.signal_window;
+      if (bullishDiv) {
+        this.divergenceSignalBar.set(bar.tokenId, currentBarCount);
+      }
+      if (stochOversold) {
+        this.stochSignalBar.set(bar.tokenId, currentBarCount);
+      }
+      const divBar = this.divergenceSignalBar.get(bar.tokenId);
+      const stochBar = this.stochSignalBar.get(bar.tokenId);
+      const hasDivergenceSignal = divBar !== undefined && currentBarCount - divBar <= window;
+      const hasStochSignal = stochBar !== undefined && currentBarCount - stochBar <= window;
+      if (hasDivergenceSignal && hasStochSignal && bar.close > 0.05 && bar.close < 0.95) {
+        const cash = ctx.getCapital() * this.params.risk_percent * 0.995;
+        const size = cash / bar.close;
+        if (size > 0 && cash <= ctx.getCapital()) {
+          const result = ctx.buy(bar.tokenId, size);
+          if (result.success) {
+            this.entryPrice.set(bar.tokenId, bar.close);
+            this.divergenceSignalBar.delete(bar.tokenId);
+            this.stochSignalBar.delete(bar.tokenId);
+          }
+        }
+      }
+    }
+  }
+  onComplete(_ctx) {}
+}
+
+// src/strategies/strat_volatility_breakout_206.ts
+import * as fs206 from "fs";
+import * as path206 from "path";
+var __dirname = "/Users/heinrich/Documents/testbtc/src/strategies";
+var defaultParams206 = {
+  atr_period: 14,
+  atr_multiplier: 0.5,
+  lookback: 20,
+  volume_period: 10,
+  stop_loss: 0.04,
+  trailing_stop: 0.03,
+  risk_percent: 0.1
+};
+function loadSavedParams206() {
+  const paramsPath = path206.join(__dirname, "strat_volatility_breakout_206.params.json");
+  if (!fs206.existsSync(paramsPath))
+    return null;
+  try {
+    const content = fs206.readFileSync(paramsPath, "utf-8");
+    const saved = JSON.parse(content);
+    const params = {};
+    for (const [key, value] of Object.entries(saved)) {
+      if (key !== "metadata" && key in defaultParams206) {
+        if (typeof value === "number") {
+          params[key] = value;
+        }
+      }
+    }
+    return params;
+  } catch {
+    return null;
+  }
+}
+
+class VolatilityBreakoutStrategy {
+  params;
+  atrIndicators = new Map;
+  priceHistory = new Map;
+  highHistory = new Map;
+  lowHistory = new Map;
+  volumeHistory = new Map;
+  entryPrice = new Map;
+  highestPrice = new Map;
+  lowestPrice = new Map;
+  positionSide = new Map;
+  constructor(params = {}) {
+    const savedParams = loadSavedParams206();
+    const mergedParams = { ...defaultParams206, ...savedParams, ...params };
+    this.params = {
+      atr_period: Math.max(2, Math.floor(mergedParams.atr_period)),
+      atr_multiplier: mergedParams.atr_multiplier,
+      lookback: Math.max(2, Math.floor(mergedParams.lookback)),
+      volume_period: Math.max(2, Math.floor(mergedParams.volume_period)),
+      stop_loss: mergedParams.stop_loss,
+      trailing_stop: mergedParams.trailing_stop,
+      risk_percent: mergedParams.risk_percent
+    };
+  }
+  onInit(_ctx) {
+    console.log(`Volatility Breakout Strategy initialized with params:`);
+    console.log(`  ATR Period: ${this.params.atr_period}`);
+    console.log(`  ATR Multiplier: ${this.params.atr_multiplier}`);
+    console.log(`  Lookback: ${this.params.lookback}`);
+    console.log(`  Volume Period: ${this.params.volume_period}`);
+    console.log(`  Stop Loss: ${(this.params.stop_loss * 100).toFixed(2)}%`);
+    console.log(`  Trailing Stop: ${(this.params.trailing_stop * 100).toFixed(2)}%`);
+    console.log(`  Risk Percent: ${(this.params.risk_percent * 100).toFixed(2)}%`);
+  }
+  onNext(ctx, bar) {
+    if (!this.atrIndicators.has(bar.tokenId)) {
+      this.atrIndicators.set(bar.tokenId, new ATR(this.params.atr_period));
+      this.priceHistory.set(bar.tokenId, []);
+      this.highHistory.set(bar.tokenId, []);
+      this.lowHistory.set(bar.tokenId, []);
+      this.volumeHistory.set(bar.tokenId, []);
+    }
+    const atrIndicator = this.atrIndicators.get(bar.tokenId);
+    const priceHist = this.priceHistory.get(bar.tokenId);
+    const highHist = this.highHistory.get(bar.tokenId);
+    const lowHist = this.lowHistory.get(bar.tokenId);
+    const volumeHist = this.volumeHistory.get(bar.tokenId);
+    atrIndicator.update(bar.high, bar.low, bar.close);
+    const atr = atrIndicator.get(0);
+    priceHist.push(bar.close);
+    highHist.push(bar.high);
+    lowHist.push(bar.low);
+    const priceRange = bar.high - bar.low;
+    const volumeProxy = priceRange > 0 ? priceRange : 0;
+    volumeHist.push(volumeProxy);
+    if (priceHist.length > this.params.lookback) {
+      priceHist.shift();
+      highHist.shift();
+      lowHist.shift();
+    }
+    if (volumeHist.length > this.params.volume_period) {
+      volumeHist.shift();
+    }
+    if (priceHist.length < this.params.lookback || atr === undefined) {
+      return;
+    }
+    const avgVolume = volumeHist.length > 0 ? volumeHist.reduce((a, b) => a + b, 0) / volumeHist.length : 0;
+    const volumeConfirmed = volumeProxy > avgVolume;
+    const recentHigh = Math.max(...highHist.slice(0, -1));
+    const recentLow = Math.min(...lowHist.slice(0, -1));
+    const longBreakoutLevel = recentHigh + this.params.atr_multiplier * atr;
+    const shortBreakoutLevel = recentLow - this.params.atr_multiplier * atr;
+    const position = ctx.getPosition(bar.tokenId);
+    if (position && position.size > 0) {
+      const entry = this.entryPrice.get(bar.tokenId);
+      const side = this.positionSide.get(bar.tokenId);
+      if (entry !== undefined && side !== undefined) {
+        if (side === "long" && bar.close < entry * (1 - this.params.stop_loss)) {
+          console.log(`[${new Date(bar.timestamp * 1000).toISOString()}] Stop loss (long) for ${bar.tokenId.slice(0, 8)}... at ${bar.close.toFixed(4)}`);
+          ctx.close(bar.tokenId);
+          this.clearPositionState(bar.tokenId);
+          return;
+        }
+        if (side === "short" && bar.close > entry * (1 + this.params.stop_loss)) {
+          console.log(`[${new Date(bar.timestamp * 1000).toISOString()}] Stop loss (short) for ${bar.tokenId.slice(0, 8)}... at ${bar.close.toFixed(4)}`);
+          ctx.close(bar.tokenId);
+          this.clearPositionState(bar.tokenId);
+          return;
+        }
+        if (side === "long") {
+          const highest = Math.max(this.highestPrice.get(bar.tokenId) ?? entry, bar.close);
+          this.highestPrice.set(bar.tokenId, highest);
+          if (bar.close < highest * (1 - this.params.trailing_stop) && bar.close > entry) {
+            console.log(`[${new Date(bar.timestamp * 1000).toISOString()}] Trailing stop (long) for ${bar.tokenId.slice(0, 8)}... at ${bar.close.toFixed(4)}`);
+            ctx.close(bar.tokenId);
+            this.clearPositionState(bar.tokenId);
+            return;
+          }
+        }
+        if (side === "short") {
+          const lowest = Math.min(this.lowestPrice.get(bar.tokenId) ?? entry, bar.close);
+          this.lowestPrice.set(bar.tokenId, lowest);
+          if (bar.close > lowest * (1 + this.params.trailing_stop) && bar.close < entry) {
+            console.log(`[${new Date(bar.timestamp * 1000).toISOString()}] Trailing stop (short) for ${bar.tokenId.slice(0, 8)}... at ${bar.close.toFixed(4)}`);
+            ctx.close(bar.tokenId);
+            this.clearPositionState(bar.tokenId);
+            return;
+          }
+        }
+        if (side === "long" && bar.close < shortBreakoutLevel && volumeConfirmed) {
+          console.log(`[${new Date(bar.timestamp * 1000).toISOString()}] Exit long (opposite signal) for ${bar.tokenId.slice(0, 8)}... at ${bar.close.toFixed(4)}`);
+          ctx.close(bar.tokenId);
+          this.clearPositionState(bar.tokenId);
+          return;
+        }
+        if (side === "short" && bar.close > longBreakoutLevel && volumeConfirmed) {
+          console.log(`[${new Date(bar.timestamp * 1000).toISOString()}] Exit short (opposite signal) for ${bar.tokenId.slice(0, 8)}... at ${bar.close.toFixed(4)}`);
+          ctx.close(bar.tokenId);
+          this.clearPositionState(bar.tokenId);
+          return;
+        }
+      }
+    } else {
+      if (!volumeConfirmed) {
+        return;
+      }
+      const feeBuffer = 0.995;
+      const cash = ctx.getCapital() * this.params.risk_percent * feeBuffer;
+      if (bar.close > longBreakoutLevel) {
+        const size = cash / bar.close;
+        if (size > 0 && cash <= ctx.getCapital()) {
+          console.log(`[${new Date(bar.timestamp * 1000).toISOString()}] Long breakout for ${bar.tokenId.slice(0, 8)}... at ${bar.close.toFixed(4)}, level: ${longBreakoutLevel.toFixed(4)}, ATR: ${atr.toFixed(4)}`);
+          const result = ctx.buy(bar.tokenId, size);
+          if (result.success) {
+            this.entryPrice.set(bar.tokenId, bar.close);
+            this.highestPrice.set(bar.tokenId, bar.close);
+            this.positionSide.set(bar.tokenId, "long");
+          } else {
+            console.error(`  Order failed: ${result.error}`);
+          }
+        }
+        return;
+      }
+      if (bar.close < shortBreakoutLevel) {
+        const size = cash / bar.close;
+        if (size > 0 && cash <= ctx.getCapital()) {
+          console.log(`[${new Date(bar.timestamp * 1000).toISOString()}] Short breakout for ${bar.tokenId.slice(0, 8)}... at ${bar.close.toFixed(4)}, level: ${shortBreakoutLevel.toFixed(4)}, ATR: ${atr.toFixed(4)}`);
+          const result = ctx.sell(bar.tokenId, size);
+          if (result.success) {
+            this.entryPrice.set(bar.tokenId, bar.close);
+            this.lowestPrice.set(bar.tokenId, bar.close);
+            this.positionSide.set(bar.tokenId, "short");
+          } else {
+            console.error(`  Order failed: ${result.error}`);
+          }
+        }
+      }
+    }
+  }
+  clearPositionState(tokenId) {
+    this.entryPrice.delete(tokenId);
+    this.highestPrice.delete(tokenId);
+    this.lowestPrice.delete(tokenId);
+    this.positionSide.delete(tokenId);
+  }
+  onComplete(ctx) {
+    console.log(`
+Strategy completed.`);
+    const positions = ctx.portfolio.getAllPositions();
+    if (positions.length > 0) {
+      console.log(`Open positions: ${positions.length}`);
+      for (const pos of positions) {
+        const side = this.positionSide.get(pos.tokenId) ?? "long";
+        console.log(`  ${pos.tokenId.slice(0, 8)}...: ${side} ${pos.size.toFixed(2)} @ ${pos.avgPrice.toFixed(4)}`);
+      }
+    }
+  }
+}
+
+// src/strategies/strat_trend_following_ma_207.ts
+import * as fs207 from "fs";
+import * as path207 from "path";
+var __dirname = "/Users/heinrich/Documents/testbtc/src/strategies";
+var defaultParams207 = {
+  fast_period: 10,
+  medium_period: 25,
+  slow_period: 50,
+  adx_period: 14,
+  adx_threshold: 25,
+  pullback_threshold: 0.005,
+  stop_loss: 0.03,
+  trailing_stop: 0.025,
+  risk_percent: 0.15,
+  take_profit_enabled: false,
+  take_profit: 0.08
+};
+
+class ADX extends Indicator {
+  period;
+  highs = [];
+  lows = [];
+  closes = [];
+  prevClose = null;
+  plusDMValues = [];
+  minusDMValues = [];
+  trValues = [];
+  prevADX = null;
+  smoothedTR = 0;
+  smoothedPlusDM = 0;
+  smoothedMinusDM = 0;
+  initialized = false;
+  constructor(period) {
+    super();
+    this.period = period;
+  }
+  update(high, low, close) {
+    this.highs.push(high);
+    this.lows.push(low);
+    this.closes.push(close);
+    if (this.highs.length > this.period + 1) {
+      this.highs.shift();
+      this.lows.shift();
+      this.closes.shift();
+    }
+    if (this.closes.length < 2) {
+      this.prevClose = close;
+      return;
+    }
+    const prevHigh = this.highs[this.highs.length - 2];
+    const prevLow = this.lows[this.lows.length - 2];
+    const plusDM = high - prevHigh > prevLow - low ? Math.max(high - prevHigh, 0) : 0;
+    const minusDM = prevLow - low > high - prevHigh ? Math.max(prevLow - low, 0) : 0;
+    const tr = Math.max(high - low, Math.abs(high - this.prevClose), Math.abs(low - this.prevClose));
+    this.plusDMValues.push(plusDM);
+    this.minusDMValues.push(minusDM);
+    this.trValues.push(tr);
+    if (this.plusDMValues.length > this.period) {
+      this.plusDMValues.shift();
+      this.minusDMValues.shift();
+      this.trValues.shift();
+    }
+    if (this.plusDMValues.length === this.period && !this.initialized) {
+      this.smoothedTR = this.trValues.reduce((a, b) => a + b, 0);
+      this.smoothedPlusDM = this.plusDMValues.reduce((a, b) => a + b, 0);
+      this.smoothedMinusDM = this.minusDMValues.reduce((a, b) => a + b, 0);
+      this.initialized = true;
+    } else if (this.initialized) {
+      this.smoothedTR = this.smoothedTR - this.smoothedTR / this.period + tr;
+      this.smoothedPlusDM = this.smoothedPlusDM - this.smoothedPlusDM / this.period + plusDM;
+      this.smoothedMinusDM = this.smoothedMinusDM - this.smoothedMinusDM / this.period + minusDM;
+    }
+    if (this.initialized && this.smoothedTR > 0) {
+      const plusDI = this.smoothedPlusDM / this.smoothedTR * 100;
+      const minusDI = this.smoothedMinusDM / this.smoothedTR * 100;
+      const dx = Math.abs(plusDI - minusDI) / (plusDI + minusDI + 0.0001) * 100;
+      if (this.prevADX === null) {
+        this.prevADX = dx;
+      } else {
+        this.prevADX = (this.prevADX * (this.period - 1) + dx) / this.period;
+      }
+      this.push(this.prevADX);
+    }
+    this.prevClose = close;
+  }
+}
+function loadSavedParams207() {
+  const paramsPath = path207.join(__dirname, "strat_trend_following_ma_207.params.json");
+  if (!fs207.existsSync(paramsPath))
+    return null;
+  try {
+    const content = fs207.readFileSync(paramsPath, "utf-8");
+    const saved = JSON.parse(content);
+    const params = {};
+    for (const [key, value] of Object.entries(saved)) {
+      if (key !== "metadata" && key in defaultParams207) {
+        if (typeof value === "number") {
+          params[key] = value;
+        } else if (typeof value === "boolean") {
+          params[key] = value;
+        }
+      }
+    }
+    return params;
+  } catch {
+    return null;
+  }
+}
+
+class TrendFollowingMAStrategy {
+  params;
+  fastMAs = new Map;
+  mediumMAs = new Map;
+  slowMAs = new Map;
+  adxs = new Map;
+  entryPrice = new Map;
+  highestPrice = new Map;
+  pullbackTriggered = new Map;
+  constructor(params = {}) {
+    const savedParams = loadSavedParams207();
+    const mergedParams = { ...defaultParams207, ...savedParams, ...params };
+    const sorted = [
+      mergedParams.fast_period,
+      mergedParams.medium_period,
+      mergedParams.slow_period
+    ].sort((a, b) => a - b);
+    this.params = {
+      fast_period: Math.max(2, Math.floor(sorted[0])),
+      medium_period: Math.max(3, Math.floor(sorted[1])),
+      slow_period: Math.max(4, Math.floor(sorted[2])),
+      adx_period: mergedParams.adx_period,
+      adx_threshold: mergedParams.adx_threshold,
+      pullback_threshold: mergedParams.pullback_threshold,
+      stop_loss: mergedParams.stop_loss,
+      trailing_stop: mergedParams.trailing_stop,
+      risk_percent: mergedParams.risk_percent,
+      take_profit_enabled: mergedParams.take_profit_enabled,
+      take_profit: mergedParams.take_profit
+    };
+  }
+  onInit(_ctx) {
+    console.log(`TrendFollowingMAStrategy initialized with params:`);
+    console.log(`  Fast MA period: ${this.params.fast_period}`);
+    console.log(`  Medium MA period: ${this.params.medium_period}`);
+    console.log(`  Slow MA period: ${this.params.slow_period}`);
+    console.log(`  ADX period: ${this.params.adx_period}`);
+    console.log(`  ADX threshold: ${this.params.adx_threshold}`);
+    console.log(`  Pullback threshold: ${this.params.pullback_threshold * 100}%`);
+    console.log(`  Stop loss: ${this.params.stop_loss * 100}%`);
+    console.log(`  Trailing stop: ${this.params.trailing_stop * 100}%`);
+    console.log(`  Risk percent: ${this.params.risk_percent * 100}%`);
+    console.log(`  Take Profit: ${this.params.take_profit_enabled ? `${this.params.take_profit * 100}%` : "disabled"}`);
+  }
+  onNext(ctx, bar) {
+    if (!this.fastMAs.has(bar.tokenId)) {
+      this.fastMAs.set(bar.tokenId, new SimpleMovingAverage(this.params.fast_period));
+      this.mediumMAs.set(bar.tokenId, new SimpleMovingAverage(this.params.medium_period));
+      this.slowMAs.set(bar.tokenId, new SimpleMovingAverage(this.params.slow_period));
+      this.adxs.set(bar.tokenId, new ADX(this.params.adx_period));
+      this.pullbackTriggered.set(bar.tokenId, false);
+    }
+    const fastMA = this.fastMAs.get(bar.tokenId);
+    const mediumMA = this.mediumMAs.get(bar.tokenId);
+    const slowMA = this.slowMAs.get(bar.tokenId);
+    const adx = this.adxs.get(bar.tokenId);
+    fastMA.update(bar.close);
+    mediumMA.update(bar.close);
+    slowMA.update(bar.close);
+    adx.update(bar.high, bar.low, bar.close);
+    const fastVal = fastMA.get(0);
+    const mediumVal = mediumMA.get(0);
+    const slowVal = slowMA.get(0);
+    const adxVal = adx.get(0);
+    if (fastVal === undefined || mediumVal === undefined || slowVal === undefined)
+      return;
+    const bullishAlignment = fastVal > mediumVal && mediumVal > slowVal;
+    const bearishAlignment = fastVal < mediumVal && mediumVal < slowVal;
+    const strongTrend = adxVal !== undefined && adxVal > this.params.adx_threshold;
+    const position = ctx.getPosition(bar.tokenId);
+    if (position && position.size > 0) {
+      const entry = this.entryPrice.get(bar.tokenId);
+      if (entry) {
+        if (bar.close < entry * (1 - this.params.stop_loss)) {
+          console.log(`[${new Date(bar.timestamp * 1000).toISOString()}] Stop loss triggered for ${bar.tokenId.slice(0, 8)}... at ${bar.close.toFixed(4)}`);
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+          this.highestPrice.delete(bar.tokenId);
+          this.pullbackTriggered.delete(bar.tokenId);
+          return;
+        }
+        const highest = Math.max(this.highestPrice.get(bar.tokenId) ?? entry, bar.close);
+        this.highestPrice.set(bar.tokenId, highest);
+        if (bar.close < highest * (1 - this.params.trailing_stop) && bar.close > entry) {
+          console.log(`[${new Date(bar.timestamp * 1000).toISOString()}] Trailing stop triggered for ${bar.tokenId.slice(0, 8)}... at ${bar.close.toFixed(4)}`);
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+          this.highestPrice.delete(bar.tokenId);
+          this.pullbackTriggered.delete(bar.tokenId);
+          return;
+        }
+        if (this.params.take_profit_enabled) {
+          const tpPrice = entry * (1 + this.params.take_profit);
+          if (bar.close >= tpPrice) {
+            console.log(`[${new Date(bar.timestamp * 1000).toISOString()}] Take profit triggered for ${bar.tokenId.slice(0, 8)}... at ${bar.close.toFixed(4)}`);
+            ctx.close(bar.tokenId);
+            this.entryPrice.delete(bar.tokenId);
+            this.highestPrice.delete(bar.tokenId);
+            this.pullbackTriggered.delete(bar.tokenId);
+            return;
+          }
+        }
+        if (bearishAlignment) {
+          console.log(`[${new Date(bar.timestamp * 1000).toISOString()}] Bearish alignment exit for ${bar.tokenId.slice(0, 8)}... at ${bar.close.toFixed(4)}`);
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+          this.highestPrice.delete(bar.tokenId);
+          this.pullbackTriggered.delete(bar.tokenId);
+        }
+      }
+    } else {
+      if (bullishAlignment && strongTrend) {
+        const distanceToMedium = Math.abs(bar.close - mediumVal) / mediumVal;
+        const isNearMediumMA = distanceToMedium <= this.params.pullback_threshold;
+        if (isNearMediumMA && bar.close >= mediumVal) {
+          const cash = ctx.getCapital() * this.params.risk_percent * 0.995;
+          const size = cash / bar.close;
+          if (size > 0 && cash <= ctx.getCapital()) {
+            console.log(`[${new Date(bar.timestamp * 1000).toISOString()}] BUY signal for ${bar.tokenId.slice(0, 8)}... at ${bar.close.toFixed(4)}, size: ${size.toFixed(4)}, ADX: ${adxVal?.toFixed(2) ?? "N/A"}`);
+            const result = ctx.buy(bar.tokenId, size);
+            if (result.success) {
+              this.entryPrice.set(bar.tokenId, bar.close);
+              this.highestPrice.set(bar.tokenId, bar.close);
+              this.pullbackTriggered.set(bar.tokenId, true);
+            } else {
+              console.error(`  Order failed: ${result.error}`);
+            }
+          }
+        }
+      }
+    }
+  }
+  onComplete(ctx) {
+    console.log(`
+Strategy completed.`);
+    const positions = ctx.portfolio.getAllPositions();
+    if (positions.length > 0) {
+      console.log(`Open positions: ${positions.length}`);
+      for (const pos of positions) {
+        console.log(`  ${pos.tokenId.slice(0, 8)}...: ${pos.size.toFixed(4)} @ ${pos.avgPrice.toFixed(4)}`);
+      }
+    }
+  }
+}
+
+// src/strategies/strat_mean_reversion_band_208.ts
+import * as fs208 from "fs";
+import * as path208 from "path";
+var __dirname = "/Users/heinrich/Documents/testbtc/src/strategies";
+var defaultParams208 = {
+  bb_period: 20,
+  bb_stddev_mult: 2,
+  rsi_period: 14,
+  rsi_oversold: 30,
+  rsi_overbought: 70,
+  stop_loss: 0.05,
+  trailing_stop: 0.03,
+  risk_percent: 0.1
+};
+function loadSavedParams208() {
+  const paramsPath = path208.join(__dirname, "strat_mean_reversion_band_208.params.json");
+  if (!fs208.existsSync(paramsPath))
+    return null;
+  try {
+    const content = fs208.readFileSync(paramsPath, "utf-8");
+    const saved = JSON.parse(content);
+    const params = {};
+    for (const [key, value] of Object.entries(saved)) {
+      if (key !== "metadata" && key in defaultParams208) {
+        if (typeof value === "number") {
+          params[key] = value;
+        }
+      }
+    }
+    return params;
+  } catch {
+    return null;
+  }
+}
+
+class MeanReversionBandV208Strategy {
+  params;
+  smaMap = new Map;
+  rsiMap = new Map;
+  priceHistoryMap = new Map;
+  entryPriceMap = new Map;
+  highestPriceMap = new Map;
+  lowestPriceMap = new Map;
+  prevPriceMap = new Map;
+  positionSideMap = new Map;
+  constructor(params = {}) {
+    const savedParams = loadSavedParams208() ?? {};
+    const merged = { ...defaultParams208 };
+    for (const [key, value] of Object.entries(savedParams)) {
+      if (typeof value === "number" && key in defaultParams208) {
+        merged[key] = value;
+      }
+    }
+    for (const [key, value] of Object.entries(params)) {
+      if (typeof value === "number" && key in defaultParams208) {
+        merged[key] = value;
+      }
+    }
+    this.params = merged;
+  }
+  onInit(_ctx) {}
+  calculateBollingerBands(prices) {
+    const period = Math.max(3, Math.floor(this.params.bb_period));
+    if (prices.length < period)
+      return;
+    const recentPrices = prices.slice(-period);
+    const sum = recentPrices.reduce((a, b) => a + b, 0);
+    const mean2 = sum / period;
+    const squaredDiffs = recentPrices.map((p) => Math.pow(p - mean2, 2));
+    const variance = squaredDiffs.reduce((a, b) => a + b, 0) / period;
+    const stddev7 = Math.sqrt(variance);
+    const multiplier = Math.max(0.5, this.params.bb_stddev_mult);
+    return {
+      upper: mean2 + multiplier * stddev7,
+      middle: mean2,
+      lower: mean2 - multiplier * stddev7
+    };
+  }
+  isRising(priceHistory) {
+    if (priceHistory.length < 2)
+      return false;
+    const current = priceHistory[priceHistory.length - 1];
+    const previous = priceHistory[priceHistory.length - 2];
+    return current > previous;
+  }
+  isFalling(priceHistory) {
+    if (priceHistory.length < 2)
+      return false;
+    const current = priceHistory[priceHistory.length - 1];
+    const previous = priceHistory[priceHistory.length - 2];
+    return current < previous;
+  }
+  onNext(ctx, bar) {
+    const period = Math.max(3, Math.floor(this.params.bb_period));
+    if (!this.smaMap.has(bar.tokenId)) {
+      this.smaMap.set(bar.tokenId, new SimpleMovingAverage(period));
+      this.rsiMap.set(bar.tokenId, new RSI(Math.max(3, Math.floor(this.params.rsi_period))));
+      this.priceHistoryMap.set(bar.tokenId, []);
+    }
+    const sma = this.smaMap.get(bar.tokenId);
+    const rsi = this.rsiMap.get(bar.tokenId);
+    const priceHistory = this.priceHistoryMap.get(bar.tokenId);
+    sma.update(bar.close);
+    rsi.update(bar.close);
+    priceHistory.push(bar.close);
+    if (priceHistory.length > period * 2) {
+      priceHistory.shift();
+    }
+    const bb = this.calculateBollingerBands(priceHistory);
+    const rsiVal = rsi.get(0);
+    if (!bb || rsiVal === undefined)
+      return;
+    const position = ctx.getPosition(bar.tokenId);
+    const side = this.positionSideMap.get(bar.tokenId);
+    if (position && position.size > 0) {
+      const entry = this.entryPriceMap.get(bar.tokenId);
+      if (!entry)
+        return;
+      if (side === "long") {
+        if (bar.close < entry * (1 - this.params.stop_loss)) {
+          ctx.close(bar.tokenId);
+          this.entryPriceMap.delete(bar.tokenId);
+          this.highestPriceMap.delete(bar.tokenId);
+          this.lowestPriceMap.delete(bar.tokenId);
+          this.positionSideMap.delete(bar.tokenId);
+          return;
+        }
+        const highest = Math.max(this.highestPriceMap.get(bar.tokenId) ?? entry, bar.close);
+        this.highestPriceMap.set(bar.tokenId, highest);
+        if (bar.close < highest * (1 - this.params.trailing_stop) && bar.close > entry) {
+          ctx.close(bar.tokenId);
+          this.entryPriceMap.delete(bar.tokenId);
+          this.highestPriceMap.delete(bar.tokenId);
+          this.lowestPriceMap.delete(bar.tokenId);
+          this.positionSideMap.delete(bar.tokenId);
+          return;
+        }
+        if (bar.close >= bb.middle || rsiVal >= this.params.rsi_overbought) {
+          ctx.close(bar.tokenId);
+          this.entryPriceMap.delete(bar.tokenId);
+          this.highestPriceMap.delete(bar.tokenId);
+          this.lowestPriceMap.delete(bar.tokenId);
+          this.positionSideMap.delete(bar.tokenId);
+          return;
+        }
+      } else if (side === "short") {
+        if (bar.close > entry * (1 + this.params.stop_loss)) {
+          ctx.close(bar.tokenId);
+          this.entryPriceMap.delete(bar.tokenId);
+          this.highestPriceMap.delete(bar.tokenId);
+          this.lowestPriceMap.delete(bar.tokenId);
+          this.positionSideMap.delete(bar.tokenId);
+          return;
+        }
+        const lowest = Math.min(this.lowestPriceMap.get(bar.tokenId) ?? entry, bar.close);
+        this.lowestPriceMap.set(bar.tokenId, lowest);
+        if (bar.close > lowest * (1 + this.params.trailing_stop) && bar.close < entry) {
+          ctx.close(bar.tokenId);
+          this.entryPriceMap.delete(bar.tokenId);
+          this.highestPriceMap.delete(bar.tokenId);
+          this.lowestPriceMap.delete(bar.tokenId);
+          this.positionSideMap.delete(bar.tokenId);
+          return;
+        }
+        if (bar.close <= bb.middle || rsiVal <= this.params.rsi_oversold) {
+          ctx.close(bar.tokenId);
+          this.entryPriceMap.delete(bar.tokenId);
+          this.highestPriceMap.delete(bar.tokenId);
+          this.lowestPriceMap.delete(bar.tokenId);
+          this.positionSideMap.delete(bar.tokenId);
+          return;
+        }
+      }
+    } else if (bar.close > 0.05 && bar.close < 0.95) {
+      const isPriceRising = this.isRising(priceHistory);
+      const isPriceFalling = this.isFalling(priceHistory);
+      if (bar.close <= bb.lower && isPriceRising && rsiVal > this.params.rsi_oversold) {
+        const cash = ctx.getCapital() * this.params.risk_percent * 0.995;
+        const size = cash / bar.close;
+        if (size > 0 && cash <= ctx.getCapital()) {
+          const result = ctx.buy(bar.tokenId, size);
+          if (result.success) {
+            this.entryPriceMap.set(bar.tokenId, bar.close);
+            this.highestPriceMap.set(bar.tokenId, bar.close);
+            this.positionSideMap.set(bar.tokenId, "long");
+          }
+        }
+      } else if (bar.close >= bb.upper && isPriceFalling && rsiVal < this.params.rsi_overbought) {
+        const cash = ctx.getCapital() * this.params.risk_percent * 0.995;
+        const size = cash / bar.close;
+        if (size > 0 && cash <= ctx.getCapital()) {
+          const result = ctx.buy(bar.tokenId, size);
+          if (result.success) {
+            this.entryPriceMap.set(bar.tokenId, bar.close);
+            this.lowestPriceMap.set(bar.tokenId, bar.close);
+            this.positionSideMap.set(bar.tokenId, "short");
+          }
+        }
+      }
+    }
+    this.prevPriceMap.set(bar.tokenId, bar.close);
+  }
+  onComplete(_ctx) {}
+}
+
 // src/optimization/differential-evolution.ts
 init_engine();
 var import_cli_progress = __toESM(require_cli_progress(), 1);
@@ -28402,8 +29939,8 @@ class DifferentialEvolutionOptimizer {
     }
     const progressBar = !this.quiet ? new import_cli_progress.default.SingleBar({
       format: "Generation {bar} {percentage}% | Gen: {value}/{total} | Best: {sharpe}",
-      barCompleteChar: "\u2588",
-      barIncompleteChar: "\u2591",
+      barCompleteChar: "█",
+      barIncompleteChar: "░",
       hideCursor: true
     }) : null;
     if (progressBar) {
@@ -28586,8 +30123,8 @@ DE: Converged after ${generation + 1} generations`);
 }
 // scripts/run-optimization.ts
 init_engine();
-import * as fs201 from "fs";
-import * as path201 from "path";
+import * as fs209 from "fs";
+import * as path209 from "path";
 kleur_default.enabled = true;
 var strategies = {
   simple_ma: {
@@ -30923,6 +32460,135 @@ var strategies = {
       risk_percent: { min: 0.05, max: 0.27, stepSize: 0.05 }
     },
     outputFile: "strat_rsi_d_v07_200.params.json"
+  },
+  stoch_v20_tweak_201: {
+    class: StochV20Tweak201Strategy,
+    params: {
+      k_period: { min: 6, max: 12, stepSize: 1 },
+      d_period: { min: 2, max: 5, stepSize: 1 },
+      oversold_base: { min: 15, max: 30, stepSize: 5 },
+      overbought_base: { min: 70, max: 85, stepSize: 5 },
+      volatility_period: { min: 10, max: 30, stepSize: 5 },
+      level_adjustment_factor: { min: 5, max: 20, stepSize: 5 },
+      stop_loss: { min: 0.04, max: 0.12, stepSize: 0.02 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 }
+    },
+    outputFile: "strat_stoch_v20_tweak_201.params.json"
+  },
+  stoch_v06_tweak_202: {
+    class: StochV06Tweak202Strategy,
+    params: {
+      k_period: { min: 8, max: 16, stepSize: 2 },
+      d_period: { min: 3, max: 7, stepSize: 1 },
+      oversold: { min: 10, max: 25, stepSize: 5 },
+      overbought: { min: 75, max: 90, stepSize: 5 },
+      stop_loss: { min: 0.03, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.2, stepSize: 0.05 },
+      ma_period: { min: 10, max: 30, stepSize: 5 },
+      use_trend_filter: { min: 0, max: 1, stepSize: 1 },
+      use_mtf_confirmation: { min: 0, max: 1, stepSize: 1 },
+      use_dynamic_sizing: { min: 0, max: 1, stepSize: 1 },
+      mtf_threshold: { min: 0.3, max: 0.7, stepSize: 0.1 }
+    },
+    outputFile: "strat_stoch_v06_tweak_202.params.json"
+  },
+  stoch_v09_tweak_203: {
+    class: StochV09Tweak203Strategy,
+    params: {
+      k_period: { min: 6, max: 14, stepSize: 2 },
+      d_period: { min: 2, max: 6, stepSize: 1 },
+      oversold: { min: 15, max: 35, stepSize: 5 },
+      overbought: { min: 65, max: 85, stepSize: 5 },
+      rsi_period: { min: 10, max: 20, stepSize: 2 },
+      rsi_oversold_max: { min: 30, max: 50, stepSize: 5 },
+      rsi_overbought_min: { min: 50, max: 70, stepSize: 5 },
+      divergence_lookback: { min: 3, max: 8, stepSize: 1 },
+      enable_divergence: { min: 0, max: 1, stepSize: 1 },
+      enable_rsi_confirm: { min: 0, max: 1, stepSize: 1 },
+      profit_level_1: { min: 0.03, max: 0.08, stepSize: 0.01 },
+      profit_level_2: { min: 0.06, max: 0.15, stepSize: 0.03 },
+      partial_close_pct_1: { min: 0.3, max: 0.6, stepSize: 0.1 },
+      partial_close_pct_2: { min: 0.3, max: 0.7, stepSize: 0.1 },
+      stop_loss: { min: 0.04, max: 0.1, stepSize: 0.02 },
+      risk_percent: { min: 0.08, max: 0.2, stepSize: 0.04 }
+    },
+    outputFile: "strat_stoch_v09_tweak_203.params.json"
+  },
+  stoch_adaptive_204: {
+    class: StochAdaptiveStrategy,
+    params: {
+      min_k_period: { min: 2, max: 5, stepSize: 1 },
+      max_k_period: { min: 10, max: 20, stepSize: 2 },
+      d_period: { min: 2, max: 5, stepSize: 1 },
+      percentile_lookback: { min: 10, max: 30, stepSize: 5 },
+      oversold_percentile: { min: 10, max: 25, stepSize: 5 },
+      overbought_percentile: { min: 75, max: 90, stepSize: 5 },
+      atr_period: { min: 10, max: 20, stepSize: 2 },
+      min_atr_threshold: { min: 0.002, max: 0.01, stepSize: 0.002 },
+      volatility_scale: { min: 30, max: 70, stepSize: 10 },
+      stop_loss: { min: 0.02, max: 0.08, stepSize: 0.02 },
+      risk_percent: { min: 0.05, max: 0.2, stepSize: 0.05 }
+    },
+    outputFile: "strat_stoch_adaptive_204.params.json"
+  },
+  rsi_stoch_combo_205: {
+    class: RsiStochCombo205Strategy,
+    params: {
+      rsi_period: { min: 10, max: 20, stepSize: 2 },
+      divergence_lookback: { min: 3, max: 8, stepSize: 1 },
+      k_period: { min: 10, max: 20, stepSize: 2 },
+      d_period: { min: 2, max: 5, stepSize: 1 },
+      oversold: { min: 15, max: 30, stepSize: 5 },
+      overbought: { min: 70, max: 85, stepSize: 5 },
+      signal_window: { min: 2, max: 5, stepSize: 1 },
+      stop_loss: { min: 0.03, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.15, stepSize: 0.05 }
+    },
+    outputFile: "strat_rsi_stoch_combo_205.params.json"
+  },
+  volatility_breakout_206: {
+    class: VolatilityBreakoutStrategy,
+    params: {
+      atr_period: { min: 10, max: 20, stepSize: 2 },
+      atr_multiplier: { min: 0.3, max: 0.8, stepSize: 0.1 },
+      lookback: { min: 10, max: 30, stepSize: 5 },
+      volume_period: { min: 5, max: 15, stepSize: 5 },
+      stop_loss: { min: 0.02, max: 0.08, stepSize: 0.02 },
+      trailing_stop: { min: 0.015, max: 0.05, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.15, stepSize: 0.05 }
+    },
+    outputFile: "strat_volatility_breakout_206.params.json"
+  },
+  trend_following_ma_207: {
+    class: TrendFollowingMAStrategy,
+    params: {
+      fast_period: { min: 5, max: 20, stepSize: 5 },
+      medium_period: { min: 15, max: 40, stepSize: 5 },
+      slow_period: { min: 30, max: 80, stepSize: 10 },
+      adx_period: { min: 10, max: 20, stepSize: 2 },
+      adx_threshold: { min: 20, max: 35, stepSize: 5 },
+      pullback_threshold: { min: 0.001, max: 0.02, stepSize: 0.005 },
+      stop_loss: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      trailing_stop: { min: 0.015, max: 0.06, stepSize: 0.015 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+      take_profit_enabled: { min: 0, max: 1, stepSize: 1 },
+      take_profit: { min: 0.05, max: 0.15, stepSize: 0.05 }
+    },
+    outputFile: "strat_trend_following_ma_207.params.json"
+  },
+  mean_reversion_band_208: {
+    class: MeanReversionBandV208Strategy,
+    params: {
+      bb_period: { min: 15, max: 30, stepSize: 5 },
+      bb_stddev_mult: { min: 1.5, max: 2.5, stepSize: 0.25 },
+      rsi_period: { min: 10, max: 20, stepSize: 2 },
+      rsi_oversold: { min: 20, max: 40, stepSize: 5 },
+      rsi_overbought: { min: 60, max: 80, stepSize: 5 },
+      stop_loss: { min: 0.03, max: 0.08, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.05, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.15, stepSize: 0.05 }
+    },
+    outputFile: "strat_mean_reversion_band_208.params.json"
   }
 };
 function seededShuffle(array, seed) {
@@ -30961,12 +32627,12 @@ program2.name("optimize").description("Differential Evolution Optimization for T
     process.exit(0);
   }
   if (options.plot) {
-    const historyPath2 = path201.join(process.cwd(), "data", "optimization-history.json");
-    if (!fs201.existsSync(historyPath2)) {
+    const historyPath2 = path209.join(process.cwd(), "data", "optimization-history.json");
+    if (!fs209.existsSync(historyPath2)) {
       console.error(kleur_default.red("No optimization history found. Run optimize first."));
       process.exit(1);
     }
-    const historyData2 = JSON.parse(fs201.readFileSync(historyPath2, "utf-8"));
+    const historyData2 = JSON.parse(fs209.readFileSync(historyPath2, "utf-8"));
     console.log(kleur_default.cyan(`Optimization Progress
 `));
     console.log("Generation | Sharpe Ratio");
@@ -31076,17 +32742,17 @@ Attempt ` + attempt + "/" + attempts + "..."));
       bestTestReturn = testMetrics.return;
       bestResult = result;
       bestParams = result.finalParams;
-      console.log(kleur_default.green("  \u2605 NEW BEST"));
+      console.log(kleur_default.green("  ★ NEW BEST"));
       if (testMetrics.return >= minTestReturn) {
         console.log(kleur_default.green(`
-\u2713 Reached target test return of $` + minTestReturn));
+✓ Reached target test return of $` + minTestReturn));
         break;
       }
     }
   }
   if (!bestResult || !bestParams) {
     console.error(kleur_default.red(`
-\u2717 Failed to find valid parameters`));
+✗ Failed to find valid parameters`));
     process.exit(1);
   }
   const finalTestMetrics = testParams(test, StrategyClass, bestParams);
@@ -31135,11 +32801,11 @@ Optimization Progress
       optimized_at: new Date().toISOString()
     }
   };
-  const outputPath = path201.join(process.cwd(), "src", "strategies", outputFile);
-  fs201.writeFileSync(outputPath, JSON.stringify(output, null, 2));
+  const outputPath = path209.join(process.cwd(), "src", "strategies", outputFile);
+  fs209.writeFileSync(outputPath, JSON.stringify(output, null, 2));
   console.log(kleur_default.green(`
-\u2713 Parameters saved to ` + outputFile));
-  const historyPath = path201.join(process.cwd(), "data", "optimization-history.json");
+✓ Parameters saved to ` + outputFile));
+  const historyPath = path209.join(process.cwd(), "data", "optimization-history.json");
   const historyData = {
     strategy: strategyName,
     bestParams,
@@ -31156,7 +32822,7 @@ Optimization Progress
       fullSharpe: fullMetrics.sharpe
     }
   };
-  fs201.writeFileSync(historyPath, JSON.stringify(historyData, null, 2));
-  console.log(kleur_default.green("\u2713 History saved to optimization-history.json"));
+  fs209.writeFileSync(historyPath, JSON.stringify(historyData, null, 2));
+  console.log(kleur_default.green("✓ History saved to optimization-history.json"));
 });
 program2.parse();

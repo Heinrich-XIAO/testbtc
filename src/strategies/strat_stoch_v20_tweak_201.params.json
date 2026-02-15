@@ -1,10 +1,14 @@
 {
-  "k_period": 8,
+  "k_period": 7,
   "d_period": 3,
-  "oversold_base": 20,
-  "overbought_base": 80,
-  "volatility_period": 20,
+  "oversold_base": 15,
+  "overbought_base": 70,
+  "volatility_period": 10,
   "level_adjustment_factor": 10,
-  "stop_loss": 0.08,
-  "risk_percent": 0.15
+  "stop_loss": 0.06195017101191676,
+  "risk_percent": 0.2364618698975364,
+  "metadata": {
+    "best_test_return": 554.0045858958113,
+    "optimized_at": "2026-02-15T16:34:45.359Z"
+  }
 }

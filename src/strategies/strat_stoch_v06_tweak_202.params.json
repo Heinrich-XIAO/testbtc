@@ -1,18 +1,17 @@
 {
-  "k_period": 12,
-  "d_period": 5,
-  "oversold": 15,
-  "overbought": 85,
-  "stop_loss": 0.05,
-  "risk_percent": 0.12,
-  "ma_period": 20,
-  "use_trend_filter": true,
-  "use_mtf_confirmation": true,
-  "use_dynamic_sizing": true,
-  "mtf_threshold": 0.5,
+  "k_period": 8,
+  "d_period": 3,
+  "oversold": 20,
+  "overbought": 80,
+  "stop_loss": 0.04038947706573717,
+  "risk_percent": 0.19733078014697322,
+  "ma_period": 30,
+  "use_trend_filter": 1,
+  "use_mtf_confirmation": 0,
+  "use_dynamic_sizing": 1,
+  "mtf_threshold": 0.5470047753465788,
   "metadata": {
-    "version": "202",
-    "base_strategy": "stoch_v06",
-    "description": "Stoch v06 with multi-timeframe confirmation, MA trend filter, and dynamic position sizing"
+    "best_test_return": 259.0582562956922,
+    "optimized_at": "2026-02-15T16:36:42.641Z"
   }
 }
