@@ -1,0 +1,17 @@
+{
+  "rsi_period": 18,
+  "rsi_oversold": 35,
+  "rsi_overbought": 65,
+  "base_lookback": 20,
+  "min_lookback": 10,
+  "max_lookback": 35,
+  "volatility_period": 10,
+  "bounce_threshold": 0.037764230660876266,
+  "stop_loss": 0.09516088269956058,
+  "trailing_stop": 0.05911230560604705,
+  "risk_percent": 0.18320412176755374,
+  "metadata": {
+    "best_test_return": -71.66108533698718,
+    "optimized_at": "2026-02-15T17:44:34.960Z"
+  }
+}
