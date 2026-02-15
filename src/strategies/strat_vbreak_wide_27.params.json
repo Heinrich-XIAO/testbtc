@@ -1,0 +1,13 @@
+{
+  "vol_period": 8,
+  "lookback": 18,
+  "contraction_ratio": 0.7514501939088086,
+  "breakout_threshold": 0.025513161190852444,
+  "stop_loss": 0.06291119750004537,
+  "trailing_stop": 0.041740932089329816,
+  "risk_percent": 0.2626870418975195,
+  "metadata": {
+    "best_test_return": 314.27266033035653,
+    "optimized_at": "2026-02-15T14:03:00.961Z"
+  }
+}

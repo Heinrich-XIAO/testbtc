@@ -1,0 +1,11 @@
+{
+  "swing_window": 4,
+  "stop_loss": 0.02515690056179185,
+  "trailing_stop": 0.04990801720935161,
+  "take_profit": 0.14478541922797467,
+  "risk_percent": 0.10117952767254915,
+  "metadata": {
+    "best_test_return": -122.60102662636007,
+    "optimized_at": "2026-02-15T15:26:01.988Z"
+  }
+}

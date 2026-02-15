@@ -1,0 +1,12 @@
+{
+  "rsi_period": 2,
+  "divergence_lookback": 10,
+  "oversold": 40,
+  "overbought": 60,
+  "stop_loss": 0.08160555721001242,
+  "risk_percent": 0.2322033954620173,
+  "metadata": {
+    "best_test_return": 21.00983576009412,
+    "optimized_at": "2026-02-15T16:17:17.358Z"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "fast_period": 25,
+  "slow_period": 20,
+  "stop_loss": 0.04553499545841656,
+  "trailing_stop": 0,
+  "risk_percent": 0.35119116836316955,
+  "metadata": {
+    "best_test_return": 1235.2181334455763,
+    "optimized_at": "2026-02-15T14:01:48.198Z"
+  }
+}

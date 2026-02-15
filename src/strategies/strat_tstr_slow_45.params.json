@@ -1,0 +1,12 @@
+{
+  "lookback": 18,
+  "entry_strength": 0.6692629215445379,
+  "exit_strength": 0.47396243104592484,
+  "stop_loss": 0.10241192268543488,
+  "trailing_stop": 0.09544504128039492,
+  "risk_percent": 0.29897160207830464,
+  "metadata": {
+    "best_test_return": 68.7092972743967,
+    "optimized_at": "2026-02-15T15:21:46.014Z"
+  }
+}

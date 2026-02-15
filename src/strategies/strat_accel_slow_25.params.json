@@ -1,0 +1,12 @@
+{
+  "lookback": 12,
+  "entry_threshold": 0.0020673024732020843,
+  "exit_threshold": 0.007677750232661722,
+  "stop_loss": 0.1267139637001733,
+  "trailing_stop": 0.05654237977002598,
+  "risk_percent": 0.0506572335652192,
+  "metadata": {
+    "best_test_return": -0.27560580014119296,
+    "optimized_at": "2026-02-15T15:29:33.172Z"
+  }
+}

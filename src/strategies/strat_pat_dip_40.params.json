@@ -1,0 +1,11 @@
+{
+  "consec_bars": 2,
+  "exit_bars": 3,
+  "stop_loss": 0.10039993952022246,
+  "trailing_stop": 0.05213661649273864,
+  "risk_percent": 0.21025724086481795,
+  "metadata": {
+    "best_test_return": 104.77845280590509,
+    "optimized_at": "2026-02-15T15:08:57.448Z"
+  }
+}

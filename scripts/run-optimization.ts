@@ -1,8 +1,207 @@
 import { Command } from 'commander';
 import kleur from 'kleur';
 import { loadStoredData } from '../src/backtest/engine';
-import { SimpleMAStrategy, type SimpleMAStrategyParams } from '../src/strategies/example';
-import { BollingerBandsStrategy, type BollingerBandsStrategyParams } from '../src/strategies/bollinger_bands';
+import { SimpleMAStrategy } from '../src/strategies/strat_simple_ma_01';
+import { BollingerBandsStrategy } from '../src/strategies/strat_bollinger_02';
+import { RSIMeanReversionStrategy } from '../src/strategies/strat_rsi_03';
+import { ATRBreakoutStrategy } from '../src/strategies/strat_atr_breakout_04';
+import { MAStrategyWithATRStop } from '../src/strategies/strat_ma_atr_05';
+import { SupportResistanceStrategy } from '../src/strategies/strat_support_06';
+import { ShortTermStrategy } from '../src/strategies/strat_momentum_07';
+import { RangeTradingStrategy } from '../src/strategies/strat_range_08';
+import { MeanReversionStrategy } from '../src/strategies/strat_mean_revert_09';
+import { DualMAStrategy } from '../src/strategies/strat_dual_ma_10';
+import { EMAFastCrossStrategy } from '../src/strategies/strat_ema_fast_11';
+import { EMAMedCrossStrategy } from '../src/strategies/strat_ema_med_12';
+import { EMASlowCrossStrategy } from '../src/strategies/strat_ema_slow_13';
+import { EMATightStopStrategy } from '../src/strategies/strat_ema_tight_14';
+import { EMAWideStopStrategy } from '../src/strategies/strat_ema_wide_15';
+import { ROCFastStrategy } from '../src/strategies/strat_roc_fast_16';
+import { ROCSlowStrategy } from '../src/strategies/strat_roc_slow_17';
+import { DonchianShortStrategy } from '../src/strategies/strat_donchian_short_18';
+import { DonchianLongStrategy } from '../src/strategies/strat_donchian_long_19';
+import { StochFastStrategy } from '../src/strategies/strat_stoch_fast_20';
+import { StochSlowStrategy } from '../src/strategies/strat_stoch_slow_21';
+import { WillRShortStrategy } from '../src/strategies/strat_willr_short_22';
+import { WillRLongStrategy } from '../src/strategies/strat_willr_long_23';
+import { AccelFastStrategy } from '../src/strategies/strat_accel_fast_24';
+import { AccelSlowStrategy } from '../src/strategies/strat_accel_slow_25';
+import { VolBreakTightStrategy } from '../src/strategies/strat_vbreak_tight_26';
+import { VolBreakWideStrategy } from '../src/strategies/strat_vbreak_wide_27';
+import { RibbonTightStrategy } from '../src/strategies/strat_ribbon_tight_28';
+import { RibbonWideStrategy } from '../src/strategies/strat_ribbon_wide_29';
+import { RSIDivFastStrategy } from '../src/strategies/strat_rsi_div_fast_30';
+import { RSIDivSlowStrategy } from '../src/strategies/strat_rsi_div_slow_31';
+import { MRRSITightStrategy } from '../src/strategies/strat_mr_rsi_tight_32';
+import { MRRSIWideStrategy } from '../src/strategies/strat_mr_rsi_wide_33';
+import { AdaptFastStrategy } from '../src/strategies/strat_adapt_fast_34';
+import { AdaptSlowStrategy } from '../src/strategies/strat_adapt_slow_35';
+import { TriMAFastStrategy } from '../src/strategies/strat_tri_ma_fast_36';
+import { TriMASlowStrategy } from '../src/strategies/strat_tri_ma_slow_37';
+import { EnvTightStrategy } from '../src/strategies/strat_env_tight_38';
+import { EnvWideStrategy } from '../src/strategies/strat_env_wide_39';
+import { PatDipStrategy } from '../src/strategies/strat_pat_dip_40';
+import { PatMomStrategy } from '../src/strategies/strat_pat_mom_41';
+import { ComboTightStrategy } from '../src/strategies/strat_combo_tight_42';
+import { ComboWideStrategy } from '../src/strategies/strat_combo_wide_43';
+import { TStrFastStrategy } from '../src/strategies/strat_tstr_fast_44';
+import { TStrSlowStrategy } from '../src/strategies/strat_tstr_slow_45';
+import { SwingShortStrategy } from '../src/strategies/strat_swing_short_46';
+import { SwingLongStrategy } from '../src/strategies/strat_swing_long_47';
+import { RevFastStrategy } from '../src/strategies/strat_rev_fast_48';
+import { RevSlowStrategy } from '../src/strategies/strat_rev_slow_49';
+import { ChanTightStrategy } from '../src/strategies/strat_chan_tight_50';
+import { ChanWideStrategy } from '../src/strategies/strat_chan_wide_51';
+import { MCrossFastStrategy } from '../src/strategies/strat_mcross_fast_52';
+import { MCrossSlowStrategy } from '../src/strategies/strat_mcross_slow_53';
+import { MRRsiV01Strategy } from '../src/strategies/strat_mr_rsi_v01_54';
+import { MRRsiV02Strategy } from '../src/strategies/strat_mr_rsi_v02_55';
+import { MRRsiV03Strategy } from '../src/strategies/strat_mr_rsi_v03_56';
+import { MRRsiV04Strategy } from '../src/strategies/strat_mr_rsi_v04_57';
+import { MRRsiV05Strategy } from '../src/strategies/strat_mr_rsi_v05_58';
+import { MRRsiV06Strategy } from '../src/strategies/strat_mr_rsi_v06_59';
+import { MRRsiV07Strategy } from '../src/strategies/strat_mr_rsi_v07_60';
+import { MRRsiV08Strategy } from '../src/strategies/strat_mr_rsi_v08_61';
+import { MRRsiV09Strategy } from '../src/strategies/strat_mr_rsi_v09_62';
+import { MRRsiV10Strategy } from '../src/strategies/strat_mr_rsi_v10_63';
+import { MRRsiV11Strategy } from '../src/strategies/strat_mr_rsi_v11_64';
+import { MRRsiV12Strategy } from '../src/strategies/strat_mr_rsi_v12_65';
+import { MRRsiV13Strategy } from '../src/strategies/strat_mr_rsi_v13_66';
+import { MRRsiV14Strategy } from '../src/strategies/strat_mr_rsi_v14_67';
+import { MRRsiV15Strategy } from '../src/strategies/strat_mr_rsi_v15_68';
+import { MRRsiV16Strategy } from '../src/strategies/strat_mr_rsi_v16_69';
+import { MRRsiV17Strategy } from '../src/strategies/strat_mr_rsi_v17_70';
+import { MRRsiV18Strategy } from '../src/strategies/strat_mr_rsi_v18_71';
+import { MRRsiV19Strategy } from '../src/strategies/strat_mr_rsi_v19_72';
+import { MRRsiV20Strategy } from '../src/strategies/strat_mr_rsi_v20_73';
+import { WillRV01Strategy } from '../src/strategies/strat_willr_v01_74';
+import { WillRV02Strategy } from '../src/strategies/strat_willr_v02_75';
+import { WillRV03Strategy } from '../src/strategies/strat_willr_v03_76';
+import { WillRV04Strategy } from '../src/strategies/strat_willr_v04_77';
+import { WillRV05Strategy } from '../src/strategies/strat_willr_v05_78';
+import { WillRV06Strategy } from '../src/strategies/strat_willr_v06_79';
+import { WillRV07Strategy } from '../src/strategies/strat_willr_v07_80';
+import { WillRV08Strategy } from '../src/strategies/strat_willr_v08_81';
+import { WillRV09Strategy } from '../src/strategies/strat_willr_v09_82';
+import { WillRV10Strategy } from '../src/strategies/strat_willr_v10_83';
+import { WillRV11Strategy } from '../src/strategies/strat_willr_v11_84';
+import { WillRV12Strategy } from '../src/strategies/strat_willr_v12_85';
+import { WillRV13Strategy } from '../src/strategies/strat_willr_v13_86';
+import { WillRV14Strategy } from '../src/strategies/strat_willr_v14_87';
+import { WillRV15Strategy } from '../src/strategies/strat_willr_v15_88';
+import { WillRV16Strategy } from '../src/strategies/strat_willr_v16_89';
+import { WillRV17Strategy } from '../src/strategies/strat_willr_v17_90';
+import { WillRV18Strategy } from '../src/strategies/strat_willr_v18_91';
+import { WillRV19Strategy } from '../src/strategies/strat_willr_v19_92';
+import { WillRV20Strategy } from '../src/strategies/strat_willr_v20_93';
+import { EnvV01Strategy } from '../src/strategies/strat_env_v01_94';
+import { EnvV02Strategy } from '../src/strategies/strat_env_v02_95';
+import { EnvV03Strategy } from '../src/strategies/strat_env_v03_96';
+import { EnvV04Strategy } from '../src/strategies/strat_env_v04_97';
+import { EnvV05Strategy } from '../src/strategies/strat_env_v05_98';
+import { EnvV06Strategy } from '../src/strategies/strat_env_v06_99';
+import { EnvV07Strategy } from '../src/strategies/strat_env_v07_100';
+import { EnvV08Strategy } from '../src/strategies/strat_env_v08_101';
+import { EnvV09Strategy } from '../src/strategies/strat_env_v09_102';
+import { EnvV10Strategy } from '../src/strategies/strat_env_v10_103';
+import { EnvV11Strategy } from '../src/strategies/strat_env_v11_104';
+import { EnvV12Strategy } from '../src/strategies/strat_env_v12_105';
+import { EnvV13Strategy } from '../src/strategies/strat_env_v13_106';
+import { EnvV14Strategy } from '../src/strategies/strat_env_v14_107';
+import { EnvV15Strategy } from '../src/strategies/strat_env_v15_108';
+import { EnvV16Strategy } from '../src/strategies/strat_env_v16_109';
+import { EnvV17Strategy } from '../src/strategies/strat_env_v17_110';
+import { EnvV18Strategy } from '../src/strategies/strat_env_v18_111';
+import { EnvV19Strategy } from '../src/strategies/strat_env_v19_112';
+import { EnvV20Strategy } from '../src/strategies/strat_env_v20_113';
+import { ChanV01Strategy } from '../src/strategies/strat_chan_v01_114';
+import { ChanV02Strategy } from '../src/strategies/strat_chan_v02_115';
+import { ChanV03Strategy } from '../src/strategies/strat_chan_v03_116';
+import { ChanV04Strategy } from '../src/strategies/strat_chan_v04_117';
+import { ChanV05Strategy } from '../src/strategies/strat_chan_v05_118';
+import { ChanV06Strategy } from '../src/strategies/strat_chan_v06_119';
+import { ChanV07Strategy } from '../src/strategies/strat_chan_v07_120';
+import { ChanV08Strategy } from '../src/strategies/strat_chan_v08_121';
+import { ChanV09Strategy } from '../src/strategies/strat_chan_v09_122';
+import { ChanV10Strategy } from '../src/strategies/strat_chan_v10_123';
+import { ChanV11Strategy } from '../src/strategies/strat_chan_v11_124';
+import { ChanV12Strategy } from '../src/strategies/strat_chan_v12_125';
+import { ChanV13Strategy } from '../src/strategies/strat_chan_v13_126';
+import { ChanV14Strategy } from '../src/strategies/strat_chan_v14_127';
+import { ChanV15Strategy } from '../src/strategies/strat_chan_v15_128';
+import { ChanV16Strategy } from '../src/strategies/strat_chan_v16_129';
+import { ChanV17Strategy } from '../src/strategies/strat_chan_v17_130';
+import { ChanV18Strategy } from '../src/strategies/strat_chan_v18_131';
+import { ChanV19Strategy } from '../src/strategies/strat_chan_v19_132';
+import { ChanV20Strategy } from '../src/strategies/strat_chan_v20_133';
+import { ComboV01Strategy } from '../src/strategies/strat_combo_v01_134';
+import { ComboV02Strategy } from '../src/strategies/strat_combo_v02_135';
+import { ComboV03Strategy } from '../src/strategies/strat_combo_v03_136';
+import { ComboV04Strategy } from '../src/strategies/strat_combo_v04_137';
+import { ComboV05Strategy } from '../src/strategies/strat_combo_v05_138';
+import { ComboV06Strategy } from '../src/strategies/strat_combo_v06_139';
+import { ComboV07Strategy } from '../src/strategies/strat_combo_v07_140';
+import { ComboV08Strategy } from '../src/strategies/strat_combo_v08_141';
+import { ComboV09Strategy } from '../src/strategies/strat_combo_v09_142';
+import { ComboV10Strategy } from '../src/strategies/strat_combo_v10_143';
+import { ComboV11Strategy } from '../src/strategies/strat_combo_v11_144';
+import { ComboV12Strategy } from '../src/strategies/strat_combo_v12_145';
+import { ComboV13Strategy } from '../src/strategies/strat_combo_v13_146';
+import { ComboV14Strategy } from '../src/strategies/strat_combo_v14_147';
+import { ComboV15Strategy } from '../src/strategies/strat_combo_v15_148';
+import { ComboV16Strategy } from '../src/strategies/strat_combo_v16_149';
+import { ComboV17Strategy } from '../src/strategies/strat_combo_v17_150';
+import { ComboV18Strategy } from '../src/strategies/strat_combo_v18_151';
+import { ComboV19Strategy } from '../src/strategies/strat_combo_v19_152';
+import { ComboV20Strategy } from '../src/strategies/strat_combo_v20_153';
+import { StochV01Strategy } from '../src/strategies/strat_stoch_v01_154';
+import { StochV02Strategy } from '../src/strategies/strat_stoch_v02_155';
+import { StochV03Strategy } from '../src/strategies/strat_stoch_v03_156';
+import { StochV04Strategy } from '../src/strategies/strat_stoch_v04_157';
+import { StochV05Strategy } from '../src/strategies/strat_stoch_v05_158';
+import { StochV06Strategy } from '../src/strategies/strat_stoch_v06_159';
+import { StochV07Strategy } from '../src/strategies/strat_stoch_v07_160';
+import { StochV08Strategy } from '../src/strategies/strat_stoch_v08_161';
+import { StochV09Strategy } from '../src/strategies/strat_stoch_v09_162';
+import { StochV10Strategy } from '../src/strategies/strat_stoch_v10_163';
+import { StochV11Strategy } from '../src/strategies/strat_stoch_v11_164';
+import { StochV12Strategy } from '../src/strategies/strat_stoch_v12_165';
+import { StochV13Strategy } from '../src/strategies/strat_stoch_v13_166';
+import { StochV14Strategy } from '../src/strategies/strat_stoch_v14_167';
+import { StochV15Strategy } from '../src/strategies/strat_stoch_v15_168';
+import { StochV16Strategy } from '../src/strategies/strat_stoch_v16_169';
+import { StochV17Strategy } from '../src/strategies/strat_stoch_v17_170';
+import { StochV18Strategy } from '../src/strategies/strat_stoch_v18_171';
+import { StochV19Strategy } from '../src/strategies/strat_stoch_v19_172';
+import { StochV20Strategy } from '../src/strategies/strat_stoch_v20_173';
+import { PatV01Strategy } from '../src/strategies/strat_pat_v01_174';
+import { PatV02Strategy } from '../src/strategies/strat_pat_v02_175';
+import { PatV03Strategy } from '../src/strategies/strat_pat_v03_176';
+import { PatV04Strategy } from '../src/strategies/strat_pat_v04_177';
+import { PatV05Strategy } from '../src/strategies/strat_pat_v05_178';
+import { PatV06Strategy } from '../src/strategies/strat_pat_v06_179';
+import { PatV07Strategy } from '../src/strategies/strat_pat_v07_180';
+import { PatV08Strategy } from '../src/strategies/strat_pat_v08_181';
+import { PatV09Strategy } from '../src/strategies/strat_pat_v09_182';
+import { PatV10Strategy } from '../src/strategies/strat_pat_v10_183';
+import { PatV11Strategy } from '../src/strategies/strat_pat_v11_184';
+import { PatV12Strategy } from '../src/strategies/strat_pat_v12_185';
+import { PatV13Strategy } from '../src/strategies/strat_pat_v13_186';
+import { PatV14Strategy } from '../src/strategies/strat_pat_v14_187';
+import { PatV15Strategy } from '../src/strategies/strat_pat_v15_188';
+import { PatV16Strategy } from '../src/strategies/strat_pat_v16_189';
+import { PatV17Strategy } from '../src/strategies/strat_pat_v17_190';
+import { PatV18Strategy } from '../src/strategies/strat_pat_v18_191';
+import { PatV19Strategy } from '../src/strategies/strat_pat_v19_192';
+import { PatV20Strategy } from '../src/strategies/strat_pat_v20_193';
+import { RsiDV01Strategy } from '../src/strategies/strat_rsi_d_v01_194';
+import { RsiDV02Strategy } from '../src/strategies/strat_rsi_d_v02_195';
+import { RsiDV03Strategy } from '../src/strategies/strat_rsi_d_v03_196';
+import { RsiDV04Strategy } from '../src/strategies/strat_rsi_d_v04_197';
+import { RsiDV05Strategy } from '../src/strategies/strat_rsi_d_v05_198';
+import { RsiDV06Strategy } from '../src/strategies/strat_rsi_d_v06_199';
+import { RsiDV07Strategy } from '../src/strategies/strat_rsi_d_v07_200';
+import { TrendFollowingMAStrategy } from '../src/strategies/strat_trend_following_ma_207';
 import { DifferentialEvolutionOptimizer } from '../src/optimization';
 import type { ParamConfig, OptimizationResult } from '../src/optimization/types';
 import type { StoredData, PricePoint } from '../src/types';
@@ -22,9 +221,9 @@ const strategies: Record<string, { class: any; params: Record<string, ParamConfi
       trailing_stop: { min: 0, max: 0, stepSize: 1 },
       risk_percent: { min: 0.1, max: 0.5, stepSize: 0.1 },
     },
-    outputFile: 'example.params.json',
+    outputFile: 'strat_simple_ma_01.params.json',
   },
-  bollinger_bands: {
+  bollinger: {
     class: BollingerBandsStrategy,
     params: {
       period: { min: 10, max: 50, stepSize: 5 },
@@ -34,8 +233,2337 @@ const strategies: Record<string, { class: any; params: Record<string, ParamConfi
       risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
       mean_reversion: { min: 0, max: 1, stepSize: 1 },
     },
-    outputFile: 'bollinger_bands.params.json',
+    outputFile: 'strat_bollinger_02.params.json',
   },
+  rsi: {
+    class: RSIMeanReversionStrategy,
+    params: {
+      rsi_period: { min: 3, max: 10, stepSize: 1 },
+      rsi_oversold: { min: 15, max: 35, stepSize: 5 },
+      rsi_overbought: { min: 65, max: 85, stepSize: 5 },
+      stop_loss: { min: 0.02, max: 0.10, stepSize: 0.02 },
+      risk_percent: { min: 0.05, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_rsi_03.params.json',
+  },
+  breakout: {
+    class: ATRBreakoutStrategy,
+    params: {
+      breakout_multiplier: { min: 0.1, max: 1.0, stepSize: 0.1 },
+      lookback: { min: 5, max: 20, stepSize: 5 },
+      stop_loss: { min: 0.02, max: 0.10, stepSize: 0.02 },
+      risk_percent: { min: 0.05, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_atr_breakout_04.params.json',
+  },
+  ma_vol: {
+    class: MAStrategyWithATRStop,
+    params: {
+      fast_period: { min: 3, max: 10, stepSize: 1 },
+      slow_period: { min: 10, max: 30, stepSize: 5 },
+      volatility_period: { min: 10, max: 30, stepSize: 5 },
+      vol_multiplier: { min: 1.0, max: 4.0, stepSize: 0.5 },
+      risk_percent: { min: 0.05, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_ma_atr_05.params.json',
+  },
+  support: {
+    class: SupportResistanceStrategy,
+    params: {
+      lookback: { min: 5, max: 20, stepSize: 5 },
+      bounce_threshold: { min: 0.02, max: 0.10, stepSize: 0.02 },
+      stop_loss: { min: 0.02, max: 0.10, stepSize: 0.02 },
+      risk_percent: { min: 0.05, max: 0.20, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.20, stepSize: 0.05 },
+    },
+    outputFile: 'strat_support_06.params.json',
+  },
+  momentum: {
+    class: ShortTermStrategy,
+    params: {
+      lookback: { min: 2, max: 6, stepSize: 1 },
+      entry_threshold: { min: 0.02, max: 0.10, stepSize: 0.02 },
+      trailing_stop_pct: { min: 0.02, max: 0.10, stepSize: 0.02 },
+      minimum_hold: { min: 2, max: 6, stepSize: 1 },
+      risk_percent: { min: 0.05, max: 0.20, stepSize: 0.05 },
+    },
+    outputFile: 'strat_momentum_07.params.json',
+  },
+  range: {
+    class: RangeTradingStrategy,
+    params: {
+      buy_below: { min: 0.15, max: 0.40, stepSize: 0.05 },
+      sell_above: { min: 0.50, max: 0.80, stepSize: 0.05 },
+      stop_loss: { min: 0.10, max: 0.30, stepSize: 0.05 },
+      risk_percent: { min: 0.05, max: 0.20, stepSize: 0.05 },
+    },
+    outputFile: 'strat_range_08.params.json',
+  },
+  mean_revert: {
+    class: MeanReversionStrategy,
+    params: {
+      ma_period: { min: 5, max: 15, stepSize: 1 },
+      deviation_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.03, max: 0.15, stepSize: 0.02 },
+      risk_percent: { min: 0.05, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_mean_revert_09.params.json',
+  },
+  dual_ma: {
+    class: DualMAStrategy,
+    params: {
+      fast_period: { min: 3, max: 8, stepSize: 1 },
+      slow_period: { min: 10, max: 20, stepSize: 2 },
+      trend_period: { min: 20, max: 40, stepSize: 5 },
+      stop_loss: { min: 0.02, max: 0.10, stepSize: 0.02 },
+      trailing_stop_pct: { min: 0.02, max: 0.08, stepSize: 0.02 },
+      risk_percent: { min: 0.05, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_dual_ma_10.params.json',
+  },
+  ema_fast: {
+    class: EMAFastCrossStrategy,
+    params: {
+      fast_period: { min: 2, max: 5, stepSize: 1 },
+      slow_period: { min: 6, max: 15, stepSize: 1 },
+      stop_loss: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.06, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_ema_fast_11.params.json',
+  },
+  ema_med: {
+    class: EMAMedCrossStrategy,
+    params: {
+      fast_period: { min: 3, max: 8, stepSize: 1 },
+      slow_period: { min: 10, max: 25, stepSize: 2 },
+      stop_loss: { min: 0.03, max: 0.1, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_ema_med_12.params.json',
+  },
+  ema_slow: {
+    class: EMASlowCrossStrategy,
+    params: {
+      fast_period: { min: 5, max: 12, stepSize: 1 },
+      slow_period: { min: 15, max: 35, stepSize: 2 },
+      stop_loss: { min: 0.03, max: 0.12, stepSize: 0.01 },
+      trailing_stop: { min: 0.03, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_ema_slow_13.params.json',
+  },
+  ema_tight: {
+    class: EMATightStopStrategy,
+    params: {
+      fast_period: { min: 2, max: 6, stepSize: 1 },
+      slow_period: { min: 8, max: 18, stepSize: 1 },
+      stop_loss: { min: 0.01, max: 0.05, stepSize: 0.005 },
+      trailing_stop: { min: 0.01, max: 0.04, stepSize: 0.005 },
+      risk_percent: { min: 0.05, max: 0.2, stepSize: 0.05 },
+    },
+    outputFile: 'strat_ema_tight_14.params.json',
+  },
+  ema_wide: {
+    class: EMAWideStopStrategy,
+    params: {
+      fast_period: { min: 3, max: 8, stepSize: 1 },
+      slow_period: { min: 8, max: 20, stepSize: 2 },
+      stop_loss: { min: 0.06, max: 0.15, stepSize: 0.01 },
+      trailing_stop: { min: 0.04, max: 0.12, stepSize: 0.01 },
+      risk_percent: { min: 0.1, max: 0.4, stepSize: 0.05 },
+    },
+    outputFile: 'strat_ema_wide_15.params.json',
+  },
+  roc_fast: {
+    class: ROCFastStrategy,
+    params: {
+      lookback: { min: 2, max: 5, stepSize: 1 },
+      entry_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      exit_threshold: { min: 0.01, max: 0.06, stepSize: 0.01 },
+      min_hold: { min: 1, max: 5, stepSize: 1 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_roc_fast_16.params.json',
+  },
+  roc_slow: {
+    class: ROCSlowStrategy,
+    params: {
+      lookback: { min: 5, max: 15, stepSize: 1 },
+      entry_threshold: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      exit_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      min_hold: { min: 2, max: 8, stepSize: 1 },
+      stop_loss: { min: 0.04, max: 0.15, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_roc_slow_17.params.json',
+  },
+  donchian_short: {
+    class: DonchianShortStrategy,
+    params: {
+      channel_period: { min: 5, max: 15, stepSize: 1 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      exit_at_mid: { min: 0, max: 1, stepSize: 1 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_donchian_short_18.params.json',
+  },
+  donchian_long: {
+    class: DonchianLongStrategy,
+    params: {
+      channel_period: { min: 10, max: 25, stepSize: 2 },
+      stop_loss: { min: 0.04, max: 0.15, stepSize: 0.01 },
+      trailing_stop: { min: 0.03, max: 0.1, stepSize: 0.01 },
+      exit_at_mid: { min: 0, max: 1, stepSize: 1 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_donchian_long_19.params.json',
+  },
+  stoch_fast: {
+    class: StochFastStrategy,
+    params: {
+      k_period: { min: 3, max: 8, stepSize: 1 },
+      d_period: { min: 2, max: 5, stepSize: 1 },
+      oversold: { min: 10, max: 30, stepSize: 5 },
+      overbought: { min: 70, max: 90, stepSize: 5 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_stoch_fast_20.params.json',
+  },
+  stoch_slow: {
+    class: StochSlowStrategy,
+    params: {
+      k_period: { min: 8, max: 15, stepSize: 1 },
+      d_period: { min: 3, max: 8, stepSize: 1 },
+      oversold: { min: 15, max: 35, stepSize: 5 },
+      overbought: { min: 65, max: 85, stepSize: 5 },
+      stop_loss: { min: 0.04, max: 0.12, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_stoch_slow_21.params.json',
+  },
+  willr_short: {
+    class: WillRShortStrategy,
+    params: {
+      period: { min: 5, max: 12, stepSize: 1 },
+      oversold_level: { min: -95, max: -70, stepSize: 5 },
+      overbought_level: { min: -30, max: -5, stepSize: 5 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_willr_short_22.params.json',
+  },
+  willr_long: {
+    class: WillRLongStrategy,
+    params: {
+      period: { min: 10, max: 20, stepSize: 1 },
+      oversold_level: { min: -95, max: -75, stepSize: 5 },
+      overbought_level: { min: -25, max: -5, stepSize: 5 },
+      stop_loss: { min: 0.04, max: 0.15, stepSize: 0.01 },
+      trailing_stop: { min: 0.03, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_willr_long_23.params.json',
+  },
+  accel_fast: {
+    class: AccelFastStrategy,
+    params: {
+      lookback: { min: 3, max: 6, stepSize: 1 },
+      entry_threshold: { min: 0.001, max: 0.015, stepSize: 0.002 },
+      exit_threshold: { min: 0.001, max: 0.01, stepSize: 0.001 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_accel_fast_24.params.json',
+  },
+  accel_slow: {
+    class: AccelSlowStrategy,
+    params: {
+      lookback: { min: 5, max: 12, stepSize: 1 },
+      entry_threshold: { min: 0.001, max: 0.01, stepSize: 0.001 },
+      exit_threshold: { min: 0.001, max: 0.008, stepSize: 0.001 },
+      stop_loss: { min: 0.04, max: 0.15, stepSize: 0.01 },
+      trailing_stop: { min: 0.03, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_accel_slow_25.params.json',
+  },
+  vbreak_tight: {
+    class: VolBreakTightStrategy,
+    params: {
+      vol_period: { min: 5, max: 12, stepSize: 1 },
+      lookback: { min: 8, max: 20, stepSize: 2 },
+      contraction_ratio: { min: 0.3, max: 0.7, stepSize: 0.1 },
+      breakout_threshold: { min: 0.01, max: 0.05, stepSize: 0.005 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_vbreak_tight_26.params.json',
+  },
+  vbreak_wide: {
+    class: VolBreakWideStrategy,
+    params: {
+      vol_period: { min: 8, max: 18, stepSize: 2 },
+      lookback: { min: 12, max: 25, stepSize: 2 },
+      contraction_ratio: { min: 0.4, max: 0.8, stepSize: 0.1 },
+      breakout_threshold: { min: 0.015, max: 0.06, stepSize: 0.005 },
+      stop_loss: { min: 0.04, max: 0.15, stepSize: 0.01 },
+      trailing_stop: { min: 0.03, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_vbreak_wide_27.params.json',
+  },
+  ribbon_tight: {
+    class: RibbonTightStrategy,
+    params: {
+      shortest_period: { min: 2, max: 5, stepSize: 1 },
+      period_step: { min: 1, max: 4, stepSize: 1 },
+      num_mas: { min: 3, max: 6, stepSize: 1 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_ribbon_tight_28.params.json',
+  },
+  ribbon_wide: {
+    class: RibbonWideStrategy,
+    params: {
+      shortest_period: { min: 3, max: 8, stepSize: 1 },
+      period_step: { min: 2, max: 6, stepSize: 1 },
+      num_mas: { min: 3, max: 7, stepSize: 1 },
+      stop_loss: { min: 0.04, max: 0.15, stepSize: 0.01 },
+      trailing_stop: { min: 0.03, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_ribbon_wide_29.params.json',
+  },
+  rsi_div_fast: {
+    class: RSIDivFastStrategy,
+    params: {
+      rsi_period: { min: 3, max: 8, stepSize: 1 },
+      divergence_lookback: { min: 4, max: 10, stepSize: 1 },
+      oversold: { min: 20, max: 40, stepSize: 5 },
+      overbought: { min: 60, max: 80, stepSize: 5 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_rsi_div_fast_30.params.json',
+  },
+  rsi_div_slow: {
+    class: RSIDivSlowStrategy,
+    params: {
+      rsi_period: { min: 5, max: 12, stepSize: 1 },
+      divergence_lookback: { min: 8, max: 15, stepSize: 1 },
+      oversold: { min: 15, max: 35, stepSize: 5 },
+      overbought: { min: 65, max: 85, stepSize: 5 },
+      stop_loss: { min: 0.04, max: 0.15, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_rsi_div_slow_31.params.json',
+  },
+  mr_rsi_tight: {
+    class: MRRSITightStrategy,
+    params: {
+      ma_period: { min: 4, max: 10, stepSize: 1 },
+      rsi_period: { min: 3, max: 8, stepSize: 1 },
+      deviation_threshold: { min: 0.01, max: 0.05, stepSize: 0.005 },
+      rsi_oversold: { min: 20, max: 40, stepSize: 5 },
+      rsi_overbought: { min: 60, max: 80, stepSize: 5 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_mr_rsi_tight_32.params.json',
+  },
+  mr_rsi_wide: {
+    class: MRRSIWideStrategy,
+    params: {
+      ma_period: { min: 6, max: 15, stepSize: 1 },
+      rsi_period: { min: 5, max: 10, stepSize: 1 },
+      deviation_threshold: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      rsi_oversold: { min: 15, max: 35, stepSize: 5 },
+      rsi_overbought: { min: 65, max: 85, stepSize: 5 },
+      stop_loss: { min: 0.04, max: 0.15, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_mr_rsi_wide_33.params.json',
+  },
+  adapt_fast: {
+    class: AdaptFastStrategy,
+    params: {
+      min_period: { min: 2, max: 5, stepSize: 1 },
+      max_period: { min: 8, max: 20, stepSize: 2 },
+      vol_sensitivity: { min: 20, max: 100, stepSize: 10 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_adapt_fast_34.params.json',
+  },
+  adapt_slow: {
+    class: AdaptSlowStrategy,
+    params: {
+      min_period: { min: 3, max: 8, stepSize: 1 },
+      max_period: { min: 15, max: 35, stepSize: 5 },
+      vol_sensitivity: { min: 10, max: 80, stepSize: 10 },
+      stop_loss: { min: 0.04, max: 0.15, stepSize: 0.01 },
+      trailing_stop: { min: 0.03, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_adapt_slow_35.params.json',
+  },
+  tri_ma_fast: {
+    class: TriMAFastStrategy,
+    params: {
+      fast_period: { min: 2, max: 5, stepSize: 1 },
+      mid_period: { min: 4, max: 10, stepSize: 1 },
+      slow_period: { min: 8, max: 18, stepSize: 2 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_tri_ma_fast_36.params.json',
+  },
+  tri_ma_slow: {
+    class: TriMASlowStrategy,
+    params: {
+      fast_period: { min: 3, max: 8, stepSize: 1 },
+      mid_period: { min: 8, max: 16, stepSize: 2 },
+      slow_period: { min: 15, max: 30, stepSize: 2 },
+      stop_loss: { min: 0.04, max: 0.15, stepSize: 0.01 },
+      trailing_stop: { min: 0.03, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_tri_ma_slow_37.params.json',
+  },
+  env_tight: {
+    class: EnvTightStrategy,
+    params: {
+      ma_period: { min: 5, max: 15, stepSize: 1 },
+      envelope_pct: { min: 0.01, max: 0.06, stepSize: 0.005 },
+      stop_loss: { min: 0.03, max: 0.12, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_env_tight_38.params.json',
+  },
+  env_wide: {
+    class: EnvWideStrategy,
+    params: {
+      ma_period: { min: 8, max: 20, stepSize: 2 },
+      envelope_pct: { min: 0.03, max: 0.1, stepSize: 0.01 },
+      stop_loss: { min: 0.05, max: 0.15, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_env_wide_39.params.json',
+  },
+  pat_dip: {
+    class: PatDipStrategy,
+    params: {
+      consec_bars: { min: 2, max: 5, stepSize: 1 },
+      exit_bars: { min: 1, max: 4, stepSize: 1 },
+      stop_loss: { min: 0.03, max: 0.12, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_pat_dip_40.params.json',
+  },
+  pat_mom: {
+    class: PatMomStrategy,
+    params: {
+      consec_bars: { min: 2, max: 5, stepSize: 1 },
+      exit_bars: { min: 1, max: 4, stepSize: 1 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_pat_mom_41.params.json',
+  },
+  combo_tight: {
+    class: ComboTightStrategy,
+    params: {
+      bb_period: { min: 5, max: 12, stepSize: 1 },
+      rsi_period: { min: 3, max: 8, stepSize: 1 },
+      std_mult: { min: 1.2, max: 2.5, stepSize: 0.1 },
+      rsi_oversold: { min: 20, max: 40, stepSize: 5 },
+      rsi_overbought: { min: 60, max: 80, stepSize: 5 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_combo_tight_42.params.json',
+  },
+  combo_wide: {
+    class: ComboWideStrategy,
+    params: {
+      bb_period: { min: 8, max: 18, stepSize: 2 },
+      rsi_period: { min: 5, max: 10, stepSize: 1 },
+      std_mult: { min: 1.5, max: 3, stepSize: 0.2 },
+      rsi_oversold: { min: 15, max: 35, stepSize: 5 },
+      rsi_overbought: { min: 65, max: 85, stepSize: 5 },
+      stop_loss: { min: 0.04, max: 0.15, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_combo_wide_43.params.json',
+  },
+  tstr_fast: {
+    class: TStrFastStrategy,
+    params: {
+      lookback: { min: 4, max: 10, stepSize: 1 },
+      entry_strength: { min: 0.5, max: 0.9, stepSize: 0.05 },
+      exit_strength: { min: 0.1, max: 0.5, stepSize: 0.05 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_tstr_fast_44.params.json',
+  },
+  tstr_slow: {
+    class: TStrSlowStrategy,
+    params: {
+      lookback: { min: 8, max: 18, stepSize: 2 },
+      entry_strength: { min: 0.5, max: 0.85, stepSize: 0.05 },
+      exit_strength: { min: 0.15, max: 0.5, stepSize: 0.05 },
+      stop_loss: { min: 0.04, max: 0.15, stepSize: 0.01 },
+      trailing_stop: { min: 0.03, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_tstr_slow_45.params.json',
+  },
+  swing_short: {
+    class: SwingShortStrategy,
+    params: {
+      swing_window: { min: 2, max: 5, stepSize: 1 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      take_profit: { min: 0.04, max: 0.15, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_swing_short_46.params.json',
+  },
+  swing_long: {
+    class: SwingLongStrategy,
+    params: {
+      swing_window: { min: 3, max: 8, stepSize: 1 },
+      stop_loss: { min: 0.04, max: 0.15, stepSize: 0.01 },
+      trailing_stop: { min: 0.03, max: 0.1, stepSize: 0.01 },
+      take_profit: { min: 0.06, max: 0.2, stepSize: 0.02 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_swing_long_47.params.json',
+  },
+  rev_fast: {
+    class: RevFastStrategy,
+    params: {
+      lookback: { min: 3, max: 8, stepSize: 1 },
+      drop_threshold: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      bounce_threshold: { min: 0.01, max: 0.05, stepSize: 0.005 },
+      stop_loss: { min: 0.03, max: 0.12, stepSize: 0.01 },
+      take_profit: { min: 0.04, max: 0.15, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_rev_fast_48.params.json',
+  },
+  rev_slow: {
+    class: RevSlowStrategy,
+    params: {
+      lookback: { min: 6, max: 15, stepSize: 1 },
+      drop_threshold: { min: 0.04, max: 0.15, stepSize: 0.01 },
+      bounce_threshold: { min: 0.01, max: 0.06, stepSize: 0.005 },
+      stop_loss: { min: 0.05, max: 0.15, stepSize: 0.01 },
+      take_profit: { min: 0.06, max: 0.2, stepSize: 0.02 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_rev_slow_49.params.json',
+  },
+  chan_tight: {
+    class: ChanTightStrategy,
+    params: {
+      channel_period: { min: 5, max: 12, stepSize: 1 },
+      channel_width: { min: 0.2, max: 0.8, stepSize: 0.1 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_chan_tight_50.params.json',
+  },
+  chan_wide: {
+    class: ChanWideStrategy,
+    params: {
+      channel_period: { min: 10, max: 20, stepSize: 2 },
+      channel_width: { min: 0.3, max: 1, stepSize: 0.1 },
+      stop_loss: { min: 0.04, max: 0.15, stepSize: 0.01 },
+      trailing_stop: { min: 0.03, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_chan_wide_51.params.json',
+  },
+  mcross_fast: {
+    class: MCrossFastStrategy,
+    params: {
+      ma_period: { min: 3, max: 10, stepSize: 1 },
+      stop_loss: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      trailing_stop: { min: 0.01, max: 0.06, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_mcross_fast_52.params.json',
+  },
+  mcross_slow: {
+    class: MCrossSlowStrategy,
+    params: {
+      ma_period: { min: 8, max: 20, stepSize: 2 },
+      stop_loss: { min: 0.04, max: 0.12, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_mcross_slow_53.params.json',
+  },
+  mr_rsi_v01: {
+    class: MRRsiV01Strategy,
+    params: {
+      ma_period: { min: 2, max: 8, stepSize: 1 },
+      rsi_period: { min: 2, max: 7, stepSize: 1 },
+      deviation_threshold: { min: 0.005, max: 0.045, stepSize: 0.005 },
+      rsi_oversold: { min: 15, max: 35, stepSize: 5 },
+      rsi_overbought: { min: 65, max: 85, stepSize: 5 },
+      stop_loss: { min: 0.010000000000000002, max: 0.09, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_mr_rsi_v01_54.params.json',
+  },
+  mr_rsi_v02: {
+    class: MRRsiV02Strategy,
+    params: {
+      ma_period: { min: 2, max: 9, stepSize: 1 },
+      rsi_period: { min: 2, max: 8, stepSize: 1 },
+      deviation_threshold: { min: 0.005, max: 0.05, stepSize: 0.005 },
+      rsi_oversold: { min: 20, max: 40, stepSize: 5 },
+      rsi_overbought: { min: 60, max: 80, stepSize: 5 },
+      stop_loss: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.22999999999999998, stepSize: 0.05 },
+    },
+    outputFile: 'strat_mr_rsi_v02_55.params.json',
+  },
+  mr_rsi_v03: {
+    class: MRRsiV03Strategy,
+    params: {
+      ma_period: { min: 2, max: 9, stepSize: 1 },
+      rsi_period: { min: 3, max: 9, stepSize: 1 },
+      deviation_threshold: { min: 0.009999999999999998, max: 0.06, stepSize: 0.005 },
+      rsi_oversold: { min: 15, max: 35, stepSize: 5 },
+      rsi_overbought: { min: 65, max: 85, stepSize: 5 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_mr_rsi_v03_56.params.json',
+  },
+  mr_rsi_v04: {
+    class: MRRsiV04Strategy,
+    params: {
+      ma_period: { min: 3, max: 11, stepSize: 1 },
+      rsi_period: { min: 3, max: 9, stepSize: 1 },
+      deviation_threshold: { min: 0.005, max: 0.05, stepSize: 0.005 },
+      rsi_oversold: { min: 20, max: 40, stepSize: 5 },
+      rsi_overbought: { min: 60, max: 80, stepSize: 5 },
+      stop_loss: { min: 0.010000000000000002, max: 0.09, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_mr_rsi_v04_57.params.json',
+  },
+  mr_rsi_v05: {
+    class: MRRsiV05Strategy,
+    params: {
+      ma_period: { min: 4, max: 12, stepSize: 1 },
+      rsi_period: { min: 4, max: 10, stepSize: 1 },
+      deviation_threshold: { min: 0.009999999999999998, max: 0.06, stepSize: 0.005 },
+      rsi_oversold: { min: 18, max: 38, stepSize: 5 },
+      rsi_overbought: { min: 62, max: 82, stepSize: 5 },
+      stop_loss: { min: 0.020000000000000004, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.27, stepSize: 0.05 },
+    },
+    outputFile: 'strat_mr_rsi_v05_58.params.json',
+  },
+  mr_rsi_v06: {
+    class: MRRsiV06Strategy,
+    params: {
+      ma_period: { min: 5, max: 13, stepSize: 1 },
+      rsi_period: { min: 5, max: 11, stepSize: 1 },
+      deviation_threshold: { min: 0.02, max: 0.07, stepSize: 0.005 },
+      rsi_oversold: { min: 15, max: 35, stepSize: 5 },
+      rsi_overbought: { min: 65, max: 85, stepSize: 5 },
+      stop_loss: { min: 0.04000000000000001, max: 0.12000000000000001, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.32999999999999996, stepSize: 0.05 },
+    },
+    outputFile: 'strat_mr_rsi_v06_59.params.json',
+  },
+  mr_rsi_v07: {
+    class: MRRsiV07Strategy,
+    params: {
+      ma_period: { min: 7, max: 15, stepSize: 1 },
+      rsi_period: { min: 6, max: 12, stepSize: 1 },
+      deviation_threshold: { min: 0.009999999999999998, max: 0.06, stepSize: 0.005 },
+      rsi_oversold: { min: 20, max: 40, stepSize: 5 },
+      rsi_overbought: { min: 60, max: 80, stepSize: 5 },
+      stop_loss: { min: 0.020000000000000004, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_mr_rsi_v07_60.params.json',
+  },
+  mr_rsi_v08: {
+    class: MRRsiV08Strategy,
+    params: {
+      ma_period: { min: 9, max: 17, stepSize: 1 },
+      rsi_period: { min: 7, max: 13, stepSize: 1 },
+      deviation_threshold: { min: 0.030000000000000002, max: 0.08, stepSize: 0.005 },
+      rsi_oversold: { min: 12, max: 32, stepSize: 5 },
+      rsi_overbought: { min: 68, max: 88, stepSize: 5 },
+      stop_loss: { min: 0.05, max: 0.13, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+    },
+    outputFile: 'strat_mr_rsi_v08_61.params.json',
+  },
+  mr_rsi_v09: {
+    class: MRRsiV09Strategy,
+    params: {
+      ma_period: { min: 2, max: 10, stepSize: 1 },
+      rsi_period: { min: 2, max: 8, stepSize: 1 },
+      deviation_threshold: { min: 0.030000000000000002, max: 0.08, stepSize: 0.005 },
+      rsi_oversold: { min: 10, max: 30, stepSize: 5 },
+      rsi_overbought: { min: 70, max: 90, stepSize: 5 },
+      stop_loss: { min: 0.05, max: 0.13, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_mr_rsi_v09_62.params.json',
+  },
+  mr_rsi_v10: {
+    class: MRRsiV10Strategy,
+    params: {
+      ma_period: { min: 2, max: 10, stepSize: 1 },
+      rsi_period: { min: 3, max: 9, stepSize: 1 },
+      deviation_threshold: { min: 0.005, max: 0.04, stepSize: 0.005 },
+      rsi_oversold: { min: 25, max: 45, stepSize: 5 },
+      rsi_overbought: { min: 55, max: 75, stepSize: 5 },
+      stop_loss: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.22999999999999998, stepSize: 0.05 },
+    },
+    outputFile: 'strat_mr_rsi_v10_63.params.json',
+  },
+  mr_rsi_v11: {
+    class: MRRsiV11Strategy,
+    params: {
+      ma_period: { min: 2, max: 8, stepSize: 1 },
+      rsi_period: { min: 2, max: 7, stepSize: 1 },
+      deviation_threshold: { min: 0.005, max: 0.04, stepSize: 0.005 },
+      rsi_oversold: { min: 25, max: 45, stepSize: 5 },
+      rsi_overbought: { min: 55, max: 75, stepSize: 5 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.4, stepSize: 0.05 },
+    },
+    outputFile: 'strat_mr_rsi_v11_64.params.json',
+  },
+  mr_rsi_v12: {
+    class: MRRsiV12Strategy,
+    params: {
+      ma_period: { min: 7, max: 15, stepSize: 1 },
+      rsi_period: { min: 6, max: 12, stepSize: 1 },
+      deviation_threshold: { min: 0.02, max: 0.07, stepSize: 0.005 },
+      rsi_oversold: { min: 10, max: 30, stepSize: 5 },
+      rsi_overbought: { min: 70, max: 90, stepSize: 5 },
+      stop_loss: { min: 0.010000000000000002, max: 0.09, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.2, stepSize: 0.05 },
+    },
+    outputFile: 'strat_mr_rsi_v12_65.params.json',
+  },
+  mr_rsi_v13: {
+    class: MRRsiV13Strategy,
+    params: {
+      ma_period: { min: 3, max: 11, stepSize: 1 },
+      rsi_period: { min: 3, max: 9, stepSize: 1 },
+      deviation_threshold: { min: 0.005000000000000001, max: 0.055, stepSize: 0.005 },
+      rsi_oversold: { min: 18, max: 38, stepSize: 5 },
+      rsi_overbought: { min: 62, max: 82, stepSize: 5 },
+      stop_loss: { min: 0.020000000000000004, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.27, stepSize: 0.05 },
+    },
+    outputFile: 'strat_mr_rsi_v13_66.params.json',
+  },
+  mr_rsi_v14: {
+    class: MRRsiV14Strategy,
+    params: {
+      ma_period: { min: 4, max: 12, stepSize: 1 },
+      rsi_period: { min: 4, max: 10, stepSize: 1 },
+      deviation_threshold: { min: 0.015000000000000003, max: 0.065, stepSize: 0.005 },
+      rsi_oversold: { min: 16, max: 36, stepSize: 5 },
+      rsi_overbought: { min: 64, max: 84, stepSize: 5 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.29000000000000004, stepSize: 0.05 },
+    },
+    outputFile: 'strat_mr_rsi_v14_67.params.json',
+  },
+  mr_rsi_v15: {
+    class: MRRsiV15Strategy,
+    params: {
+      ma_period: { min: 2, max: 10, stepSize: 1 },
+      rsi_period: { min: 2, max: 8, stepSize: 1 },
+      deviation_threshold: { min: 0.005, max: 0.05, stepSize: 0.005 },
+      rsi_oversold: { min: 20, max: 40, stepSize: 5 },
+      rsi_overbought: { min: 60, max: 80, stepSize: 5 },
+      stop_loss: { min: 0.01, max: 0.07, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_mr_rsi_v15_68.params.json',
+  },
+  mr_rsi_v16: {
+    class: MRRsiV16Strategy,
+    params: {
+      ma_period: { min: 2, max: 10, stepSize: 1 },
+      rsi_period: { min: 2, max: 8, stepSize: 1 },
+      deviation_threshold: { min: 0.005, max: 0.05, stepSize: 0.005 },
+      rsi_oversold: { min: 20, max: 40, stepSize: 5 },
+      rsi_overbought: { min: 60, max: 80, stepSize: 5 },
+      stop_loss: { min: 0.07, max: 0.15000000000000002, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_mr_rsi_v16_69.params.json',
+  },
+  mr_rsi_v17: {
+    class: MRRsiV17Strategy,
+    params: {
+      ma_period: { min: 3, max: 11, stepSize: 1 },
+      rsi_period: { min: 3, max: 9, stepSize: 1 },
+      deviation_threshold: { min: 0.009999999999999998, max: 0.06, stepSize: 0.005 },
+      rsi_oversold: { min: 15, max: 35, stepSize: 5 },
+      rsi_overbought: { min: 65, max: 85, stepSize: 5 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.4, stepSize: 0.05 },
+    },
+    outputFile: 'strat_mr_rsi_v17_70.params.json',
+  },
+  mr_rsi_v18: {
+    class: MRRsiV18Strategy,
+    params: {
+      ma_period: { min: 3, max: 11, stepSize: 1 },
+      rsi_period: { min: 3, max: 9, stepSize: 1 },
+      deviation_threshold: { min: 0.009999999999999998, max: 0.06, stepSize: 0.005 },
+      rsi_oversold: { min: 15, max: 35, stepSize: 5 },
+      rsi_overbought: { min: 65, max: 85, stepSize: 5 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.2, stepSize: 0.05 },
+    },
+    outputFile: 'strat_mr_rsi_v18_71.params.json',
+  },
+  mr_rsi_v19: {
+    class: MRRsiV19Strategy,
+    params: {
+      ma_period: { min: 2, max: 8, stepSize: 1 },
+      rsi_period: { min: 2, max: 7, stepSize: 1 },
+      deviation_threshold: { min: 0.005, max: 0.05, stepSize: 0.005 },
+      rsi_oversold: { min: 20, max: 40, stepSize: 5 },
+      rsi_overbought: { min: 60, max: 80, stepSize: 5 },
+      stop_loss: { min: 0.010000000000000002, max: 0.09, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.27, stepSize: 0.05 },
+    },
+    outputFile: 'strat_mr_rsi_v19_72.params.json',
+  },
+  mr_rsi_v20: {
+    class: MRRsiV20Strategy,
+    params: {
+      ma_period: { min: 11, max: 19, stepSize: 1 },
+      rsi_period: { min: 8, max: 14, stepSize: 1 },
+      deviation_threshold: { min: 0.039999999999999994, max: 0.09, stepSize: 0.005 },
+      rsi_oversold: { min: 10, max: 30, stepSize: 5 },
+      rsi_overbought: { min: 70, max: 90, stepSize: 5 },
+      stop_loss: { min: 0.07, max: 0.15000000000000002, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_mr_rsi_v20_73.params.json',
+  },
+  willr_v01: {
+    class: WillRV01Strategy,
+    params: {
+      period: { min: 3, max: 9, stepSize: 1 },
+      oversold_level: { min: -95, max: -75, stepSize: 5 },
+      overbought_level: { min: -25, max: -5, stepSize: 5 },
+      stop_loss: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      trailing_stop: { min: 0.01, max: 0.06, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_willr_v01_74.params.json',
+  },
+  willr_v02: {
+    class: WillRV02Strategy,
+    params: {
+      period: { min: 3, max: 10, stepSize: 1 },
+      oversold_level: { min: -90, max: -70, stepSize: 5 },
+      overbought_level: { min: -30, max: -10, stepSize: 5 },
+      stop_loss: { min: 0.010000000000000002, max: 0.09, stepSize: 0.01 },
+      trailing_stop: { min: 0.01, max: 0.07, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.22999999999999998, stepSize: 0.05 },
+    },
+    outputFile: 'strat_willr_v02_75.params.json',
+  },
+  willr_v03: {
+    class: WillRV03Strategy,
+    params: {
+      period: { min: 3, max: 10, stepSize: 1 },
+      oversold_level: { min: -98, max: -80, stepSize: 5 },
+      overbought_level: { min: -20, max: -2, stepSize: 5 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      trailing_stop: { min: 0.030000000000000002, max: 0.09, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_willr_v03_76.params.json',
+  },
+  willr_v04: {
+    class: WillRV04Strategy,
+    params: {
+      period: { min: 5, max: 13, stepSize: 1 },
+      oversold_level: { min: -90, max: -70, stepSize: 5 },
+      overbought_level: { min: -30, max: -10, stepSize: 5 },
+      stop_loss: { min: 0.020000000000000004, max: 0.1, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_willr_v04_77.params.json',
+  },
+  willr_v05: {
+    class: WillRV05Strategy,
+    params: {
+      period: { min: 5, max: 13, stepSize: 1 },
+      oversold_level: { min: -95, max: -75, stepSize: 5 },
+      overbought_level: { min: -25, max: -5, stepSize: 5 },
+      stop_loss: { min: 0.04000000000000001, max: 0.12000000000000001, stepSize: 0.01 },
+      trailing_stop: { min: 0.030000000000000002, max: 0.09, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_willr_v05_78.params.json',
+  },
+  willr_v06: {
+    class: WillRV06Strategy,
+    params: {
+      period: { min: 5, max: 13, stepSize: 1 },
+      oversold_level: { min: -98, max: -85, stepSize: 5 },
+      overbought_level: { min: -15, max: -2, stepSize: 5 },
+      stop_loss: { min: 0.05, max: 0.13, stepSize: 0.01 },
+      trailing_stop: { min: 0.039999999999999994, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+    },
+    outputFile: 'strat_willr_v06_79.params.json',
+  },
+  willr_v07: {
+    class: WillRV07Strategy,
+    params: {
+      period: { min: 9, max: 17, stepSize: 1 },
+      oversold_level: { min: -90, max: -70, stepSize: 5 },
+      overbought_level: { min: -30, max: -10, stepSize: 5 },
+      stop_loss: { min: 0.020000000000000004, max: 0.1, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_willr_v07_80.params.json',
+  },
+  willr_v08: {
+    class: WillRV08Strategy,
+    params: {
+      period: { min: 9, max: 17, stepSize: 1 },
+      oversold_level: { min: -98, max: -80, stepSize: 5 },
+      overbought_level: { min: -20, max: -2, stepSize: 5 },
+      stop_loss: { min: 0.05, max: 0.13, stepSize: 0.01 },
+      trailing_stop: { min: 0.039999999999999994, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.32999999999999996, stepSize: 0.05 },
+    },
+    outputFile: 'strat_willr_v08_81.params.json',
+  },
+  willr_v09: {
+    class: WillRV09Strategy,
+    params: {
+      period: { min: 4, max: 12, stepSize: 1 },
+      oversold_level: { min: -98, max: -85, stepSize: 5 },
+      overbought_level: { min: -35, max: -15, stepSize: 5 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.27, stepSize: 0.05 },
+    },
+    outputFile: 'strat_willr_v09_82.params.json',
+  },
+  willr_v10: {
+    class: WillRV10Strategy,
+    params: {
+      period: { min: 3, max: 11, stepSize: 1 },
+      oversold_level: { min: -80, max: -60, stepSize: 5 },
+      overbought_level: { min: -40, max: -20, stepSize: 5 },
+      stop_loss: { min: 0.010000000000000002, max: 0.09, stepSize: 0.01 },
+      trailing_stop: { min: 0.01, max: 0.07, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.22999999999999998, stepSize: 0.05 },
+    },
+    outputFile: 'strat_willr_v10_83.params.json',
+  },
+  willr_v11: {
+    class: WillRV11Strategy,
+    params: {
+      period: { min: 3, max: 9, stepSize: 1 },
+      oversold_level: { min: -85, max: -65, stepSize: 5 },
+      overbought_level: { min: -35, max: -15, stepSize: 5 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.4, stepSize: 0.05 },
+    },
+    outputFile: 'strat_willr_v11_84.params.json',
+  },
+  willr_v12: {
+    class: WillRV12Strategy,
+    params: {
+      period: { min: 11, max: 19, stepSize: 1 },
+      oversold_level: { min: -98, max: -80, stepSize: 5 },
+      overbought_level: { min: -20, max: -2, stepSize: 5 },
+      stop_loss: { min: 0.010000000000000002, max: 0.09, stepSize: 0.01 },
+      trailing_stop: { min: 0.01, max: 0.07, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.2, stepSize: 0.05 },
+    },
+    outputFile: 'strat_willr_v12_85.params.json',
+  },
+  willr_v13: {
+    class: WillRV13Strategy,
+    params: {
+      period: { min: 4, max: 12, stepSize: 1 },
+      oversold_level: { min: -92, max: -72, stepSize: 5 },
+      overbought_level: { min: -28, max: -8, stepSize: 5 },
+      stop_loss: { min: 0.020000000000000004, max: 0.1, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.27, stepSize: 0.05 },
+    },
+    outputFile: 'strat_willr_v13_86.params.json',
+  },
+  willr_v14: {
+    class: WillRV14Strategy,
+    params: {
+      period: { min: 6, max: 14, stepSize: 1 },
+      oversold_level: { min: -88, max: -68, stepSize: 5 },
+      overbought_level: { min: -32, max: -12, stepSize: 5 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      trailing_stop: { min: 0.030000000000000002, max: 0.09, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.29000000000000004, stepSize: 0.05 },
+    },
+    outputFile: 'strat_willr_v14_87.params.json',
+  },
+  willr_v15: {
+    class: WillRV15Strategy,
+    params: {
+      period: { min: 4, max: 12, stepSize: 1 },
+      oversold_level: { min: -90, max: -70, stepSize: 5 },
+      overbought_level: { min: -30, max: -10, stepSize: 5 },
+      stop_loss: { min: 0.01, max: 0.07, stepSize: 0.01 },
+      trailing_stop: { min: 0.01, max: 0.06, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_willr_v15_88.params.json',
+  },
+  willr_v16: {
+    class: WillRV16Strategy,
+    params: {
+      period: { min: 4, max: 12, stepSize: 1 },
+      oversold_level: { min: -90, max: -70, stepSize: 5 },
+      overbought_level: { min: -30, max: -10, stepSize: 5 },
+      stop_loss: { min: 0.09, max: 0.16999999999999998, stepSize: 0.01 },
+      trailing_stop: { min: 0.06, max: 0.12, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_willr_v16_89.params.json',
+  },
+  willr_v17: {
+    class: WillRV17Strategy,
+    params: {
+      period: { min: 3, max: 11, stepSize: 1 },
+      oversold_level: { min: -95, max: -75, stepSize: 5 },
+      overbought_level: { min: -25, max: -5, stepSize: 5 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.4, stepSize: 0.05 },
+    },
+    outputFile: 'strat_willr_v17_90.params.json',
+  },
+  willr_v18: {
+    class: WillRV18Strategy,
+    params: {
+      period: { min: 3, max: 11, stepSize: 1 },
+      oversold_level: { min: -95, max: -75, stepSize: 5 },
+      overbought_level: { min: -25, max: -5, stepSize: 5 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.2, stepSize: 0.05 },
+    },
+    outputFile: 'strat_willr_v18_91.params.json',
+  },
+  willr_v19: {
+    class: WillRV19Strategy,
+    params: {
+      period: { min: 3, max: 8, stepSize: 1 },
+      oversold_level: { min: -90, max: -70, stepSize: 5 },
+      overbought_level: { min: -30, max: -10, stepSize: 5 },
+      stop_loss: { min: 0.010000000000000002, max: 0.09, stepSize: 0.01 },
+      trailing_stop: { min: 0.01, max: 0.07, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_willr_v19_92.params.json',
+  },
+  willr_v20: {
+    class: WillRV20Strategy,
+    params: {
+      period: { min: 15, max: 23, stepSize: 1 },
+      oversold_level: { min: -95, max: -75, stepSize: 5 },
+      overbought_level: { min: -25, max: -5, stepSize: 5 },
+      stop_loss: { min: 0.05, max: 0.13, stepSize: 0.01 },
+      trailing_stop: { min: 0.039999999999999994, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_willr_v20_93.params.json',
+  },
+  env_v01: {
+    class: EnvV01Strategy,
+    params: {
+      ma_period: { min: 2, max: 9, stepSize: 1 },
+      envelope_pct: { min: 0.005, max: 0.04, stepSize: 0.005 },
+      stop_loss: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.22999999999999998, stepSize: 0.05 },
+    },
+    outputFile: 'strat_env_v01_94.params.json',
+  },
+  env_v02: {
+    class: EnvV02Strategy,
+    params: {
+      ma_period: { min: 2, max: 10, stepSize: 1 },
+      envelope_pct: { min: 0.005, max: 0.045, stepSize: 0.005 },
+      stop_loss: { min: 0.010000000000000002, max: 0.09, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_env_v02_95.params.json',
+  },
+  env_v03: {
+    class: EnvV03Strategy,
+    params: {
+      ma_period: { min: 2, max: 10, stepSize: 1 },
+      envelope_pct: { min: 0.010000000000000002, max: 0.055, stepSize: 0.005 },
+      stop_loss: { min: 0.020000000000000004, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.27, stepSize: 0.05 },
+    },
+    outputFile: 'strat_env_v03_96.params.json',
+  },
+  env_v04: {
+    class: EnvV04Strategy,
+    params: {
+      ma_period: { min: 2, max: 10, stepSize: 1 },
+      envelope_pct: { min: 0.025, max: 0.07, stepSize: 0.005 },
+      stop_loss: { min: 0.04000000000000001, max: 0.12000000000000001, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_env_v04_97.params.json',
+  },
+  env_v05: {
+    class: EnvV05Strategy,
+    params: {
+      ma_period: { min: 5, max: 13, stepSize: 1 },
+      envelope_pct: { min: 0.005000000000000001, max: 0.05, stepSize: 0.005 },
+      stop_loss: { min: 0.010000000000000002, max: 0.09, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_env_v05_98.params.json',
+  },
+  env_v06: {
+    class: EnvV06Strategy,
+    params: {
+      ma_period: { min: 5, max: 13, stepSize: 1 },
+      envelope_pct: { min: 0.015, max: 0.06, stepSize: 0.005 },
+      stop_loss: { min: 0.020000000000000004, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.27, stepSize: 0.05 },
+    },
+    outputFile: 'strat_env_v06_99.params.json',
+  },
+  env_v07: {
+    class: EnvV07Strategy,
+    params: {
+      ma_period: { min: 5, max: 13, stepSize: 1 },
+      envelope_pct: { min: 0.035, max: 0.08, stepSize: 0.005 },
+      stop_loss: { min: 0.05, max: 0.13, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.32999999999999996, stepSize: 0.05 },
+    },
+    outputFile: 'strat_env_v07_100.params.json',
+  },
+  env_v08: {
+    class: EnvV08Strategy,
+    params: {
+      ma_period: { min: 9, max: 17, stepSize: 1 },
+      envelope_pct: { min: 0.005000000000000001, max: 0.05, stepSize: 0.005 },
+      stop_loss: { min: 0.020000000000000004, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_env_v08_101.params.json',
+  },
+  env_v09: {
+    class: EnvV09Strategy,
+    params: {
+      ma_period: { min: 9, max: 17, stepSize: 1 },
+      envelope_pct: { min: 0.025, max: 0.07, stepSize: 0.005 },
+      stop_loss: { min: 0.04000000000000001, max: 0.12000000000000001, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_env_v09_102.params.json',
+  },
+  env_v10: {
+    class: EnvV10Strategy,
+    params: {
+      ma_period: { min: 9, max: 17, stepSize: 1 },
+      envelope_pct: { min: 0.045, max: 0.09, stepSize: 0.005 },
+      stop_loss: { min: 0.07, max: 0.15000000000000002, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+    },
+    outputFile: 'strat_env_v10_103.params.json',
+  },
+  env_v11: {
+    class: EnvV11Strategy,
+    params: {
+      ma_period: { min: 2, max: 9, stepSize: 1 },
+      envelope_pct: { min: 0.005, max: 0.045, stepSize: 0.005 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.4, stepSize: 0.05 },
+    },
+    outputFile: 'strat_env_v11_104.params.json',
+  },
+  env_v12: {
+    class: EnvV12Strategy,
+    params: {
+      ma_period: { min: 12, max: 20, stepSize: 1 },
+      envelope_pct: { min: 0.035, max: 0.08, stepSize: 0.005 },
+      stop_loss: { min: 0.010000000000000002, max: 0.09, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.2, stepSize: 0.05 },
+    },
+    outputFile: 'strat_env_v12_105.params.json',
+  },
+  env_v13: {
+    class: EnvV13Strategy,
+    params: {
+      ma_period: { min: 4, max: 12, stepSize: 1 },
+      envelope_pct: { min: 0.010000000000000002, max: 0.055, stepSize: 0.005 },
+      stop_loss: { min: 0.020000000000000004, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.27, stepSize: 0.05 },
+    },
+    outputFile: 'strat_env_v13_106.params.json',
+  },
+  env_v14: {
+    class: EnvV14Strategy,
+    params: {
+      ma_period: { min: 6, max: 14, stepSize: 1 },
+      envelope_pct: { min: 0.020000000000000004, max: 0.065, stepSize: 0.005 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.29000000000000004, stepSize: 0.05 },
+    },
+    outputFile: 'strat_env_v14_107.params.json',
+  },
+  env_v15: {
+    class: EnvV15Strategy,
+    params: {
+      ma_period: { min: 3, max: 11, stepSize: 1 },
+      envelope_pct: { min: 0.005000000000000001, max: 0.05, stepSize: 0.005 },
+      stop_loss: { min: 0.01, max: 0.07, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_env_v15_108.params.json',
+  },
+  env_v16: {
+    class: EnvV16Strategy,
+    params: {
+      ma_period: { min: 3, max: 11, stepSize: 1 },
+      envelope_pct: { min: 0.005000000000000001, max: 0.05, stepSize: 0.005 },
+      stop_loss: { min: 0.09, max: 0.16999999999999998, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_env_v16_109.params.json',
+  },
+  env_v17: {
+    class: EnvV17Strategy,
+    params: {
+      ma_period: { min: 4, max: 12, stepSize: 1 },
+      envelope_pct: { min: 0.015, max: 0.06, stepSize: 0.005 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.4, stepSize: 0.05 },
+    },
+    outputFile: 'strat_env_v17_110.params.json',
+  },
+  env_v18: {
+    class: EnvV18Strategy,
+    params: {
+      ma_period: { min: 4, max: 12, stepSize: 1 },
+      envelope_pct: { min: 0.015, max: 0.06, stepSize: 0.005 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.2, stepSize: 0.05 },
+    },
+    outputFile: 'strat_env_v18_111.params.json',
+  },
+  env_v19: {
+    class: EnvV19Strategy,
+    params: {
+      ma_period: { min: 2, max: 8, stepSize: 1 },
+      envelope_pct: { min: 0.005, max: 0.038, stepSize: 0.005 },
+      stop_loss: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.22999999999999998, stepSize: 0.05 },
+    },
+    outputFile: 'strat_env_v19_112.params.json',
+  },
+  env_v20: {
+    class: EnvV20Strategy,
+    params: {
+      ma_period: { min: 15, max: 23, stepSize: 1 },
+      envelope_pct: { min: 0.045, max: 0.09, stepSize: 0.005 },
+      stop_loss: { min: 0.07, max: 0.15000000000000002, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_env_v20_113.params.json',
+  },
+  chan_v01: {
+    class: ChanV01Strategy,
+    params: {
+      channel_period: { min: 3, max: 9, stepSize: 1 },
+      channel_width: { min: 0.1, max: 0.6, stepSize: 0.1 },
+      stop_loss: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      trailing_stop: { min: 0.01, max: 0.06, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.22999999999999998, stepSize: 0.05 },
+    },
+    outputFile: 'strat_chan_v01_114.params.json',
+  },
+  chan_v02: {
+    class: ChanV02Strategy,
+    params: {
+      channel_period: { min: 3, max: 10, stepSize: 1 },
+      channel_width: { min: 0.10000000000000003, max: 0.7, stepSize: 0.1 },
+      stop_loss: { min: 0.010000000000000002, max: 0.09, stepSize: 0.01 },
+      trailing_stop: { min: 0.01, max: 0.07, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_chan_v02_115.params.json',
+  },
+  chan_v03: {
+    class: ChanV03Strategy,
+    params: {
+      channel_period: { min: 3, max: 10, stepSize: 1 },
+      channel_width: { min: 0.2, max: 0.8, stepSize: 0.1 },
+      stop_loss: { min: 0.020000000000000004, max: 0.1, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.27, stepSize: 0.05 },
+    },
+    outputFile: 'strat_chan_v03_116.params.json',
+  },
+  chan_v04: {
+    class: ChanV04Strategy,
+    params: {
+      channel_period: { min: 3, max: 10, stepSize: 1 },
+      channel_width: { min: 0.39999999999999997, max: 1, stepSize: 0.1 },
+      stop_loss: { min: 0.04000000000000001, max: 0.12000000000000001, stepSize: 0.01 },
+      trailing_stop: { min: 0.030000000000000002, max: 0.09, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_chan_v04_117.params.json',
+  },
+  chan_v05: {
+    class: ChanV05Strategy,
+    params: {
+      channel_period: { min: 5, max: 13, stepSize: 1 },
+      channel_width: { min: 0.10000000000000003, max: 0.7, stepSize: 0.1 },
+      stop_loss: { min: 0.010000000000000002, max: 0.09, stepSize: 0.01 },
+      trailing_stop: { min: 0.01, max: 0.07, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_chan_v05_118.params.json',
+  },
+  chan_v06: {
+    class: ChanV06Strategy,
+    params: {
+      channel_period: { min: 5, max: 13, stepSize: 1 },
+      channel_width: { min: 0.2, max: 0.8, stepSize: 0.1 },
+      stop_loss: { min: 0.020000000000000004, max: 0.1, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.27, stepSize: 0.05 },
+    },
+    outputFile: 'strat_chan_v06_119.params.json',
+  },
+  chan_v07: {
+    class: ChanV07Strategy,
+    params: {
+      channel_period: { min: 5, max: 13, stepSize: 1 },
+      channel_width: { min: 0.5, max: 1.1, stepSize: 0.1 },
+      stop_loss: { min: 0.05, max: 0.13, stepSize: 0.01 },
+      trailing_stop: { min: 0.039999999999999994, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.32999999999999996, stepSize: 0.05 },
+    },
+    outputFile: 'strat_chan_v07_120.params.json',
+  },
+  chan_v08: {
+    class: ChanV08Strategy,
+    params: {
+      channel_period: { min: 9, max: 17, stepSize: 1 },
+      channel_width: { min: 0.10000000000000003, max: 0.7, stepSize: 0.1 },
+      stop_loss: { min: 0.020000000000000004, max: 0.1, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_chan_v08_121.params.json',
+  },
+  chan_v09: {
+    class: ChanV09Strategy,
+    params: {
+      channel_period: { min: 9, max: 17, stepSize: 1 },
+      channel_width: { min: 0.3, max: 0.8999999999999999, stepSize: 0.1 },
+      stop_loss: { min: 0.04000000000000001, max: 0.12000000000000001, stepSize: 0.01 },
+      trailing_stop: { min: 0.030000000000000002, max: 0.09, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_chan_v09_122.params.json',
+  },
+  chan_v10: {
+    class: ChanV10Strategy,
+    params: {
+      channel_period: { min: 9, max: 17, stepSize: 1 },
+      channel_width: { min: 0.6000000000000001, max: 1.2, stepSize: 0.1 },
+      stop_loss: { min: 0.07, max: 0.15000000000000002, stepSize: 0.01 },
+      trailing_stop: { min: 0.05, max: 0.11000000000000001, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+    },
+    outputFile: 'strat_chan_v10_123.params.json',
+  },
+  chan_v11: {
+    class: ChanV11Strategy,
+    params: {
+      channel_period: { min: 3, max: 9, stepSize: 1 },
+      channel_width: { min: 0.1, max: 0.6, stepSize: 0.1 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.4, stepSize: 0.05 },
+    },
+    outputFile: 'strat_chan_v11_124.params.json',
+  },
+  chan_v12: {
+    class: ChanV12Strategy,
+    params: {
+      channel_period: { min: 12, max: 20, stepSize: 1 },
+      channel_width: { min: 0.39999999999999997, max: 1, stepSize: 0.1 },
+      stop_loss: { min: 0.010000000000000002, max: 0.09, stepSize: 0.01 },
+      trailing_stop: { min: 0.01, max: 0.07, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.2, stepSize: 0.05 },
+    },
+    outputFile: 'strat_chan_v12_125.params.json',
+  },
+  chan_v13: {
+    class: ChanV13Strategy,
+    params: {
+      channel_period: { min: 4, max: 12, stepSize: 1 },
+      channel_width: { min: 0.2, max: 0.8, stepSize: 0.1 },
+      stop_loss: { min: 0.020000000000000004, max: 0.1, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.27, stepSize: 0.05 },
+    },
+    outputFile: 'strat_chan_v13_126.params.json',
+  },
+  chan_v14: {
+    class: ChanV14Strategy,
+    params: {
+      channel_period: { min: 6, max: 14, stepSize: 1 },
+      channel_width: { min: 0.3, max: 0.8999999999999999, stepSize: 0.1 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      trailing_stop: { min: 0.030000000000000002, max: 0.09, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.29000000000000004, stepSize: 0.05 },
+    },
+    outputFile: 'strat_chan_v14_127.params.json',
+  },
+  chan_v15: {
+    class: ChanV15Strategy,
+    params: {
+      channel_period: { min: 4, max: 12, stepSize: 1 },
+      channel_width: { min: 0.2, max: 0.8, stepSize: 0.1 },
+      stop_loss: { min: 0.01, max: 0.07, stepSize: 0.01 },
+      trailing_stop: { min: 0.01, max: 0.06, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_chan_v15_128.params.json',
+  },
+  chan_v16: {
+    class: ChanV16Strategy,
+    params: {
+      channel_period: { min: 4, max: 12, stepSize: 1 },
+      channel_width: { min: 0.2, max: 0.8, stepSize: 0.1 },
+      stop_loss: { min: 0.09, max: 0.16999999999999998, stepSize: 0.01 },
+      trailing_stop: { min: 0.06, max: 0.12, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_chan_v16_129.params.json',
+  },
+  chan_v17: {
+    class: ChanV17Strategy,
+    params: {
+      channel_period: { min: 3, max: 11, stepSize: 1 },
+      channel_width: { min: 0.2, max: 0.8, stepSize: 0.1 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.4, stepSize: 0.05 },
+    },
+    outputFile: 'strat_chan_v17_130.params.json',
+  },
+  chan_v18: {
+    class: ChanV18Strategy,
+    params: {
+      channel_period: { min: 3, max: 11, stepSize: 1 },
+      channel_width: { min: 0.2, max: 0.8, stepSize: 0.1 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.2, stepSize: 0.05 },
+    },
+    outputFile: 'strat_chan_v18_131.params.json',
+  },
+  chan_v19: {
+    class: ChanV19Strategy,
+    params: {
+      channel_period: { min: 3, max: 8, stepSize: 1 },
+      channel_width: { min: 0.1, max: 0.5, stepSize: 0.1 },
+      stop_loss: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      trailing_stop: { min: 0.01, max: 0.06, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.22999999999999998, stepSize: 0.05 },
+    },
+    outputFile: 'strat_chan_v19_132.params.json',
+  },
+  chan_v20: {
+    class: ChanV20Strategy,
+    params: {
+      channel_period: { min: 15, max: 23, stepSize: 1 },
+      channel_width: { min: 0.7, max: 1.3, stepSize: 0.1 },
+      stop_loss: { min: 0.07, max: 0.15000000000000002, stepSize: 0.01 },
+      trailing_stop: { min: 0.05, max: 0.11000000000000001, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_chan_v20_133.params.json',
+  },
+  combo_v01: {
+    class: ComboV01Strategy,
+    params: {
+      bb_period: { min: 2, max: 9, stepSize: 1 },
+      rsi_period: { min: 2, max: 7, stepSize: 1 },
+      std_mult: { min: 1, max: 2.3, stepSize: 0.1 },
+      rsi_oversold: { min: 15, max: 35, stepSize: 5 },
+      rsi_overbought: { min: 65, max: 85, stepSize: 5 },
+      stop_loss: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.22999999999999998, stepSize: 0.05 },
+    },
+    outputFile: 'strat_combo_v01_134.params.json',
+  },
+  combo_v02: {
+    class: ComboV02Strategy,
+    params: {
+      bb_period: { min: 2, max: 10, stepSize: 1 },
+      rsi_period: { min: 2, max: 7, stepSize: 1 },
+      std_mult: { min: 1.3, max: 2.6, stepSize: 0.1 },
+      rsi_oversold: { min: 20, max: 40, stepSize: 5 },
+      rsi_overbought: { min: 60, max: 80, stepSize: 5 },
+      stop_loss: { min: 0.010000000000000002, max: 0.09, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_combo_v02_135.params.json',
+  },
+  combo_v03: {
+    class: ComboV03Strategy,
+    params: {
+      bb_period: { min: 3, max: 11, stepSize: 1 },
+      rsi_period: { min: 2, max: 8, stepSize: 1 },
+      std_mult: { min: 1.5, max: 2.8, stepSize: 0.1 },
+      rsi_oversold: { min: 15, max: 35, stepSize: 5 },
+      rsi_overbought: { min: 65, max: 85, stepSize: 5 },
+      stop_loss: { min: 0.020000000000000004, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.27, stepSize: 0.05 },
+    },
+    outputFile: 'strat_combo_v03_136.params.json',
+  },
+  combo_v04: {
+    class: ComboV04Strategy,
+    params: {
+      bb_period: { min: 3, max: 11, stepSize: 1 },
+      rsi_period: { min: 3, max: 9, stepSize: 1 },
+      std_mult: { min: 2, max: 3.3, stepSize: 0.1 },
+      rsi_oversold: { min: 10, max: 30, stepSize: 5 },
+      rsi_overbought: { min: 70, max: 90, stepSize: 5 },
+      stop_loss: { min: 0.04000000000000001, max: 0.12000000000000001, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_combo_v04_137.params.json',
+  },
+  combo_v05: {
+    class: ComboV05Strategy,
+    params: {
+      bb_period: { min: 5, max: 13, stepSize: 1 },
+      rsi_period: { min: 3, max: 9, stepSize: 1 },
+      std_mult: { min: 1, max: 2.3, stepSize: 0.1 },
+      rsi_oversold: { min: 20, max: 40, stepSize: 5 },
+      rsi_overbought: { min: 60, max: 80, stepSize: 5 },
+      stop_loss: { min: 0.010000000000000002, max: 0.09, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_combo_v05_138.params.json',
+  },
+  combo_v06: {
+    class: ComboV06Strategy,
+    params: {
+      bb_period: { min: 5, max: 13, stepSize: 1 },
+      rsi_period: { min: 4, max: 10, stepSize: 1 },
+      std_mult: { min: 1.5, max: 2.8, stepSize: 0.1 },
+      rsi_oversold: { min: 15, max: 35, stepSize: 5 },
+      rsi_overbought: { min: 65, max: 85, stepSize: 5 },
+      stop_loss: { min: 0.020000000000000004, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.27, stepSize: 0.05 },
+    },
+    outputFile: 'strat_combo_v06_139.params.json',
+  },
+  combo_v07: {
+    class: ComboV07Strategy,
+    params: {
+      bb_period: { min: 7, max: 15, stepSize: 1 },
+      rsi_period: { min: 5, max: 11, stepSize: 1 },
+      std_mult: { min: 2, max: 3.3, stepSize: 0.1 },
+      rsi_oversold: { min: 10, max: 30, stepSize: 5 },
+      rsi_overbought: { min: 70, max: 90, stepSize: 5 },
+      stop_loss: { min: 0.05, max: 0.13, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.32999999999999996, stepSize: 0.05 },
+    },
+    outputFile: 'strat_combo_v07_140.params.json',
+  },
+  combo_v08: {
+    class: ComboV08Strategy,
+    params: {
+      bb_period: { min: 9, max: 17, stepSize: 1 },
+      rsi_period: { min: 5, max: 11, stepSize: 1 },
+      std_mult: { min: 1, max: 2.3, stepSize: 0.1 },
+      rsi_oversold: { min: 20, max: 40, stepSize: 5 },
+      rsi_overbought: { min: 60, max: 80, stepSize: 5 },
+      stop_loss: { min: 0.020000000000000004, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_combo_v08_141.params.json',
+  },
+  combo_v09: {
+    class: ComboV09Strategy,
+    params: {
+      bb_period: { min: 9, max: 17, stepSize: 1 },
+      rsi_period: { min: 6, max: 12, stepSize: 1 },
+      std_mult: { min: 1.5, max: 2.8, stepSize: 0.1 },
+      rsi_oversold: { min: 15, max: 35, stepSize: 5 },
+      rsi_overbought: { min: 65, max: 85, stepSize: 5 },
+      stop_loss: { min: 0.04000000000000001, max: 0.12000000000000001, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_combo_v09_142.params.json',
+  },
+  combo_v10: {
+    class: ComboV10Strategy,
+    params: {
+      bb_period: { min: 12, max: 20, stepSize: 1 },
+      rsi_period: { min: 7, max: 13, stepSize: 1 },
+      std_mult: { min: 2, max: 3.3, stepSize: 0.1 },
+      rsi_oversold: { min: 10, max: 30, stepSize: 5 },
+      rsi_overbought: { min: 70, max: 90, stepSize: 5 },
+      stop_loss: { min: 0.07, max: 0.15000000000000002, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+    },
+    outputFile: 'strat_combo_v10_143.params.json',
+  },
+  combo_v11: {
+    class: ComboV11Strategy,
+    params: {
+      bb_period: { min: 2, max: 9, stepSize: 1 },
+      rsi_period: { min: 2, max: 7, stepSize: 1 },
+      std_mult: { min: 0.8, max: 2.1, stepSize: 0.1 },
+      rsi_oversold: { min: 25, max: 45, stepSize: 5 },
+      rsi_overbought: { min: 55, max: 75, stepSize: 5 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.4, stepSize: 0.05 },
+    },
+    outputFile: 'strat_combo_v11_144.params.json',
+  },
+  combo_v12: {
+    class: ComboV12Strategy,
+    params: {
+      bb_period: { min: 11, max: 19, stepSize: 1 },
+      rsi_period: { min: 6, max: 12, stepSize: 1 },
+      std_mult: { min: 2.3, max: 3.5999999999999996, stepSize: 0.1 },
+      rsi_oversold: { min: 10, max: 28, stepSize: 5 },
+      rsi_overbought: { min: 72, max: 90, stepSize: 5 },
+      stop_loss: { min: 0.010000000000000002, max: 0.09, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.2, stepSize: 0.05 },
+    },
+    outputFile: 'strat_combo_v12_145.params.json',
+  },
+  combo_v13: {
+    class: ComboV13Strategy,
+    params: {
+      bb_period: { min: 4, max: 12, stepSize: 1 },
+      rsi_period: { min: 3, max: 9, stepSize: 1 },
+      std_mult: { min: 1.3, max: 2.6, stepSize: 0.1 },
+      rsi_oversold: { min: 18, max: 38, stepSize: 5 },
+      rsi_overbought: { min: 62, max: 82, stepSize: 5 },
+      stop_loss: { min: 0.020000000000000004, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.27, stepSize: 0.05 },
+    },
+    outputFile: 'strat_combo_v13_146.params.json',
+  },
+  combo_v14: {
+    class: ComboV14Strategy,
+    params: {
+      bb_period: { min: 6, max: 14, stepSize: 1 },
+      rsi_period: { min: 4, max: 10, stepSize: 1 },
+      std_mult: { min: 1.7000000000000002, max: 3, stepSize: 0.1 },
+      rsi_oversold: { min: 16, max: 36, stepSize: 5 },
+      rsi_overbought: { min: 64, max: 84, stepSize: 5 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.29000000000000004, stepSize: 0.05 },
+    },
+    outputFile: 'strat_combo_v14_147.params.json',
+  },
+  combo_v15: {
+    class: ComboV15Strategy,
+    params: {
+      bb_period: { min: 3, max: 11, stepSize: 1 },
+      rsi_period: { min: 2, max: 8, stepSize: 1 },
+      std_mult: { min: 1.5, max: 2.8, stepSize: 0.1 },
+      rsi_oversold: { min: 15, max: 35, stepSize: 5 },
+      rsi_overbought: { min: 65, max: 85, stepSize: 5 },
+      stop_loss: { min: 0.01, max: 0.07, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_combo_v15_148.params.json',
+  },
+  combo_v16: {
+    class: ComboV16Strategy,
+    params: {
+      bb_period: { min: 3, max: 11, stepSize: 1 },
+      rsi_period: { min: 2, max: 8, stepSize: 1 },
+      std_mult: { min: 1.5, max: 2.8, stepSize: 0.1 },
+      rsi_oversold: { min: 15, max: 35, stepSize: 5 },
+      rsi_overbought: { min: 65, max: 85, stepSize: 5 },
+      stop_loss: { min: 0.09, max: 0.16999999999999998, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_combo_v16_149.params.json',
+  },
+  combo_v17: {
+    class: ComboV17Strategy,
+    params: {
+      bb_period: { min: 4, max: 12, stepSize: 1 },
+      rsi_period: { min: 3, max: 9, stepSize: 1 },
+      std_mult: { min: 1.5, max: 2.8, stepSize: 0.1 },
+      rsi_oversold: { min: 15, max: 35, stepSize: 5 },
+      rsi_overbought: { min: 65, max: 85, stepSize: 5 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.4, stepSize: 0.05 },
+    },
+    outputFile: 'strat_combo_v17_150.params.json',
+  },
+  combo_v18: {
+    class: ComboV18Strategy,
+    params: {
+      bb_period: { min: 4, max: 12, stepSize: 1 },
+      rsi_period: { min: 3, max: 9, stepSize: 1 },
+      std_mult: { min: 1.5, max: 2.8, stepSize: 0.1 },
+      rsi_oversold: { min: 15, max: 35, stepSize: 5 },
+      rsi_overbought: { min: 65, max: 85, stepSize: 5 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.2, stepSize: 0.05 },
+    },
+    outputFile: 'strat_combo_v18_151.params.json',
+  },
+  combo_v19: {
+    class: ComboV19Strategy,
+    params: {
+      bb_period: { min: 2, max: 8, stepSize: 1 },
+      rsi_period: { min: 2, max: 7, stepSize: 1 },
+      std_mult: { min: 0.8, max: 2, stepSize: 0.1 },
+      rsi_oversold: { min: 20, max: 40, stepSize: 5 },
+      rsi_overbought: { min: 60, max: 80, stepSize: 5 },
+      stop_loss: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.22999999999999998, stepSize: 0.05 },
+    },
+    outputFile: 'strat_combo_v19_152.params.json',
+  },
+  combo_v20: {
+    class: ComboV20Strategy,
+    params: {
+      bb_period: { min: 15, max: 23, stepSize: 1 },
+      rsi_period: { min: 8, max: 14, stepSize: 1 },
+      std_mult: { min: 2.5, max: 3.8, stepSize: 0.1 },
+      rsi_oversold: { min: 10, max: 25, stepSize: 5 },
+      rsi_overbought: { min: 75, max: 90, stepSize: 5 },
+      stop_loss: { min: 0.07, max: 0.15000000000000002, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_combo_v20_153.params.json',
+  },
+  stoch_v01: {
+    class: StochV01Strategy,
+    params: {
+      k_period: { min: 2, max: 8, stepSize: 1 },
+      d_period: { min: 2, max: 5, stepSize: 1 },
+      oversold: { min: 5, max: 25, stepSize: 5 },
+      overbought: { min: 75, max: 95, stepSize: 5 },
+      stop_loss: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.22999999999999998, stepSize: 0.05 },
+    },
+    outputFile: 'strat_stoch_v01_154.params.json',
+  },
+  stoch_v02: {
+    class: StochV02Strategy,
+    params: {
+      k_period: { min: 2, max: 9, stepSize: 1 },
+      d_period: { min: 2, max: 5, stepSize: 1 },
+      oversold: { min: 10, max: 30, stepSize: 5 },
+      overbought: { min: 70, max: 90, stepSize: 5 },
+      stop_loss: { min: 0.010000000000000002, max: 0.09, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_stoch_v02_155.params.json',
+  },
+  stoch_v03: {
+    class: StochV03Strategy,
+    params: {
+      k_period: { min: 2, max: 10, stepSize: 1 },
+      d_period: { min: 2, max: 6, stepSize: 1 },
+      oversold: { min: 10, max: 30, stepSize: 5 },
+      overbought: { min: 70, max: 90, stepSize: 5 },
+      stop_loss: { min: 0.020000000000000004, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.27, stepSize: 0.05 },
+    },
+    outputFile: 'strat_stoch_v03_156.params.json',
+  },
+  stoch_v04: {
+    class: StochV04Strategy,
+    params: {
+      k_period: { min: 2, max: 10, stepSize: 1 },
+      d_period: { min: 2, max: 6, stepSize: 1 },
+      oversold: { min: 5, max: 25, stepSize: 5 },
+      overbought: { min: 75, max: 95, stepSize: 5 },
+      stop_loss: { min: 0.04000000000000001, max: 0.12000000000000001, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_stoch_v04_157.params.json',
+  },
+  stoch_v05: {
+    class: StochV05Strategy,
+    params: {
+      k_period: { min: 4, max: 12, stepSize: 1 },
+      d_period: { min: 2, max: 6, stepSize: 1 },
+      oversold: { min: 15, max: 35, stepSize: 5 },
+      overbought: { min: 65, max: 85, stepSize: 5 },
+      stop_loss: { min: 0.010000000000000002, max: 0.09, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_stoch_v05_158.params.json',
+  },
+  stoch_v06: {
+    class: StochV06Strategy,
+    params: {
+      k_period: { min: 5, max: 13, stepSize: 1 },
+      d_period: { min: 3, max: 7, stepSize: 1 },
+      oversold: { min: 10, max: 30, stepSize: 5 },
+      overbought: { min: 70, max: 90, stepSize: 5 },
+      stop_loss: { min: 0.020000000000000004, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.27, stepSize: 0.05 },
+    },
+    outputFile: 'strat_stoch_v06_159.params.json',
+  },
+  stoch_v07: {
+    class: StochV07Strategy,
+    params: {
+      k_period: { min: 7, max: 15, stepSize: 1 },
+      d_period: { min: 3, max: 7, stepSize: 1 },
+      oversold: { min: 5, max: 25, stepSize: 5 },
+      overbought: { min: 75, max: 95, stepSize: 5 },
+      stop_loss: { min: 0.05, max: 0.13, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.32999999999999996, stepSize: 0.05 },
+    },
+    outputFile: 'strat_stoch_v07_160.params.json',
+  },
+  stoch_v08: {
+    class: StochV08Strategy,
+    params: {
+      k_period: { min: 9, max: 17, stepSize: 1 },
+      d_period: { min: 4, max: 8, stepSize: 1 },
+      oversold: { min: 15, max: 35, stepSize: 5 },
+      overbought: { min: 65, max: 85, stepSize: 5 },
+      stop_loss: { min: 0.020000000000000004, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_stoch_v08_161.params.json',
+  },
+  stoch_v09: {
+    class: StochV09Strategy,
+    params: {
+      k_period: { min: 9, max: 17, stepSize: 1 },
+      d_period: { min: 4, max: 8, stepSize: 1 },
+      oversold: { min: 10, max: 30, stepSize: 5 },
+      overbought: { min: 70, max: 90, stepSize: 5 },
+      stop_loss: { min: 0.04000000000000001, max: 0.12000000000000001, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_stoch_v09_162.params.json',
+  },
+  stoch_v10: {
+    class: StochV10Strategy,
+    params: {
+      k_period: { min: 11, max: 19, stepSize: 1 },
+      d_period: { min: 5, max: 9, stepSize: 1 },
+      oversold: { min: 5, max: 25, stepSize: 5 },
+      overbought: { min: 75, max: 95, stepSize: 5 },
+      stop_loss: { min: 0.07, max: 0.15000000000000002, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+    },
+    outputFile: 'strat_stoch_v10_163.params.json',
+  },
+  stoch_v11: {
+    class: StochV11Strategy,
+    params: {
+      k_period: { min: 2, max: 8, stepSize: 1 },
+      d_period: { min: 2, max: 5, stepSize: 1 },
+      oversold: { min: 15, max: 35, stepSize: 5 },
+      overbought: { min: 65, max: 85, stepSize: 5 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.4, stepSize: 0.05 },
+    },
+    outputFile: 'strat_stoch_v11_164.params.json',
+  },
+  stoch_v12: {
+    class: StochV12Strategy,
+    params: {
+      k_period: { min: 11, max: 19, stepSize: 1 },
+      d_period: { min: 5, max: 9, stepSize: 1 },
+      oversold: { min: 5, max: 20, stepSize: 5 },
+      overbought: { min: 80, max: 95, stepSize: 5 },
+      stop_loss: { min: 0.010000000000000002, max: 0.09, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.2, stepSize: 0.05 },
+    },
+    outputFile: 'strat_stoch_v12_165.params.json',
+  },
+  stoch_v13: {
+    class: StochV13Strategy,
+    params: {
+      k_period: { min: 3, max: 11, stepSize: 1 },
+      d_period: { min: 2, max: 6, stepSize: 1 },
+      oversold: { min: 12, max: 32, stepSize: 5 },
+      overbought: { min: 68, max: 88, stepSize: 5 },
+      stop_loss: { min: 0.020000000000000004, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.27, stepSize: 0.05 },
+    },
+    outputFile: 'strat_stoch_v13_166.params.json',
+  },
+  stoch_v14: {
+    class: StochV14Strategy,
+    params: {
+      k_period: { min: 6, max: 14, stepSize: 1 },
+      d_period: { min: 3, max: 7, stepSize: 1 },
+      oversold: { min: 8, max: 28, stepSize: 5 },
+      overbought: { min: 72, max: 92, stepSize: 5 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.29000000000000004, stepSize: 0.05 },
+    },
+    outputFile: 'strat_stoch_v14_167.params.json',
+  },
+  stoch_v15: {
+    class: StochV15Strategy,
+    params: {
+      k_period: { min: 3, max: 11, stepSize: 1 },
+      d_period: { min: 2, max: 6, stepSize: 1 },
+      oversold: { min: 10, max: 30, stepSize: 5 },
+      overbought: { min: 70, max: 90, stepSize: 5 },
+      stop_loss: { min: 0.01, max: 0.07, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_stoch_v15_168.params.json',
+  },
+  stoch_v16: {
+    class: StochV16Strategy,
+    params: {
+      k_period: { min: 3, max: 11, stepSize: 1 },
+      d_period: { min: 2, max: 6, stepSize: 1 },
+      oversold: { min: 10, max: 30, stepSize: 5 },
+      overbought: { min: 70, max: 90, stepSize: 5 },
+      stop_loss: { min: 0.09, max: 0.16999999999999998, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_stoch_v16_169.params.json',
+  },
+  stoch_v17: {
+    class: StochV17Strategy,
+    params: {
+      k_period: { min: 4, max: 12, stepSize: 1 },
+      d_period: { min: 2, max: 6, stepSize: 1 },
+      oversold: { min: 10, max: 30, stepSize: 5 },
+      overbought: { min: 70, max: 90, stepSize: 5 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.4, stepSize: 0.05 },
+    },
+    outputFile: 'strat_stoch_v17_170.params.json',
+  },
+  stoch_v18: {
+    class: StochV18Strategy,
+    params: {
+      k_period: { min: 4, max: 12, stepSize: 1 },
+      d_period: { min: 2, max: 6, stepSize: 1 },
+      oversold: { min: 10, max: 30, stepSize: 5 },
+      overbought: { min: 70, max: 90, stepSize: 5 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.2, stepSize: 0.05 },
+    },
+    outputFile: 'strat_stoch_v18_171.params.json',
+  },
+  stoch_v19: {
+    class: StochV19Strategy,
+    params: {
+      k_period: { min: 2, max: 8, stepSize: 1 },
+      d_period: { min: 2, max: 5, stepSize: 1 },
+      oversold: { min: 10, max: 30, stepSize: 5 },
+      overbought: { min: 70, max: 90, stepSize: 5 },
+      stop_loss: { min: 0.010000000000000002, max: 0.09, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_stoch_v19_172.params.json',
+  },
+  stoch_v20: {
+    class: StochV20Strategy,
+    params: {
+      k_period: { min: 15, max: 23, stepSize: 1 },
+      d_period: { min: 6, max: 10, stepSize: 1 },
+      oversold: { min: 10, max: 30, stepSize: 5 },
+      overbought: { min: 70, max: 90, stepSize: 5 },
+      stop_loss: { min: 0.05, max: 0.13, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_stoch_v20_173.params.json',
+  },
+  pat_v01: {
+    class: PatV01Strategy,
+    params: {
+      consec_bars: { min: 2, max: 4, stepSize: 1 },
+      exit_bars: { min: 1, max: 3, stepSize: 1 },
+      stop_loss: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      trailing_stop: { min: 0.01, max: 0.06, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.22999999999999998, stepSize: 0.05 },
+    },
+    outputFile: 'strat_pat_v01_174.params.json',
+  },
+  pat_v02: {
+    class: PatV02Strategy,
+    params: {
+      consec_bars: { min: 2, max: 4, stepSize: 1 },
+      exit_bars: { min: 1, max: 4, stepSize: 1 },
+      stop_loss: { min: 0.020000000000000004, max: 0.1, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.27, stepSize: 0.05 },
+    },
+    outputFile: 'strat_pat_v02_175.params.json',
+  },
+  pat_v03: {
+    class: PatV03Strategy,
+    params: {
+      consec_bars: { min: 2, max: 5, stepSize: 1 },
+      exit_bars: { min: 1, max: 3, stepSize: 1 },
+      stop_loss: { min: 0.010000000000000002, max: 0.09, stepSize: 0.01 },
+      trailing_stop: { min: 0.01, max: 0.07, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_pat_v03_176.params.json',
+  },
+  pat_v04: {
+    class: PatV04Strategy,
+    params: {
+      consec_bars: { min: 2, max: 5, stepSize: 1 },
+      exit_bars: { min: 1, max: 4, stepSize: 1 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      trailing_stop: { min: 0.030000000000000002, max: 0.09, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_pat_v04_177.params.json',
+  },
+  pat_v05: {
+    class: PatV05Strategy,
+    params: {
+      consec_bars: { min: 2, max: 5, stepSize: 1 },
+      exit_bars: { min: 1, max: 5, stepSize: 1 },
+      stop_loss: { min: 0.04000000000000001, max: 0.12000000000000001, stepSize: 0.01 },
+      trailing_stop: { min: 0.030000000000000002, max: 0.09, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_pat_v05_178.params.json',
+  },
+  pat_v06: {
+    class: PatV06Strategy,
+    params: {
+      consec_bars: { min: 3, max: 6, stepSize: 1 },
+      exit_bars: { min: 1, max: 3, stepSize: 1 },
+      stop_loss: { min: 0.020000000000000004, max: 0.1, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.27, stepSize: 0.05 },
+    },
+    outputFile: 'strat_pat_v06_179.params.json',
+  },
+  pat_v07: {
+    class: PatV07Strategy,
+    params: {
+      consec_bars: { min: 3, max: 6, stepSize: 1 },
+      exit_bars: { min: 1, max: 4, stepSize: 1 },
+      stop_loss: { min: 0.04000000000000001, max: 0.12000000000000001, stepSize: 0.01 },
+      trailing_stop: { min: 0.030000000000000002, max: 0.09, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.32999999999999996, stepSize: 0.05 },
+    },
+    outputFile: 'strat_pat_v07_180.params.json',
+  },
+  pat_v08: {
+    class: PatV08Strategy,
+    params: {
+      consec_bars: { min: 3, max: 6, stepSize: 1 },
+      exit_bars: { min: 1, max: 5, stepSize: 1 },
+      stop_loss: { min: 0.05, max: 0.13, stepSize: 0.01 },
+      trailing_stop: { min: 0.039999999999999994, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.32999999999999996, stepSize: 0.05 },
+    },
+    outputFile: 'strat_pat_v08_181.params.json',
+  },
+  pat_v09: {
+    class: PatV09Strategy,
+    params: {
+      consec_bars: { min: 4, max: 7, stepSize: 1 },
+      exit_bars: { min: 1, max: 4, stepSize: 1 },
+      stop_loss: { min: 0.05, max: 0.13, stepSize: 0.01 },
+      trailing_stop: { min: 0.039999999999999994, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_pat_v09_182.params.json',
+  },
+  pat_v10: {
+    class: PatV10Strategy,
+    params: {
+      consec_bars: { min: 4, max: 7, stepSize: 1 },
+      exit_bars: { min: 1, max: 5, stepSize: 1 },
+      stop_loss: { min: 0.07, max: 0.15000000000000002, stepSize: 0.01 },
+      trailing_stop: { min: 0.05, max: 0.11000000000000001, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+    },
+    outputFile: 'strat_pat_v10_183.params.json',
+  },
+  pat_v11: {
+    class: PatV11Strategy,
+    params: {
+      consec_bars: { min: 2, max: 4, stepSize: 1 },
+      exit_bars: { min: 1, max: 3, stepSize: 1 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.4, stepSize: 0.05 },
+    },
+    outputFile: 'strat_pat_v11_184.params.json',
+  },
+  pat_v12: {
+    class: PatV12Strategy,
+    params: {
+      consec_bars: { min: 3, max: 6, stepSize: 1 },
+      exit_bars: { min: 1, max: 5, stepSize: 1 },
+      stop_loss: { min: 0.010000000000000002, max: 0.09, stepSize: 0.01 },
+      trailing_stop: { min: 0.01, max: 0.07, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.2, stepSize: 0.05 },
+    },
+    outputFile: 'strat_pat_v12_185.params.json',
+  },
+  pat_v13: {
+    class: PatV13Strategy,
+    params: {
+      consec_bars: { min: 2, max: 5, stepSize: 1 },
+      exit_bars: { min: 1, max: 4, stepSize: 1 },
+      stop_loss: { min: 0.020000000000000004, max: 0.1, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.27, stepSize: 0.05 },
+    },
+    outputFile: 'strat_pat_v13_186.params.json',
+  },
+  pat_v14: {
+    class: PatV14Strategy,
+    params: {
+      consec_bars: { min: 2, max: 5, stepSize: 1 },
+      exit_bars: { min: 1, max: 3, stepSize: 1 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.29000000000000004, stepSize: 0.05 },
+    },
+    outputFile: 'strat_pat_v14_187.params.json',
+  },
+  pat_v15: {
+    class: PatV15Strategy,
+    params: {
+      consec_bars: { min: 2, max: 5, stepSize: 1 },
+      exit_bars: { min: 1, max: 4, stepSize: 1 },
+      stop_loss: { min: 0.01, max: 0.07, stepSize: 0.01 },
+      trailing_stop: { min: 0.01, max: 0.06, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_pat_v15_188.params.json',
+  },
+  pat_v16: {
+    class: PatV16Strategy,
+    params: {
+      consec_bars: { min: 2, max: 5, stepSize: 1 },
+      exit_bars: { min: 1, max: 4, stepSize: 1 },
+      stop_loss: { min: 0.09, max: 0.16999999999999998, stepSize: 0.01 },
+      trailing_stop: { min: 0.06, max: 0.12, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_pat_v16_189.params.json',
+  },
+  pat_v17: {
+    class: PatV17Strategy,
+    params: {
+      consec_bars: { min: 2, max: 4, stepSize: 1 },
+      exit_bars: { min: 1, max: 3, stepSize: 1 },
+      stop_loss: { min: 0.020000000000000004, max: 0.1, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.4, stepSize: 0.05 },
+    },
+    outputFile: 'strat_pat_v17_190.params.json',
+  },
+  pat_v18: {
+    class: PatV18Strategy,
+    params: {
+      consec_bars: { min: 2, max: 4, stepSize: 1 },
+      exit_bars: { min: 1, max: 3, stepSize: 1 },
+      stop_loss: { min: 0.020000000000000004, max: 0.1, stepSize: 0.01 },
+      trailing_stop: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.2, stepSize: 0.05 },
+    },
+    outputFile: 'strat_pat_v18_191.params.json',
+  },
+  pat_v19: {
+    class: PatV19Strategy,
+    params: {
+      consec_bars: { min: 2, max: 4, stepSize: 1 },
+      exit_bars: { min: 1, max: 3, stepSize: 1 },
+      stop_loss: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      trailing_stop: { min: 0.01, max: 0.06, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_pat_v19_192.params.json',
+  },
+  pat_v20: {
+    class: PatV20Strategy,
+    params: {
+      consec_bars: { min: 4, max: 7, stepSize: 1 },
+      exit_bars: { min: 1, max: 6, stepSize: 1 },
+      stop_loss: { min: 0.07, max: 0.15000000000000002, stepSize: 0.01 },
+      trailing_stop: { min: 0.06, max: 0.12, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_pat_v20_193.params.json',
+  },
+  rsi_d_v01: {
+    class: RsiDV01Strategy,
+    params: {
+      rsi_period: { min: 2, max: 7, stepSize: 1 },
+      divergence_lookback: { min: 3, max: 9, stepSize: 1 },
+      oversold: { min: 15, max: 35, stepSize: 5 },
+      overbought: { min: 65, max: 85, stepSize: 5 },
+      stop_loss: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.22999999999999998, stepSize: 0.05 },
+    },
+    outputFile: 'strat_rsi_d_v01_194.params.json',
+  },
+  rsi_d_v02: {
+    class: RsiDV02Strategy,
+    params: {
+      rsi_period: { min: 2, max: 8, stepSize: 1 },
+      divergence_lookback: { min: 3, max: 10, stepSize: 1 },
+      oversold: { min: 20, max: 40, stepSize: 5 },
+      overbought: { min: 60, max: 80, stepSize: 5 },
+      stop_loss: { min: 0.010000000000000002, max: 0.09, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+    },
+    outputFile: 'strat_rsi_d_v02_195.params.json',
+  },
+  rsi_d_v03: {
+    class: RsiDV03Strategy,
+    params: {
+      rsi_period: { min: 4, max: 10, stepSize: 1 },
+      divergence_lookback: { min: 4, max: 12, stepSize: 1 },
+      oversold: { min: 15, max: 35, stepSize: 5 },
+      overbought: { min: 65, max: 85, stepSize: 5 },
+      stop_loss: { min: 0.020000000000000004, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.27, stepSize: 0.05 },
+    },
+    outputFile: 'strat_rsi_d_v03_196.params.json',
+  },
+  rsi_d_v04: {
+    class: RsiDV04Strategy,
+    params: {
+      rsi_period: { min: 6, max: 12, stepSize: 1 },
+      divergence_lookback: { min: 7, max: 15, stepSize: 1 },
+      oversold: { min: 10, max: 30, stepSize: 5 },
+      overbought: { min: 70, max: 90, stepSize: 5 },
+      stop_loss: { min: 0.04000000000000001, max: 0.12000000000000001, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.3, stepSize: 0.05 },
+    },
+    outputFile: 'strat_rsi_d_v04_197.params.json',
+  },
+  rsi_d_v05: {
+    class: RsiDV05Strategy,
+    params: {
+      rsi_period: { min: 2, max: 8, stepSize: 1 },
+      divergence_lookback: { min: 3, max: 10, stepSize: 1 },
+      oversold: { min: 20, max: 40, stepSize: 5 },
+      overbought: { min: 60, max: 80, stepSize: 5 },
+      stop_loss: { min: 0.03, max: 0.11, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.4, stepSize: 0.05 },
+    },
+    outputFile: 'strat_rsi_d_v05_198.params.json',
+  },
+  rsi_d_v06: {
+    class: RsiDV06Strategy,
+    params: {
+      rsi_period: { min: 8, max: 14, stepSize: 1 },
+      divergence_lookback: { min: 9, max: 17, stepSize: 1 },
+      oversold: { min: 10, max: 28, stepSize: 5 },
+      overbought: { min: 72, max: 90, stepSize: 5 },
+      stop_loss: { min: 0.010000000000000002, max: 0.09, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.2, stepSize: 0.05 },
+    },
+    outputFile: 'strat_rsi_d_v06_199.params.json',
+  },
+  rsi_d_v07: {
+    class: RsiDV07Strategy,
+    params: {
+      rsi_period: { min: 4, max: 10, stepSize: 1 },
+      divergence_lookback: { min: 5, max: 13, stepSize: 1 },
+      oversold: { min: 15, max: 35, stepSize: 5 },
+      overbought: { min: 65, max: 85, stepSize: 5 },
+      stop_loss: { min: 0.020000000000000004, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.27, stepSize: 0.05 },
+    },
+    outputFile: 'strat_rsi_d_v07_200.params.json',
+  },
+  trend_following_ma_207: {
+    class: TrendFollowingMAStrategy,
+    params: {
+      fast_period: { min: 5, max: 20, stepSize: 5 },
+      medium_period: { min: 15, max: 40, stepSize: 5 },
+      slow_period: { min: 30, max: 80, stepSize: 10 },
+      adx_period: { min: 10, max: 20, stepSize: 2 },
+      adx_threshold: { min: 20, max: 35, stepSize: 5 },
+      pullback_threshold: { min: 0.001, max: 0.02, stepSize: 0.005 },
+      stop_loss: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      trailing_stop: { min: 0.015, max: 0.06, stepSize: 0.015 },
+      risk_percent: { min: 0.05, max: 0.25, stepSize: 0.05 },
+      take_profit_enabled: { min: 0, max: 1, stepSize: 1 },
+      take_profit: { min: 0.05, max: 0.15, stepSize: 0.05 },
+    },
+    outputFile: 'strat_trend_following_ma_207.params.json',
+  },
+
 };
 
 function splitData(data: StoredData, trainRatio: number = 0.7): { train: StoredData; test: StoredData } {
@@ -215,6 +2743,7 @@ program
   .option('-d, --data <file>', 'Data file path', 'data/test-data.bson')
   .option('-m, --min-test-return <number>', 'Minimum test return to accept', '10')
   .option('-a, --attempts <number>', 'Number of optimization attempts', '5')
+  .option('-t, --max-tokens <number>', 'Maximum number of tokens to use', '500')
   .action(async (options) => {
     if (options.listStrategies) {
       console.log(kleur.cyan('Available strategies:'));
@@ -268,6 +2797,7 @@ program
     const dataFile = options.data;
     const minTestReturn = parseFloat(options.minTestReturn);
     const attempts = parseInt(options.attempts);
+    const maxTokens = parseInt(options.maxTokens);
 
     console.log(kleur.cyan('Strategy:') + ' ' + strategyName);
     console.log(kleur.cyan('Loading data from:') + ' ' + dataFile);
@@ -276,14 +2806,22 @@ program
     
     console.log(kleur.yellow('\nSplitting data: 70% train, 30% test (by time)...'));
     
-    const allTokens = Array.from(fullData.priceHistory.keys());
+    // Get all tokens and optionally limit them
+    let allTokens = Array.from(fullData.priceHistory.keys());
+    
+    // If we have more tokens than maxTokens, shuffle and take first N
+    if (allTokens.length > maxTokens) {
+      allTokens = seededShuffle(allTokens, 42).slice(0, maxTokens);
+      console.log('Limiting to ' + maxTokens + ' tokens (seeded shuffle)');
+    }
     
     // Time-based split: use first 70% of each token's history for train, last 30% for test
     const trainPriceHistory = new Map<string, PricePoint[]>();
     const testPriceHistory = new Map<string, PricePoint[]>();
     
-    for (const [tokenId, history] of fullData.priceHistory) {
-      if (history.length < 10) continue; // Skip tokens with too little data
+    for (const tokenId of allTokens) {
+      const history = fullData.priceHistory.get(tokenId);
+      if (!history || history.length < 10) continue; // Skip tokens with too little data
       
       const splitIdx = Math.floor(history.length * 0.7);
       const trainHistory = history.slice(0, splitIdx);

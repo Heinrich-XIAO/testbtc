@@ -1,0 +1,12 @@
+{
+  "shortest_period": 7,
+  "period_step": 6,
+  "num_mas": 6,
+  "stop_loss": 0.13139255465487024,
+  "trailing_stop": 0.0992489039038994,
+  "risk_percent": 0.1429452385483666,
+  "metadata": {
+    "best_test_return": 104.65095894591673,
+    "optimized_at": "2026-02-15T14:45:47.230Z"
+  }
+}

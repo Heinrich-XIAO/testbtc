@@ -1,0 +1,12 @@
+{
+  "period": 4,
+  "oversold_level": -90,
+  "overbought_level": -25,
+  "stop_loss": 0.06928015036974797,
+  "trailing_stop": 0.020174069858441675,
+  "risk_percent": 0.24261047809394026,
+  "metadata": {
+    "best_test_return": -4.0670016751176945,
+    "optimized_at": "2026-02-15T15:55:44.318Z"
+  }
+}

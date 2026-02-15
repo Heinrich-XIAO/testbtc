@@ -1,0 +1,10 @@
+{
+  "k_period": 8,
+  "d_period": 3,
+  "oversold_base": 20,
+  "overbought_base": 80,
+  "volatility_period": 20,
+  "level_adjustment_factor": 10,
+  "stop_loss": 0.08,
+  "risk_percent": 0.15
+}

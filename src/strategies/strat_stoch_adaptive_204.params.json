@@ -1,0 +1,13 @@
+{
+  "min_k_period": 3,
+  "max_k_period": 14,
+  "d_period": 3,
+  "percentile_lookback": 20,
+  "oversold_percentile": 15,
+  "overbought_percentile": 85,
+  "atr_period": 14,
+  "min_atr_threshold": 0.005,
+  "volatility_scale": 50,
+  "stop_loss": 0.04,
+  "risk_percent": 0.1
+}

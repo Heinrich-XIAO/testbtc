@@ -25,30 +25,67 @@ const strategies: Record<string, {
   name: string;
   getStrategy: (params: any) => Strategy;
   paramsFile: string;
-  paramKeys: string[];
 }> = {
-  'ma': {
-    name: 'Moving Average',
-    getStrategy: (params) => new (require('../src/strategies/example').SimpleMAStrategy)(params),
-    paramsFile: 'src/strategies/example.params.json',
-    paramKeys: ['fast_period', 'slow_period', 'stop_loss', 'trailing_stop', 'risk_percent'],
+  'simple_ma': {
+    name: 'Simple MA (01)',
+    getStrategy: (params) => new (require('../src/strategies/strat_simple_ma_01').SimpleMAStrategy)(params),
+    paramsFile: 'src/strategies/strat_simple_ma_01.params.json',
   },
   'bollinger': {
-    name: 'Bollinger Bands',
-    getStrategy: (params) => new (require('../src/strategies/bollinger_bands').BollingerBandsStrategy)(params),
-    paramsFile: 'src/strategies/bollinger_bands.params.json',
-    paramKeys: ['period', 'std_dev_multiplier', 'stop_loss', 'trailing_stop', 'risk_percent', 'mean_reversion'],
+    name: 'Bollinger Bands (02)',
+    getStrategy: (params) => new (require('../src/strategies/strat_bollinger_02').BollingerBandsStrategy)(params),
+    paramsFile: 'src/strategies/strat_bollinger_02.params.json',
+  },
+  'rsi': {
+    name: 'RSI Mean Reversion (03)',
+    getStrategy: (params) => new (require('../src/strategies/strat_rsi_03').RSIMeanReversionStrategy)(params),
+    paramsFile: 'src/strategies/strat_rsi_03.params.json',
+  },
+  'breakout': {
+    name: 'Price Breakout (04)',
+    getStrategy: (params) => new (require('../src/strategies/strat_atr_breakout_04').ATRBreakoutStrategy)(params),
+    paramsFile: 'src/strategies/strat_atr_breakout_04.params.json',
+  },
+  'ma_vol': {
+    name: 'MA + Volatility Stop (05)',
+    getStrategy: (params) => new (require('../src/strategies/strat_ma_atr_05').MAStrategyWithATRStop)(params),
+    paramsFile: 'src/strategies/strat_ma_atr_05.params.json',
+  },
+  'support': {
+    name: 'Support/Resistance (06)',
+    getStrategy: (params) => new (require('../src/strategies/strat_support_06').SupportResistanceStrategy)(params),
+    paramsFile: 'src/strategies/strat_support_06.params.json',
+  },
+  'momentum': {
+    name: 'Momentum (07)',
+    getStrategy: (params) => new (require('../src/strategies/strat_momentum_07').ShortTermStrategy)(params),
+    paramsFile: 'src/strategies/strat_momentum_07.params.json',
+  },
+  'range': {
+    name: 'Range Trading (08)',
+    getStrategy: (params) => new (require('../src/strategies/strat_range_08').RangeTradingStrategy)(params),
+    paramsFile: 'src/strategies/strat_range_08.params.json',
+  },
+  'mean_revert': {
+    name: 'Mean Reversion (09)',
+    getStrategy: (params) => new (require('../src/strategies/strat_mean_revert_09').MeanReversionStrategy)(params),
+    paramsFile: 'src/strategies/strat_mean_revert_09.params.json',
+  },
+  'dual_ma': {
+    name: 'Dual MA + Trend (10)',
+    getStrategy: (params) => new (require('../src/strategies/strat_dual_ma_10').DualMAStrategy)(params),
+    paramsFile: 'src/strategies/strat_dual_ma_10.params.json',
   },
 };
 
 async function runBacktest(
-  strategyInfo: typeof strategies['ma'],
+  strategyInfo: typeof strategies['simple_ma'],
   data: any,
   options: any,
   savedParams: Record<string, number> | null
 ): Promise<{ result: BacktestResult; params: any }> {
-  const strategyParams = buildParams(strategyInfo, options, savedParams);
-  const strategy = strategyInfo.getStrategy(strategyParams);
+  // Pass saved params directly to the strategy constructor - each strategy handles its own merging
+  const strategy = strategyInfo.getStrategy(savedParams || {});
 
   const config: Partial<BacktestConfig> = {
     initialCapital: parseFloat(options.capital),
@@ -59,38 +96,12 @@ async function runBacktest(
   const engine = new BacktestEngine(data, strategy, config);
   const result = engine.run();
 
-  return { result, params: strategyParams };
+  return { result, params: savedParams };
 }
 
 function buildParams(strategyInfo: any, options: any, savedParams: Record<string, number> | null): any {
-  const params: any = {};
-  
-  if (strategyInfo.paramKeys.includes('fast_period')) {
-    params.fast_period = options.fast !== '50' ? parseInt(options.fast) : (savedParams?.fast_period ?? 50);
-  }
-  if (strategyInfo.paramKeys.includes('slow_period')) {
-    params.slow_period = options.slow !== '200' ? parseInt(options.slow) : (savedParams?.slow_period ?? 200);
-  }
-  if (strategyInfo.paramKeys.includes('stop_loss')) {
-    params.stop_loss = options.stopLoss !== '2' ? parseFloat(options.stopLoss) / 100 : (savedParams?.stop_loss ?? 0.02);
-  }
-  if (strategyInfo.paramKeys.includes('trailing_stop')) {
-    params.trailing_stop = options.trailingStop;
-  }
-  if (strategyInfo.paramKeys.includes('risk_percent')) {
-    params.risk_percent = options.riskPercent !== '95' ? parseFloat(options.riskPercent) / 100 : (savedParams?.risk_percent ?? 0.95);
-  }
-  if (strategyInfo.paramKeys.includes('period')) {
-    params.period = savedParams?.period ?? 20;
-  }
-  if (strategyInfo.paramKeys.includes('std_dev_multiplier')) {
-    params.std_dev_multiplier = savedParams?.std_dev_multiplier ?? 2.0;
-  }
-  if (strategyInfo.paramKeys.includes('mean_reversion')) {
-    params.mean_reversion = savedParams?.mean_reversion === 1;
-  }
-
-  return params;
+  // Kept for backward compatibility but strategies now handle their own param merging
+  return savedParams || {};
 }
 
 function printComparison(results: Array<{ strategy: string; result: BacktestResult }>) {
@@ -132,7 +143,7 @@ const program = new Command();
 program
   .name('backtest')
   .description('Polymarket Backtest Runner')
-  .option('-s, --strategy <name>', 'Strategy to use (all, ma, bollinger)', 'all')
+  .option('-s, --strategy <name>', 'Strategy to use (all, simple_ma, bollinger, rsi, breakout, ma_vol, support, momentum, range, mean_revert, dual_ma)', 'all')
   .option('-d, --data <file>', 'Data file path', DEFAULT_DATA_FILE)
   .option('-c, --capital <number>', 'Initial capital in USD', '1000')
   .option('-f, --fee <percent>', 'Fee rate as percentage', '0')

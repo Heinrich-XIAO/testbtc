@@ -1,0 +1,11 @@
+{
+  "rsi_period": 14,
+  "divergence_lookback": 5,
+  "k_period": 14,
+  "d_period": 3,
+  "oversold": 20,
+  "overbought": 80,
+  "signal_window": 3,
+  "stop_loss": 0.05,
+  "risk_percent": 0.1
+}

@@ -1,0 +1,10 @@
+{
+  "ma_period": 7,
+  "deviation_threshold": 0.026203754708586307,
+  "stop_loss": 0.06641793254495303,
+  "risk_percent": 0.29575157852346456,
+  "metadata": {
+    "best_test_return": 110.67500809956573,
+    "optimized_at": "2026-02-15T14:56:24.823Z"
+  }
+}

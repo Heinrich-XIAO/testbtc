@@ -1,0 +1,12 @@
+{
+  "k_period": 7,
+  "d_period": 3,
+  "oversold": 20,
+  "overbought": 80,
+  "stop_loss": 0.10478171885429587,
+  "risk_percent": 0.19552999157158893,
+  "metadata": {
+    "best_test_return": 190.62783501531953,
+    "optimized_at": "2026-02-15T15:17:15.457Z"
+  }
+}

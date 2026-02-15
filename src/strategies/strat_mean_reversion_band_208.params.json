@@ -1,0 +1,10 @@
+{
+  "bb_period": 20,
+  "bb_stddev_mult": 2.0,
+  "rsi_period": 14,
+  "rsi_oversold": 30,
+  "rsi_overbought": 70,
+  "stop_loss": 0.05,
+  "trailing_stop": 0.03,
+  "risk_percent": 0.1
+}

@@ -1,0 +1,11 @@
+{
+  "fast_period": 3,
+  "slow_period": 15,
+  "volatility_period": 10,
+  "vol_multiplier": 2.26223685020582,
+  "risk_percent": 0.2960249211255472,
+  "metadata": {
+    "best_test_return": 453.5045145574977,
+    "optimized_at": "2026-02-15T14:49:21.637Z"
+  }
+}

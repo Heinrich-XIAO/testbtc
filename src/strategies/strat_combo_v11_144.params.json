@@ -1,0 +1,13 @@
+{
+  "bb_period": 7,
+  "rsi_period": 2,
+  "std_mult": 0.9703297315536215,
+  "rsi_oversold": 45,
+  "rsi_overbought": 60,
+  "stop_loss": 0.045941422846711946,
+  "risk_percent": 0.4,
+  "metadata": {
+    "best_test_return": -254.59027532481684,
+    "optimized_at": "2026-02-15T15:51:57.132Z"
+  }
+}

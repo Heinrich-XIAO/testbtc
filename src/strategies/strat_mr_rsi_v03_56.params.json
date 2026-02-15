@@ -1,0 +1,13 @@
+{
+  "ma_period": 4,
+  "rsi_period": 3,
+  "deviation_threshold": 0.05834041538301686,
+  "rsi_oversold": 35,
+  "rsi_overbought": 75,
+  "stop_loss": 0.09961444025871585,
+  "risk_percent": 0.2922859381623121,
+  "metadata": {
+    "best_test_return": -131.55085449036437,
+    "optimized_at": "2026-02-15T15:32:55.619Z"
+  }
+}

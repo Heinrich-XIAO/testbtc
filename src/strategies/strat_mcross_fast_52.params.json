@@ -1,0 +1,10 @@
+{
+  "ma_period": 10,
+  "stop_loss": 0.058462132199143424,
+  "trailing_stop": 0.032084406814210875,
+  "risk_percent": 0.05092914378178495,
+  "metadata": {
+    "best_test_return": -23.798972641772593,
+    "optimized_at": "2026-02-15T15:27:23.715Z"
+  }
+}

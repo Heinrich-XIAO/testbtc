@@ -1,0 +1,10 @@
+{
+  "ma_period": 5,
+  "envelope_pct": 0.05,
+  "stop_loss": 0.03891078864270736,
+  "risk_percent": 0.25,
+  "metadata": {
+    "best_test_return": 162.39238955332348,
+    "optimized_at": "2026-02-15T14:29:05.752Z"
+  }
+}

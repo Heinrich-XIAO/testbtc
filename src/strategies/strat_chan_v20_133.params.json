@@ -1,0 +1,11 @@
+{
+  "channel_period": 22,
+  "channel_width": 0.7399069633791022,
+  "stop_loss": 0.1367291761413008,
+  "trailing_stop": 0.054223264862428455,
+  "risk_percent": 0.22448758218884104,
+  "metadata": {
+    "best_test_return": -143.29429568335627,
+    "optimized_at": "2026-02-15T15:36:42.610Z"
+  }
+}

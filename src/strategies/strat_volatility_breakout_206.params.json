@@ -1,0 +1,13 @@
+{
+  "atr_period": 14,
+  "atr_multiplier": 0.5,
+  "lookback": 20,
+  "volume_period": 10,
+  "stop_loss": 0.04,
+  "trailing_stop": 0.03,
+  "risk_percent": 0.10,
+  "metadata": {
+    "description": "ATR-based volatility breakout strategy with volume confirmation",
+    "created": "2026-02-15"
+  }
+}
