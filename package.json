@@ -6,6 +6,8 @@
     "collect": "bun run scripts/run-collector.ts",
     "backtest": "bun run scripts/run-backtest.ts",
     "optimize": "bun run scripts/run-optimization.ts",
+    "trade": "bun run scripts/run-live-trader.ts",
+    "trade:live": "bun run scripts/run-live-trader.ts -- --live",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -15,6 +17,7 @@
     "commander": "^14.0.3",
     "kleur": "^4.1.5",
     "perfect-cli": "^1.0.21",
+    "playwright": "^1.58.2",
     "prompts": "^2.4.2"
   },
   "devDependencies": {
