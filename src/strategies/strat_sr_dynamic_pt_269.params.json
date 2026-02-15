@@ -1,0 +1,26 @@
+{
+  "base_lookback": 12,
+  "min_lookback": 8,
+  "max_lookback": 40,
+  "volatility_period": 8,
+  "bounce_threshold": 0.025673334863692908,
+  "stoch_k_period": 14,
+  "stoch_d_period": 4,
+  "stoch_oversold": 28,
+  "stoch_overbought": 76,
+  "trend_period": 28,
+  "trend_threshold": -0.001735278073382451,
+  "momentum_period": 2,
+  "momentum_threshold": 0.003,
+  "min_bounce_bars": 1,
+  "stop_loss": 0.06359082023094947,
+  "trailing_stop": 0.05388144224875268,
+  "base_profit_target": 0.0768871193648194,
+  "vol_pt_scale": 2.6870042958521987,
+  "max_hold_bars": 50,
+  "risk_percent": 0.28,
+  "metadata": {
+    "best_test_return": -14.48720000000003,
+    "optimized_at": "2026-02-15T20:29:04.664Z"
+  }
+}
