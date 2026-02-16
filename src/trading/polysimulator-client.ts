@@ -166,17 +166,34 @@ export class PolySimulatorClient {
       if (conditionId) {
         await this.page.goto(`https://polysimulator.com/markets/${conditionId}`, { waitUntil: 'domcontentloaded', timeout: 30000 });
         await this.page.waitForTimeout(3000);
-      } else if (marketSlug) {
-        await this.page.goto(`https://polysimulator.com/markets/${marketSlug}`, { waitUntil: 'domcontentloaded', timeout: 30000 });
-        await this.page.waitForTimeout(3000);
+      } else {
+        throw new Error('conditionId required for PolySimulator navigation');
       }
       
-      // Click Buy Yes button
-      const buyButton = await this.page.$('button:has-text("Buy Yes")');
-      if (!buyButton) {
-        throw new Error('Buy Yes button not found on market page');
+      // Check if page loaded correctly (not a 404)
+      const notFoundText = await this.page.$('text=/not found|404/i');
+      if (notFoundText) {
+        throw new Error('Market not found on PolySimulator');
       }
-      await buyButton.click();
+      
+      // Click Buy button (green button with specific class)
+      // First, find all green buttons and pick the visible one
+      const greenButtons = await this.page.$$('button[class*="accent-green"]');
+      let clicked = false;
+      
+      for (const btn of greenButtons) {
+        const isVisible = await btn.isVisible();
+        if (isVisible) {
+          await btn.scrollIntoViewIfNeeded();
+          await btn.click({ force: true });
+          clicked = true;
+          break;
+        }
+      }
+      
+      if (!clicked) {
+        throw new Error('No visible Buy button found on market page');
+      }
       await this.page.waitForTimeout(1500);
 
       // Find and fill amount input
@@ -222,14 +239,33 @@ try {
       if (conditionId) {
         await this.page.goto(`https://polysimulator.com/markets/${conditionId}`, { waitUntil: 'domcontentloaded', timeout: 30000 });
         await this.page.waitForTimeout(3000);
+      } else {
+        throw new Error('conditionId required for PolySimulator navigation');
       }
       
-      // Click Sell button
-      const sellButton = await this.page.$('button:has-text("Sell")');
-      if (!sellButton) {
-        throw new Error('Sell button not found on market page');
+      // Check if page loaded correctly (not a 404)
+      const notFoundText = await this.page.$('text=/not found|404/i');
+      if (notFoundText) {
+        throw new Error('Market not found on PolySimulator');
       }
-      await sellButton.click();
+      
+      // Click Sell button (red button)
+      const redButtons = await this.page.$$('button[class*="accent-red"]');
+      let clicked = false;
+      
+      for (const btn of redButtons) {
+        const isVisible = await btn.isVisible();
+        if (isVisible) {
+          await btn.scrollIntoViewIfNeeded();
+          await btn.click({ force: true });
+          clicked = true;
+          break;
+        }
+      }
+      
+      if (!clicked) {
+        throw new Error('No visible Sell button found on market page');
+      }
       await this.page.waitForTimeout(1500);
 
       // Find and fill amount input
