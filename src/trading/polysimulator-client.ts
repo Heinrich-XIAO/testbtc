@@ -59,8 +59,16 @@ export class PolySimulatorClient {
       
       for (let i = 0; i < 60; i++) {
         await this.page.waitForTimeout(5000);
-        const balanceEl = await this.page.$('[class*="balance"], [class*="Balance"], text=/\\$[0-9]/');
-        if (balanceEl) {
+        const balanceEl = await this.page.locator('[class*="balance"], [class*="Balance"]').first();
+        const isVisible = await balanceEl.isVisible().catch(() => false);
+        if (isVisible) {
+          this.session.isAuthenticated = true;
+          console.log('Authentication detected!');
+          return true;
+        }
+        const dollarText = await this.page.locator('text=/\\$[0-9]/').first();
+        const dollarVisible = await dollarText.isVisible().catch(() => false);
+        if (dollarVisible) {
           this.session.isAuthenticated = true;
           console.log('Authentication detected!');
           return true;

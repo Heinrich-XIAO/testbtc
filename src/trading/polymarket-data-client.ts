@@ -60,13 +60,13 @@ export class PolymarketDataClient {
   }
 
   async fetchCurrentPrice(tokenId: string): Promise<number> {
-    const response = await fetch(`${CLOB_API}/price?token_id=${tokenId}`);
+    const response = await fetch(`${CLOB_API}/midpoint?token_id=${tokenId}`);
     if (!response.ok) {
       throw new Error(`Failed to fetch price: ${response.statusText}`);
     }
 
-    const data = (await response.json()) as { price: string };
-    return parseFloat(data.price);
+    const data = (await response.json()) as { mid: string };
+    return parseFloat(data.mid);
   }
 
   async fetchOrderbook(tokenId: string): Promise<Orderbook> {

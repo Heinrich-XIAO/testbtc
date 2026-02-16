@@ -154,7 +154,9 @@ export class LiveTradingEngine {
         
         updated++;
       } catch (error) {
-        // Skip failed price fetch
+        if (updated === 0 && error instanceof Error) {
+          console.error(`First price fetch failed for ${tokenId}:`, error.message);
+        }
       }
     }
     
