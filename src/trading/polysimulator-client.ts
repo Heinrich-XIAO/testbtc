@@ -598,21 +598,43 @@ try {
         throw new Error('Market not found on PolySimulator');
       }
       
-      // Click Sell button (red button)
-      const redButtons = await this.page.$$('button[class*="accent-red"]');
-      let clicked = false;
+      // Click Sell button - look for red/accent-red buttons or Sell text
+      const sellSelectors = [
+        'button[class*="accent-red"]',
+        'button[class*="red"]',
+        'button:has-text("Sell")',
+        'button:has-text("sell")',
+        'button:has-text("No")',  // "Sell No" button
+      ];
       
-      for (const btn of redButtons) {
-        const isVisible = await btn.isVisible();
-        if (isVisible) {
-          await btn.scrollIntoViewIfNeeded();
-          await btn.click({ force: true });
-          clicked = true;
-          break;
+      let clicked = false;
+      for (const selector of sellSelectors) {
+        const buttons = await this.page.$$(selector);
+        for (const btn of buttons) {
+          const isVisible = await btn.isVisible().catch(() => false);
+          if (isVisible) {
+            const text = await btn.textContent();
+            // Make sure it's not a "Buy" button with "No" in it
+            if (text?.toLowerCase().includes('buy')) continue;
+            await btn.scrollIntoViewIfNeeded();
+            await btn.click({ force: true });
+            console.log(`Clicked Sell button: "${text?.trim()}"`);
+            clicked = true;
+            break;
+          }
         }
+        if (clicked) break;
       }
       
       if (!clicked) {
+        // Debug: log all buttons
+        const allButtons = await this.page.$$('button');
+        console.log(`Found ${allButtons.length} buttons, looking for sell:`);
+        for (let i = 0; i < allButtons.length; i++) {
+          const text = await allButtons[i].textContent();
+          const classes = await allButtons[i].getAttribute('class');
+          console.log(`  Button ${i}: "${text?.trim()}" class="${classes?.slice(0, 50)}"`);
+        }
         throw new Error('No visible Sell button found on market page');
       }
       await this.page.waitForTimeout(1500);
@@ -627,10 +649,25 @@ try {
       }
 
       // Click confirm Sell button
-      const confirmButton = await this.page.$('button:has-text("Sell"):not(:has-text("No"))');
-      if (confirmButton) {
-        await confirmButton.click();
-        await this.page.waitForTimeout(3000);
+      const confirmSelectors = [
+        'button:has-text("Sell")',
+        'button:has-text("Confirm")',
+        'button[type="submit"]',
+        'button[class*="accent-red"]',
+      ];
+      
+      for (const selector of confirmSelectors) {
+        const btn = await this.page.$(selector);
+        if (btn) {
+          const isVisible = await btn.isVisible().catch(() => false);
+          if (isVisible) {
+            const text = await btn.textContent();
+            console.log(`Clicking confirm: "${text?.trim()}"`);
+            await btn.click({ force: true });
+            await this.page.waitForTimeout(2000);
+            break;
+          }
+        }
       }
 
       order.status = 'filled';
