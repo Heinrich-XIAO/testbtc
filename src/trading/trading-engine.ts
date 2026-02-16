@@ -364,7 +364,7 @@ console.log(`Updated ${updated}/${tokenIds.length} prices`);
       }
       
       if (signal.action === 'BUY' && signal.size) {
-        const order = await this.polySimClient.placeBuyOrder(signal.tokenId, signal.size);
+        const order = await this.polySimClient.placeBuyOrder(signal.tokenId, signal.size, undefined, market.slug);
         if (order.status === 'filled') {
           this.state.entryPrice.set(signal.tokenId, this.priceCache.get(signal.tokenId)?.price ?? 0);
           this.state.highestPrice.set(signal.tokenId, this.priceCache.get(signal.tokenId)?.price ?? 0);
@@ -372,7 +372,7 @@ console.log(`Updated ${updated}/${tokenIds.length} prices`);
           console.log('Buy order filled!');
         }
       } else if (signal.action === 'CLOSE' || signal.action === 'SELL') {
-        const order = await this.polySimClient.placeSellOrder(signal.tokenId, 0);
+        const order = await this.polySimClient.placeSellOrder(signal.tokenId, 0, undefined, market.slug);
         if (order.status === 'filled') {
           this.state.entryPrice.delete(signal.tokenId);
           this.state.highestPrice.delete(signal.tokenId);

@@ -6,6 +6,7 @@ const CLOB_API = 'https://clob.polymarket.com';
 export interface MarketData {
   conditionId: string;
   question: string;
+  slug: string;
   description: string;
   tokens: MarketToken[];
   active: boolean;
@@ -206,6 +207,7 @@ export class PolymarketDataClient {
     return {
       conditionId: m.condition_id ?? m.conditionId,
       question: m.question,
+      slug: m.slug ?? m.question.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
       description: m.description ?? '',
       tokens: tokens.map((t: any, i: number): MarketToken => ({
         outcome: outcomes[i] ?? `Outcome ${i}`,

@@ -148,7 +148,7 @@ export class PolySimulatorClient {
     return positions;
   }
 
-  async placeBuyOrder(tokenId: string, amount: number, maxPrice?: number): Promise<LiveOrder> {
+  async placeBuyOrder(tokenId: string, amount: number, maxPrice?: number, marketSlug?: string): Promise<LiveOrder> {
     if (!this.page) throw new Error('Client not initialized');
 
     const order: LiveOrder = {
@@ -162,25 +162,19 @@ export class PolySimulatorClient {
     };
 
     try {
-      // Navigate to PolySimulator markets page to find the market
-      await this.page.goto('https://polysimulator.com/markets', { waitUntil: 'domcontentloaded', timeout: 30000 });
-      await this.page.waitForTimeout(2000);
-      
-      // Look for any market card that might contain this token
-      // For now, just find and click the first available Buy button
-      const buyButtons = await this.page.$$('button:has-text("Buy")');
-      if (buyButtons.length === 0) {
-        // Try clicking a market first
-        const marketCards = await this.page.$$('a[href*="/markets/"], [class*="market-card"], [class*="MarketCard"]');
-        if (marketCards.length > 0) {
-          await marketCards[0].click();
-          await this.page.waitForTimeout(1500);
-        }
+      // Navigate directly to the market page if we have a slug
+      if (marketSlug) {
+        await this.page.goto(`https://polysimulator.com/markets/${marketSlug}`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+        await this.page.waitForTimeout(2000);
+      } else {
+        await this.page.goto('https://polysimulator.com/markets', { waitUntil: 'domcontentloaded', timeout: 30000 });
+        await this.page.waitForTimeout(2000);
       }
       
+      // Look for Buy button
       const buyButton = await this.page.$('button:has-text("Buy")');
       if (!buyButton) {
-        throw new Error('Buy button not found - please navigate to a market manually');
+        throw new Error('Buy button not found on market page');
       }
       await buyButton.click();
       await this.page.waitForTimeout(500);
@@ -214,7 +208,7 @@ export class PolySimulatorClient {
     return order;
   }
 
-  async placeSellOrder(tokenId: string, amount: number, minPrice?: number): Promise<LiveOrder> {
+  async placeSellOrder(tokenId: string, amount: number, minPrice?: number, marketSlug?: string): Promise<LiveOrder> {
     if (!this.page) throw new Error('Client not initialized');
 
     const order: LiveOrder = {
@@ -228,7 +222,12 @@ export class PolySimulatorClient {
     };
 
     try {
-      const sellButton = await this.page.$('button:has-text("Sell"), [class*="sell"], [data-action="sell"]');
+      if (marketSlug) {
+        await this.page.goto(`https://polysimulator.com/markets/${marketSlug}`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+        await this.page.waitForTimeout(2000);
+      }
+      
+      const sellButton = await this.page.$('button:has-text("Sell")');
       if (!sellButton) {
         throw new Error('Sell button not found on current page');
       }
