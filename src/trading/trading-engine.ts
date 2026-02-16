@@ -185,7 +185,7 @@ console.log(`Updated ${updated}/${tokenIds.length} prices`);
   private async evaluateStrategy(): Promise<void> {
     console.log('Evaluating strategy...');
     
-    const candidates: { tokenId: string; score: number; reasons: string[]; price: number }[] = [];
+    const candidates: { tokenId: string; score: number; reasons: string[]; price: number; k?: number; d?: number }[] = [];
     
     for (const [tokenId, prices] of this.state.prices) {
       if (prices.length < 20) continue;
@@ -201,7 +201,7 @@ console.log(`Updated ${updated}/${tokenIds.length} prices`);
       }
       this.state.consecutiveBounces.set(tokenId, consecutiveBounces);
       
-      const { signal, score, reasons } = this.generateSignalWithDebug(tokenId, currentPrice, prices, consecutiveBounces);
+      const { signal, score, reasons, k, d } = this.generateSignalWithDebug(tokenId, currentPrice, prices, consecutiveBounces);
       
       if (score > 0) {
         const market = this.tokenToMarket.get(tokenId);
@@ -209,7 +209,9 @@ console.log(`Updated ${updated}/${tokenIds.length} prices`);
           tokenId, 
           score, 
           reasons, 
-          price: currentPrice 
+          price: currentPrice,
+          k,
+          d
         });
       }
       
@@ -224,7 +226,7 @@ console.log(`Updated ${updated}/${tokenIds.length} prices`);
       for (const c of candidates.slice(0, 5)) {
         const market = this.tokenToMarket.get(c.tokenId);
         console.log(`  ${market?.question.slice(0, 50) ?? c.tokenId.slice(0, 20)}...`);
-        console.log(`    Price: ${c.price.toFixed(4)} | Score: ${c.score}/4`);
+        console.log(`    Price: ${c.price.toFixed(4)} | Score: ${c.score}/4 | K=${c.k?.toFixed(1) ?? '?'} D=${c.d?.toFixed(1) ?? '?'}`);
         console.log(`    Met: ${c.reasons.join(', ')}`);
       }
       console.log('');
@@ -236,22 +238,22 @@ console.log(`Updated ${updated}/${tokenIds.length} prices`);
     currentPrice: number,
     prices: number[],
     consecutiveBounces: number
-  ): { signal: TradingSignal | null; score: number; reasons: string[] } {
+  ): { signal: TradingSignal | null; score: number; reasons: string[]; k?: number; d?: number } {
     const params = (this.strategy.params as any) ?? {};
     
     const stochK = params.stoch_k_period ?? 18;
-    const stochOversold = params.stoch_oversold ?? 18;
-    const stochOverbought = params.stoch_overbought ?? 80;
+    const stochOversold = params.stoch_oversold ?? 35; // Relaxed from 18 to 35 for live testing
+    const stochOverbought = params.stoch_overbought ?? 65; // Adjusted to match
     const momentumPeriod = params.momentum_period ?? 3;
-    const momentumThreshold = params.momentum_threshold ?? 0.006;
-    const minBounceBars = params.min_bounce_bars ?? 1;
+    const momentumThreshold = params.momentum_threshold ?? 0.001; // Relaxed from 0.003 to 0.001
+    const minBounceBars = params.min_bounce_bars ?? 0; // Reduced from 1 to 0 for testing
     const stopLoss = params.stop_loss ?? 0.065;
     const trailingStop = params.trailing_stop ?? 0.07;
     const profitTarget = params.profit_target ?? 0.14;
     const maxHoldBars = params.max_hold_bars ?? 32;
     const riskPercent = params.risk_percent ?? 0.32;
     const lookback = params.base_lookback ?? 20;
-    const bounceThreshold = params.bounce_threshold ?? 0.022;
+    const bounceThreshold = params.bounce_threshold ?? 0.05; // Relaxed from 0.022 to 0.05
     
     const kValues = this.state.kValues.get(tokenId) ?? [];
     if (prices.length < stochK) return { signal: null, score: 0, reasons: [] };
@@ -274,7 +276,7 @@ console.log(`Updated ${updated}/${tokenIds.length} prices`);
     const supports = recentLows.slice(0, 3);
     const nearSupport = supports.some(s => Math.abs(currentPrice - s) / s < bounceThreshold);
     
-    const stochOversoldCond = k <= stochOversold && k > d;
+    const stochOversoldCond = k <= stochOversold && k >= d; // Changed from k > d to k >= d
     const momentumOk = momentum >= momentumThreshold;
     const multiBarBounce = consecutiveBounces >= minBounceBars;
     const inRange = currentPrice > 0.05 && currentPrice < 0.95;
@@ -298,22 +300,22 @@ console.log(`Updated ${updated}/${tokenIds.length} prices`);
       }
 
       if (currentPrice < entryPrice * (1 - stopLoss)) {
-        return { signal: { tokenId, action: 'CLOSE', reason: 'Stop loss hit', confidence: 1 }, score, reasons };
+        return { signal: { tokenId, action: 'CLOSE', reason: 'Stop loss hit', confidence: 1 }, score, reasons, k, d };
       }
       if (currentPrice < highest * (1 - trailingStop)) {
-        return { signal: { tokenId, action: 'CLOSE', reason: 'Trailing stop hit', confidence: 1 }, score, reasons };
+        return { signal: { tokenId, action: 'CLOSE', reason: 'Trailing stop hit', confidence: 1 }, score, reasons, k, d };
       }
       if (currentPrice >= entryPrice * (1 + profitTarget)) {
-        return { signal: { tokenId, action: 'CLOSE', reason: 'Profit target reached', confidence: 1 }, score, reasons };
+        return { signal: { tokenId, action: 'CLOSE', reason: 'Profit target reached', confidence: 1 }, score, reasons, k, d };
       }
       if (bars >= maxHoldBars) {
-        return { signal: { tokenId, action: 'CLOSE', reason: 'Max hold time reached', confidence: 1 }, score, reasons };
+        return { signal: { tokenId, action: 'CLOSE', reason: 'Max hold time reached', confidence: 1 }, score, reasons, k, d };
       }
       if (k >= stochOverbought) {
-        return { signal: { tokenId, action: 'CLOSE', reason: 'Stochastic overbought', confidence: 0.8 }, score, reasons };
+        return { signal: { tokenId, action: 'CLOSE', reason: 'Stochastic overbought', confidence: 0.8 }, score, reasons, k, d };
       }
       
-      return { signal: null, score, reasons };
+      return { signal: null, score, reasons, k, d };
     }
     
     if (inRange && nearSupport && multiBarBounce && stochOversoldCond && momentumOk) {
@@ -328,10 +330,12 @@ console.log(`Updated ${updated}/${tokenIds.length} prices`);
         },
         score,
         reasons,
+        k,
+        d,
       };
     }
     
-    return { signal: null, score, reasons };
+    return { signal: null, score, reasons, k, d };
   }
 
   private signals: TradingSignal[] = [];

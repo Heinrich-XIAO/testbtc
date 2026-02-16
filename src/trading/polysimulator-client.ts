@@ -162,9 +162,25 @@ export class PolySimulatorClient {
     };
 
     try {
-      const buyButton = await this.page.$('button:has-text("Buy"), [class*="buy"], [data-action="buy"]');
+      // Navigate to PolySimulator markets page to find the market
+      await this.page.goto('https://polysimulator.com/markets', { waitUntil: 'domcontentloaded', timeout: 30000 });
+      await this.page.waitForTimeout(2000);
+      
+      // Look for any market card that might contain this token
+      // For now, just find and click the first available Buy button
+      const buyButtons = await this.page.$$('button:has-text("Buy")');
+      if (buyButtons.length === 0) {
+        // Try clicking a market first
+        const marketCards = await this.page.$$('a[href*="/markets/"], [class*="market-card"], [class*="MarketCard"]');
+        if (marketCards.length > 0) {
+          await marketCards[0].click();
+          await this.page.waitForTimeout(1500);
+        }
+      }
+      
+      const buyButton = await this.page.$('button:has-text("Buy")');
       if (!buyButton) {
-        throw new Error('Buy button not found on current page');
+        throw new Error('Buy button not found - please navigate to a market manually');
       }
       await buyButton.click();
       await this.page.waitForTimeout(500);
