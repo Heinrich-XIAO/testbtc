@@ -99,6 +99,25 @@ export class LiveTradingEngine {
         this.state.consecutiveBounces.set(token.token_id, 0);
       }
     }
+    
+    console.log('Loading price history for top 20 markets...');
+    const tokenIds = Array.from(this.tokenToMarket.keys()).slice(0, 40);
+    let loaded = 0;
+    
+    for (const tokenId of tokenIds) {
+      try {
+        const history = await this.dataClient.fetchPriceHistory(tokenId, 15, '1d');
+        if (history.length > 0) {
+          const prices = history.map(h => h.p);
+          this.state.prices.set(tokenId, prices);
+          loaded++;
+        }
+        await new Promise(r => setTimeout(r, 100));
+      } catch (e) {
+        // Skip if history unavailable
+      }
+    }
+    console.log(`Loaded history for ${loaded} tokens`);
   }
 
   private async runLoop(): Promise<void> {
@@ -160,11 +179,13 @@ export class LiveTradingEngine {
       }
     }
     
-    console.log(`Updated ${updated}/${tokenIds.length} prices`);
+console.log(`Updated ${updated}/${tokenIds.length} prices`);
   }
 
   private async evaluateStrategy(): Promise<void> {
     console.log('Evaluating strategy...');
+    
+    const candidates: { tokenId: string; score: number; reasons: string[]; price: number }[] = [];
     
     for (const [tokenId, prices] of this.state.prices) {
       if (prices.length < 20) continue;
@@ -180,20 +201,42 @@ export class LiveTradingEngine {
       }
       this.state.consecutiveBounces.set(tokenId, consecutiveBounces);
       
-      const signal = this.generateSignal(tokenId, currentPrice, prices, consecutiveBounces);
+      const { signal, score, reasons } = this.generateSignalWithDebug(tokenId, currentPrice, prices, consecutiveBounces);
+      
+      if (score > 0) {
+        const market = this.tokenToMarket.get(tokenId);
+        candidates.push({ 
+          tokenId, 
+          score, 
+          reasons, 
+          price: currentPrice 
+        });
+      }
       
       if (signal) {
         await this.executeSignal(signal);
       }
     }
+    
+    if (candidates.length > 0) {
+      candidates.sort((a, b) => b.score - a.score);
+      console.log(`\nTop ${Math.min(5, candidates.length)} candidates closest to signal:`);
+      for (const c of candidates.slice(0, 5)) {
+        const market = this.tokenToMarket.get(c.tokenId);
+        console.log(`  ${market?.question.slice(0, 50) ?? c.tokenId.slice(0, 20)}...`);
+        console.log(`    Price: ${c.price.toFixed(4)} | Score: ${c.score}/4`);
+        console.log(`    Met: ${c.reasons.join(', ')}`);
+      }
+      console.log('');
+    }
   }
 
-  private generateSignal(
+  private generateSignalWithDebug(
     tokenId: string,
     currentPrice: number,
     prices: number[],
     consecutiveBounces: number
-  ): TradingSignal | null {
+  ): { signal: TradingSignal | null; score: number; reasons: string[] } {
     const params = (this.strategy.params as any) ?? {};
     
     const stochK = params.stoch_k_period ?? 18;
@@ -211,7 +254,7 @@ export class LiveTradingEngine {
     const bounceThreshold = params.bounce_threshold ?? 0.022;
     
     const kValues = this.state.kValues.get(tokenId) ?? [];
-    if (prices.length < stochK) return null;
+    if (prices.length < stochK) return { signal: null, score: 0, reasons: [] };
     
     const slice = prices.slice(-stochK);
     const high = Math.max(...slice);
@@ -234,6 +277,14 @@ export class LiveTradingEngine {
     const stochOversoldCond = k <= stochOversold && k > d;
     const momentumOk = momentum >= momentumThreshold;
     const multiBarBounce = consecutiveBounces >= minBounceBars;
+    const inRange = currentPrice > 0.05 && currentPrice < 0.95;
+    
+    const reasons: string[] = [];
+    let score = 0;
+    if (nearSupport) { score++; reasons.push('support'); }
+    if (multiBarBounce) { score++; reasons.push('bounce'); }
+    if (stochOversoldCond) { score++; reasons.push('stoch'); }
+    if (momentumOk) { score++; reasons.push('mom'); }
     
     const entryPrice = this.state.entryPrice.get(tokenId);
     
@@ -245,40 +296,42 @@ export class LiveTradingEngine {
       if (currentPrice > highest) {
         this.state.highestPrice.set(tokenId, currentPrice);
       }
-      
+
       if (currentPrice < entryPrice * (1 - stopLoss)) {
-        return { tokenId, action: 'CLOSE', reason: 'Stop loss hit', confidence: 1 };
+        return { signal: { tokenId, action: 'CLOSE', reason: 'Stop loss hit', confidence: 1 }, score, reasons };
       }
       if (currentPrice < highest * (1 - trailingStop)) {
-        return { tokenId, action: 'CLOSE', reason: 'Trailing stop hit', confidence: 1 };
+        return { signal: { tokenId, action: 'CLOSE', reason: 'Trailing stop hit', confidence: 1 }, score, reasons };
       }
       if (currentPrice >= entryPrice * (1 + profitTarget)) {
-        return { tokenId, action: 'CLOSE', reason: 'Profit target reached', confidence: 1 };
+        return { signal: { tokenId, action: 'CLOSE', reason: 'Profit target reached', confidence: 1 }, score, reasons };
       }
       if (bars >= maxHoldBars) {
-        return { tokenId, action: 'CLOSE', reason: 'Max hold time reached', confidence: 1 };
+        return { signal: { tokenId, action: 'CLOSE', reason: 'Max hold time reached', confidence: 1 }, score, reasons };
       }
       if (k >= stochOverbought) {
-        return { tokenId, action: 'CLOSE', reason: 'Stochastic overbought', confidence: 0.8 };
+        return { signal: { tokenId, action: 'CLOSE', reason: 'Stochastic overbought', confidence: 0.8 }, score, reasons };
       }
       
-      return null;
+      return { signal: null, score, reasons };
     }
     
-    if (currentPrice > 0.05 && currentPrice < 0.95) {
-      if (nearSupport && multiBarBounce && stochOversoldCond && momentumOk) {
-        const size = (this.config.initialCapital * riskPercent * 0.995) / currentPrice;
-        return {
+    if (inRange && nearSupport && multiBarBounce && stochOversoldCond && momentumOk) {
+      const size = (this.config.initialCapital * riskPercent * 0.995) / currentPrice;
+      return {
+        signal: {
           tokenId,
           action: 'BUY',
           size: Math.min(size, this.config.maxPositionSize),
           reason: `Entry: near support, stoch=${k.toFixed(1)}, mom=${(momentum * 100).toFixed(2)}%`,
           confidence: 0.7,
-        };
-      }
+        },
+        score,
+        reasons,
+      };
     }
     
-    return null;
+    return { signal: null, score, reasons };
   }
 
   private signals: TradingSignal[] = [];
