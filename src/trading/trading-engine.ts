@@ -31,6 +31,7 @@ export class LiveTradingEngine {
   private priceCache: Map<string, PriceCache> = new Map();
   private running: boolean = false;
   private lastUpdate: number = 0;
+  private tradeHistory: { timestamp: number; tokenId: string; action: string; price: number; reason: string }[] = [];
 
   constructor(
     strategy: Strategy,
@@ -130,6 +131,7 @@ export class LiveTradingEngine {
         await this.updatePrices();
         await this.evaluateStrategy();
         await this.executeSignals();
+        this.logPortfolioSummary();
         
         const now = Date.now();
         const nextUpdate = this.lastUpdate + this.config.pollIntervalMs;
@@ -142,6 +144,21 @@ export class LiveTradingEngine {
         console.error('Error in trading loop:', error);
         await this.sleep(10000);
       }
+    }
+  }
+
+  private logPortfolioSummary(): void {
+    const positions = this.getPortfolioStatus();
+    if (positions.openPositionCount > 0) {
+      console.log(`\n📊 Portfolio: ${positions.openPositionCount} open position(s)`);
+      for (const pos of positions.positions) {
+        const currentPrice = this.priceCache.get(pos.tokenId)?.price ?? 0;
+        const pnl = currentPrice > 0 && pos.entryPrice > 0 
+          ? ((currentPrice - pos.entryPrice) / pos.entryPrice * 100).toFixed(2)
+          : '0.00';
+        console.log(`  ${pos.market}... | Entry: ${pos.entryPrice.toFixed(4)} | Current: ${currentPrice.toFixed(4)} | PnL: ${pnl}% | Bars: ${pos.barsHeld}`);
+      }
+      console.log('');
     }
   }
 
@@ -371,14 +388,18 @@ console.log(`Updated ${updated}/${tokenIds.length} prices`);
       if (signal.action === 'BUY' && signal.size) {
         const order = await this.polySimClient.placeBuyOrder(signal.tokenId, signal.size, undefined, market.slug, market.conditionId);
         if (order.status === 'filled') {
-          this.state.entryPrice.set(signal.tokenId, this.priceCache.get(signal.tokenId)?.price ?? 0);
-          this.state.highestPrice.set(signal.tokenId, this.priceCache.get(signal.tokenId)?.price ?? 0);
+          const price = this.priceCache.get(signal.tokenId)?.price ?? 0;
+          this.state.entryPrice.set(signal.tokenId, price);
+          this.state.highestPrice.set(signal.tokenId, price);
           this.state.barsHeld.set(signal.tokenId, 0);
+          this.tradeHistory.push({ timestamp: Date.now(), tokenId: signal.tokenId, action: 'BUY', price, reason: signal.reason });
           console.log('Buy order filled!');
         }
       } else if (signal.action === 'CLOSE' || signal.action === 'SELL') {
         const order = await this.polySimClient.placeSellOrder(signal.tokenId, 0, undefined, market.slug, market.conditionId);
         if (order.status === 'filled') {
+          const price = this.priceCache.get(signal.tokenId)?.price ?? 0;
+          this.tradeHistory.push({ timestamp: Date.now(), tokenId: signal.tokenId, action: 'SELL', price, reason: signal.reason });
           this.state.entryPrice.delete(signal.tokenId);
           this.state.highestPrice.delete(signal.tokenId);
           this.state.barsHeld.delete(signal.tokenId);
@@ -399,6 +420,39 @@ console.log(`Updated ${updated}/${tokenIds.length} prices`);
       running: this.running,
       markets: this.markets.size,
       lastUpdate: this.lastUpdate,
+    };
+  }
+
+  getPortfolioStatus(): {
+    positions: { tokenId: string; market: string; entryPrice: number; currentPrice: number; pnl: number; barsHeld: number }[];
+    openPositionCount: number;
+    totalTrades: number;
+    tradeHistory: { timestamp: number; tokenId: string; action: string; price: number; reason: string }[];
+  } {
+    const positions: { tokenId: string; market: string; entryPrice: number; currentPrice: number; pnl: number; barsHeld: number }[] = [];
+    
+    for (const [tokenId, entryPrice] of this.state.entryPrice) {
+      const market = this.tokenToMarket.get(tokenId);
+      const barsHeld = this.state.barsHeld.get(tokenId) ?? 0;
+      const currentPrice = this.priceCache.get(tokenId)?.price ?? 0;
+      const pnl = currentPrice > 0 && entryPrice > 0 
+        ? ((currentPrice - entryPrice) / entryPrice * 100)
+        : 0;
+      positions.push({
+        tokenId,
+        market: market?.question.slice(0, 50) ?? tokenId.slice(0, 20),
+        entryPrice,
+        currentPrice,
+        pnl,
+        barsHeld,
+      });
+    }
+    
+    return {
+      positions,
+      openPositionCount: positions.length,
+      totalTrades: this.tradeHistory.length,
+      tradeHistory: this.tradeHistory,
     };
   }
 }
