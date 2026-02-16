@@ -100,8 +100,8 @@ export class LiveTradingEngine {
       }
     }
     
-    console.log('Loading price history for top 20 markets...');
-    const tokenIds = Array.from(this.tokenToMarket.keys()).slice(0, 40);
+    console.log('Loading price history for all markets...');
+    const tokenIds = Array.from(this.tokenToMarket.keys());
     let loaded = 0;
     
     for (const tokenId of tokenIds) {
@@ -112,12 +112,12 @@ export class LiveTradingEngine {
           this.state.prices.set(tokenId, prices);
           loaded++;
         }
-        await new Promise(r => setTimeout(r, 100));
+        await new Promise(r => setTimeout(r, 50));
       } catch (e) {
         // Skip if history unavailable
       }
     }
-    console.log(`Loaded history for ${loaded} tokens`);
+    console.log(`Loaded history for ${loaded}/${tokenIds.length} tokens`);
   }
 
   private async runLoop(): Promise<void> {
