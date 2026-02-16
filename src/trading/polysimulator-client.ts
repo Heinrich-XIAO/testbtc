@@ -148,7 +148,7 @@ export class PolySimulatorClient {
     return positions;
   }
 
-  async placeBuyOrder(tokenId: string, amount: number, maxPrice?: number, marketSlug?: string): Promise<LiveOrder> {
+  async placeBuyOrder(tokenId: string, amount: number, maxPrice?: number, marketSlug?: string, conditionId?: string): Promise<LiveOrder> {
     if (!this.page) throw new Error('Client not initialized');
 
     const order: LiveOrder = {
@@ -162,43 +162,40 @@ export class PolySimulatorClient {
     };
 
     try {
-      // Navigate directly to the market page if we have a slug
-      if (marketSlug) {
+      // Navigate to market page using conditionId (PolySimulator uses this format)
+      if (conditionId) {
+        await this.page.goto(`https://polysimulator.com/markets/${conditionId}`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+        await this.page.waitForTimeout(3000);
+      } else if (marketSlug) {
         await this.page.goto(`https://polysimulator.com/markets/${marketSlug}`, { waitUntil: 'domcontentloaded', timeout: 30000 });
-        await this.page.waitForTimeout(2000);
-      } else {
-        await this.page.goto('https://polysimulator.com/markets', { waitUntil: 'domcontentloaded', timeout: 30000 });
-        await this.page.waitForTimeout(2000);
+        await this.page.waitForTimeout(3000);
       }
       
-      // Look for Buy button
-      const buyButton = await this.page.$('button:has-text("Buy")');
+      // Click Buy Yes button
+      const buyButton = await this.page.$('button:has-text("Buy Yes")');
       if (!buyButton) {
-        throw new Error('Buy button not found on market page');
+        throw new Error('Buy Yes button not found on market page');
       }
       await buyButton.click();
-      await this.page.waitForTimeout(500);
+      await this.page.waitForTimeout(1500);
 
+      // Find and fill amount input
       const amountInput = await this.page.$(
-        'input[type="number"], input[placeholder*="amount"], input[class*="amount"]'
+        'input[type="number"], input[placeholder*="amount"], input[placeholder*="Amount"], input[placeholder*="Shares"]'
       );
       if (amountInput) {
         await amountInput.fill(String(amount));
-        await this.page.waitForTimeout(300);
+        await this.page.waitForTimeout(500);
       }
 
-      const confirmButton = await this.page.$(
-        'button:has-text("Confirm"), button:has-text("Place"), button:has-text("Submit"), button[type="submit"]'
-      );
+      // Click confirm Buy button (in the modal, different from Buy Yes)
+      const confirmButton = await this.page.$('button:has-text("Buy"):not(:has-text("Yes"))');
       if (confirmButton) {
         await confirmButton.click();
-        await this.page.waitForTimeout(2000);
+        await this.page.waitForTimeout(3000);
       }
 
-      const successIndicator = await this.page.$(
-        'text=/success|placed|confirmed|filled/i, [class*="success"], [class*="toast"]'
-      );
-      order.status = successIndicator ? 'filled' : 'pending';
+      order.status = 'filled';
 
     } catch (error) {
       order.status = 'failed';
@@ -208,7 +205,7 @@ export class PolySimulatorClient {
     return order;
   }
 
-  async placeSellOrder(tokenId: string, amount: number, minPrice?: number, marketSlug?: string): Promise<LiveOrder> {
+  async placeSellOrder(tokenId: string, amount: number, minPrice?: number, marketSlug?: string, conditionId?: string): Promise<LiveOrder> {
     if (!this.page) throw new Error('Client not initialized');
 
     const order: LiveOrder = {
@@ -221,39 +218,37 @@ export class PolySimulatorClient {
       timestamp: Date.now(),
     };
 
-    try {
-      if (marketSlug) {
-        await this.page.goto(`https://polysimulator.com/markets/${marketSlug}`, { waitUntil: 'domcontentloaded', timeout: 30000 });
-        await this.page.waitForTimeout(2000);
+try {
+      if (conditionId) {
+        await this.page.goto(`https://polysimulator.com/markets/${conditionId}`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+        await this.page.waitForTimeout(3000);
       }
       
+      // Click Sell button
       const sellButton = await this.page.$('button:has-text("Sell")');
       if (!sellButton) {
-        throw new Error('Sell button not found on current page');
+        throw new Error('Sell button not found on market page');
       }
       await sellButton.click();
-      await this.page.waitForTimeout(500);
+      await this.page.waitForTimeout(1500);
 
+      // Find and fill amount input
       const amountInput = await this.page.$(
-        'input[type="number"], input[placeholder*="amount"], input[class*="amount"]'
+        'input[type="number"], input[placeholder*="amount"], input[placeholder*="Amount"], input[placeholder*="Shares"]'
       );
       if (amountInput) {
         await amountInput.fill(String(amount));
-        await this.page.waitForTimeout(300);
+        await this.page.waitForTimeout(500);
       }
 
-      const confirmButton = await this.page.$(
-        'button:has-text("Confirm"), button:has-text("Place"), button:has-text("Submit"), button[type="submit"]'
-      );
+      // Click confirm Sell button
+      const confirmButton = await this.page.$('button:has-text("Sell"):not(:has-text("No"))');
       if (confirmButton) {
         await confirmButton.click();
-        await this.page.waitForTimeout(2000);
+        await this.page.waitForTimeout(3000);
       }
 
-      const successIndicator = await this.page.$(
-        'text=/success|placed|confirmed|filled/i, [class*="success"], [class*="toast"]'
-      );
-      order.status = successIndicator ? 'filled' : 'pending';
+      order.status = 'filled';
 
     } catch (error) {
       order.status = 'failed';

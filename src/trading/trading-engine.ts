@@ -242,8 +242,8 @@ console.log(`Updated ${updated}/${tokenIds.length} prices`);
     const params = (this.strategy.params as any) ?? {};
     
     const stochK = params.stoch_k_period ?? 18;
-    const stochOversold = params.stoch_oversold ?? 35; // Relaxed from 18 to 35 for live testing
-    const stochOverbought = params.stoch_overbought ?? 65; // Adjusted to match
+    const stochOversold = params.stoch_oversold ?? 35; // Back to 35
+    const stochOverbought = params.stoch_overbought ?? 65;
     const momentumPeriod = params.momentum_period ?? 3;
     const momentumThreshold = params.momentum_threshold ?? 0.001; // Relaxed from 0.003 to 0.001
     const minBounceBars = params.min_bounce_bars ?? 0; // Reduced from 1 to 0 for testing
@@ -318,14 +318,15 @@ console.log(`Updated ${updated}/${tokenIds.length} prices`);
       return { signal: null, score, reasons, k, d };
     }
     
-    if (inRange && nearSupport && multiBarBounce && stochOversoldCond && momentumOk) {
+    // Force trade on score >= 3 (for testing)
+    if (inRange && score >= 3) {
       const size = (this.config.initialCapital * riskPercent * 0.995) / currentPrice;
       return {
         signal: {
           tokenId,
           action: 'BUY',
           size: Math.min(size, this.config.maxPositionSize),
-          reason: `Entry: near support, stoch=${k.toFixed(1)}, mom=${(momentum * 100).toFixed(2)}%`,
+          reason: `Entry: score=${score}/4, stoch=${k.toFixed(1)}, mom=${(momentum * 100).toFixed(2)}%`,
           confidence: 0.7,
         },
         score,
@@ -364,7 +365,7 @@ console.log(`Updated ${updated}/${tokenIds.length} prices`);
       }
       
       if (signal.action === 'BUY' && signal.size) {
-        const order = await this.polySimClient.placeBuyOrder(signal.tokenId, signal.size, undefined, market.slug);
+        const order = await this.polySimClient.placeBuyOrder(signal.tokenId, signal.size, undefined, market.slug, market.conditionId);
         if (order.status === 'filled') {
           this.state.entryPrice.set(signal.tokenId, this.priceCache.get(signal.tokenId)?.price ?? 0);
           this.state.highestPrice.set(signal.tokenId, this.priceCache.get(signal.tokenId)?.price ?? 0);
@@ -372,7 +373,7 @@ console.log(`Updated ${updated}/${tokenIds.length} prices`);
           console.log('Buy order filled!');
         }
       } else if (signal.action === 'CLOSE' || signal.action === 'SELL') {
-        const order = await this.polySimClient.placeSellOrder(signal.tokenId, 0, undefined, market.slug);
+        const order = await this.polySimClient.placeSellOrder(signal.tokenId, 0, undefined, market.slug, market.conditionId);
         if (order.status === 'filled') {
           this.state.entryPrice.delete(signal.tokenId);
           this.state.highestPrice.delete(signal.tokenId);
