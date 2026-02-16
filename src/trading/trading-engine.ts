@@ -34,7 +34,8 @@ export class LiveTradingEngine {
 
   constructor(
     strategy: Strategy,
-    config: Partial<TradingConfig> = {}
+    config: Partial<TradingConfig> = {},
+    discordCredentials?: { email: string; password: string }
   ) {
     this.strategy = strategy;
     this.config = {
@@ -45,6 +46,9 @@ export class LiveTradingEngine {
     };
     
     this.polySimClient = new PolySimulatorClient();
+    if (discordCredentials) {
+      this.polySimClient.setDiscordCredentials(discordCredentials.email, discordCredentials.password);
+    }
     this.dataClient = new PolymarketDataClient();
     this.state = {
       prices: new Map(),

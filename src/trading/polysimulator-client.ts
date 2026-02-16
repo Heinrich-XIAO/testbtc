@@ -10,6 +10,13 @@ export class PolySimulatorClient {
     balance: 0,
     lastUpdate: 0,
   };
+  private discordEmail: string | null = null;
+  private discordPassword: string | null = null;
+
+  setDiscordCredentials(email: string, password: string): void {
+    this.discordEmail = email;
+    this.discordPassword = password;
+  }
 
   async init(): Promise<void> {
     this.browser = await chromium.launch({
@@ -52,33 +59,375 @@ export class PolySimulatorClient {
     await this.page.goto('https://polysimulator.com', { waitUntil: 'domcontentloaded', timeout: 60000 });
     await this.page.waitForTimeout(3000);
 
+    // Check if already logged in
+    const balanceEl = await this.page.locator('[class*="balance"], [class*="Balance"]').first();
+    const alreadyLoggedIn = await balanceEl.isVisible().catch(() => false);
+    if (alreadyLoggedIn) {
+      console.log('Already authenticated!');
+      this.session.isAuthenticated = true;
+      return true;
+    }
+
     const signInButton = await this.page.$('text=Sign In');
-    if (signInButton) {
-      console.log('Please sign in manually in the browser window...');
-      console.log('Waiting for authentication (checking every 5 seconds)...');
-      
-      for (let i = 0; i < 60; i++) {
-        await this.page.waitForTimeout(5000);
-        const balanceEl = await this.page.locator('[class*="balance"], [class*="Balance"]').first();
-        const isVisible = await balanceEl.isVisible().catch(() => false);
-        if (isVisible) {
-          this.session.isAuthenticated = true;
-          console.log('Authentication detected!');
-          return true;
-        }
-        const dollarText = await this.page.locator('text=/\\$[0-9]/').first();
-        const dollarVisible = await dollarText.isVisible().catch(() => false);
-        if (dollarVisible) {
-          this.session.isAuthenticated = true;
-          console.log('Authentication detected!');
-          return true;
-        }
-      }
-      return false;
+    if (!signInButton) {
+      this.session.isAuthenticated = true;
+      return true;
     }
     
-    this.session.isAuthenticated = true;
-    return true;
+    // Auto-login with Discord if credentials provided
+    if (this.discordEmail && this.discordPassword) {
+      console.log('Attempting Discord auto-login...');
+      return await this.loginWithDiscord();
+    }
+    
+    // Manual login fallback
+    console.log('Please sign in manually in the browser window...');
+    console.log('Waiting for authentication (checking every 5 seconds)...');
+    
+    for (let i = 0; i < 60; i++) {
+      await this.page.waitForTimeout(5000);
+      const balanceEl = await this.page.locator('[class*="balance"], [class*="Balance"]').first();
+      const isVisible = await balanceEl.isVisible().catch(() => false);
+      if (isVisible) {
+        this.session.isAuthenticated = true;
+        console.log('Authentication detected!');
+        return true;
+      }
+      const dollarText = await this.page.locator('text=/\\$[0-9]/').first();
+      const dollarVisible = await dollarText.isVisible().catch(() => false);
+      if (dollarVisible) {
+        this.session.isAuthenticated = true;
+        console.log('Authentication detected!');
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private async loginWithDiscord(): Promise<boolean> {
+    if (!this.page || !this.discordEmail || !this.discordPassword) return false;
+    
+    try {
+      console.log('Clicking Sign In...');
+      const signInButton = await this.page.$('text=Sign In');
+      if (signInButton) {
+        await signInButton.click();
+        await this.page.waitForTimeout(2000);
+      }
+      
+      // Wait for auth modal/page
+      await this.page.waitForTimeout(2000);
+      
+      // Look for Discord button - try multiple selectors
+      console.log('Looking for Discord login option...');
+      const discordSelectors = [
+        'button:has-text("Discord")',
+        'button:has-text("discord")',
+        '[class*="discord"]',
+        'img[alt*="Discord"]',
+        'img[alt*="discord"]',
+        'svg[class*="discord"]',
+      ];
+      
+      let discordButton = null;
+      for (const selector of discordSelectors) {
+        discordButton = await this.page.$(selector);
+        if (discordButton) {
+          console.log(`Found Discord button with: ${selector}`);
+          break;
+        }
+      }
+      
+      if (!discordButton) {
+        // Check all buttons on the page
+        const allButtons = await this.page.$$('button');
+        console.log(`Found ${allButtons.length} buttons on auth page`);
+        for (let i = 0; i < allButtons.length; i++) {
+          const text = await allButtons[i].textContent();
+          const html = await allButtons[i].innerHTML();
+          console.log(`  Button ${i}: "${text?.trim()}"`);
+          if (text?.toLowerCase().includes('discord') || html.toLowerCase().includes('discord')) {
+            discordButton = allButtons[i];
+            console.log(`  -> Using this button for Discord`);
+            break;
+          }
+        }
+      }
+      
+      if (discordButton) {
+        await discordButton.click();
+        await this.page.waitForTimeout(3000);
+        
+        // Check if we're on Discord login page or if a popup appeared
+        const currentUrl = this.page.url();
+        console.log(`Current URL: ${currentUrl}`);
+        
+        // Handle Discord OAuth in same tab
+        if (currentUrl.includes('discord.com')) {
+          return await this.handleDiscordLoginPage();
+        }
+        
+        // Check for popup
+        const pages = this.browser?.contexts()[0]?.pages() ?? [];
+        const discordPage = pages.find(p => p.url().includes('discord.com'));
+        if (discordPage) {
+          console.log('Found Discord popup/tab');
+          this.page = discordPage;
+          return await this.handleDiscordLoginPage();
+        }
+        
+        // Wait for redirect to Discord
+        console.log('Waiting for Discord redirect...');
+        await this.page.waitForTimeout(3000);
+        const newUrl = this.page.url();
+        if (newUrl.includes('discord.com')) {
+          return await this.handleDiscordLoginPage();
+        }
+        
+        // Might already be logged in
+        const balanceEl = await this.page.locator('[class*="balance"], [class*="Balance"]').first();
+        const isLoggedIn = await balanceEl.isVisible().catch(() => false);
+        if (isLoggedIn) {
+          this.session.isAuthenticated = true;
+          console.log('Already authenticated!');
+          return true;
+        }
+      } else {
+        console.log('Discord button not found');
+      }
+      
+      return false;
+    } catch (error) {
+      console.error('Discord auto-login error:', error);
+      return false;
+    }
+  }
+
+  private async handleDiscordLoginPage(): Promise<boolean> {
+    if (!this.page || !this.discordEmail || !this.discordPassword) return false;
+    
+    console.log('On Discord login page, filling credentials...');
+    
+    // Wait for page to load
+    await this.page.waitForTimeout(2000);
+    
+    // Fill email
+    const emailSelectors = [
+      'input[name="email"]',
+      'input[type="email"]',
+      'input[id="uid_5"]',
+      'input[autocomplete="email"]',
+      'input[placeholder*="email"]',
+    ];
+    
+    let emailInput = null;
+    for (const selector of emailSelectors) {
+      emailInput = await this.page?.$(selector);
+      if (emailInput) break;
+    }
+    
+    if (emailInput) {
+      await emailInput.fill(this.discordEmail);
+      console.log('Filled email');
+    } else {
+      console.log('Email input not found');
+    }
+    
+    // Fill password
+    const passwordSelectors = [
+      'input[name="password"]',
+      'input[type="password"]',
+      'input[id="uid_7"]',
+      'input[autocomplete="current-password"]',
+    ];
+    
+    let passwordInput = null;
+    for (const selector of passwordSelectors) {
+      passwordInput = await this.page?.$(selector);
+      if (passwordInput) break;
+    }
+    
+    if (passwordInput) {
+      await passwordInput.fill(this.discordPassword);
+      console.log('Filled password');
+    } else {
+      console.log('Password input not found');
+    }
+    
+    await this.page.waitForTimeout(500);
+    
+    // Click login
+    const loginSelectors = [
+      'button[type="submit"]',
+      'button:has-text("Login")',
+      'button:has-text("Log In")',
+      'button:has-text("Sign in")',
+    ];
+    
+    for (const selector of loginSelectors) {
+      const loginButton = await this.page?.$(selector);
+      if (loginButton) {
+        await loginButton.click();
+        console.log('Clicked login button');
+        break;
+      }
+    }
+    
+    await this.page.waitForTimeout(5000);
+    
+    // Check for 2FA
+    const twoFASelectors = [
+      'input[name="mfaCode"]',
+      'input[placeholder*="code"]',
+      'input[maxlength="6"]',
+      'input[inputmode="numeric"]',
+    ];
+    
+    for (const selector of twoFASelectors) {
+      const twoFAInput = await this.page?.$(selector);
+      if (twoFAInput) {
+        console.log('2FA required - please enter code manually in browser...');
+        // Wait for user to enter 2FA
+        for (let i = 0; i < 60; i++) {
+          await this.page.waitForTimeout(2000);
+          const url = this.page.url();
+          if (!url.includes('discord.com/login') && !url.includes('discord.com/oauth2')) {
+            break;
+          }
+        }
+        break;
+      }
+    }
+    
+    // Handle authorize button (on Discord OAuth page)
+    console.log('Looking for Authorize button...');
+    
+    // Discord OAuth has a scrollable container - use wheel events
+    const scrollable = await this.page.$('[class*="scroll"], [class*="Scroll"], .scroller, .content');
+    if (scrollable) {
+      console.log('Found scrollable element, scrolling...');
+      await scrollable.hover();
+      for (let i = 0; i < 10; i++) {
+        await this.page.mouse.wheel(0, 500);
+        await this.page.waitForTimeout(200);
+      }
+    } else {
+      // Try clicking directly in the content area and scrolling
+      await this.page.click('body');
+      for (let i = 0; i < 10; i++) {
+        await this.page.keyboard.press('ArrowDown');
+        await this.page.waitForTimeout(100);
+      }
+    }
+    
+    await this.page.waitForTimeout(1000);
+    
+    // Debug: log all buttons on the page
+    const allButtons = await this.page.$$('button');
+    console.log(`Found ${allButtons.length} buttons on authorize page`);
+    for (let i = 0; i < allButtons.length; i++) {
+      const text = await allButtons[i].textContent();
+      const isDisabled = await allButtons[i].isDisabled().catch(() => true);
+      const isVisible = await allButtons[i].isVisible().catch(() => false);
+      console.log(`  Button ${i}: "${text?.trim()}" (disabled: ${isDisabled}, visible: ${isVisible})`);
+    }
+    
+    // Find and click Authorize button
+    for (const btn of allButtons) {
+      const text = await btn.textContent();
+      if (text?.toLowerCase().includes('authorize')) {
+        await btn.scrollIntoViewIfNeeded();
+        await btn.click({ force: true });
+        console.log('Clicked Authorize button');
+        break;
+      }
+    }
+    
+    // Wait for redirect back to PolySimulator
+    console.log('Waiting for redirect to PolySimulator...');
+    await this.page.waitForTimeout(3000);
+    
+    // Check if back on PolySimulator and logged in
+    const currentUrl = this.page.url();
+    console.log(`Final URL: ${currentUrl}`);
+    
+    // Wait for page to load
+    if (currentUrl.includes('polysimulator.com')) {
+      console.log('On PolySimulator, waiting for authentication...');
+      await this.page.waitForTimeout(5000);
+    }
+    
+    // Multiple selectors for balance/auth indicators
+    const balanceSelectors = [
+      '[class*="balance"]',
+      '[class*="Balance"]',
+      '[class*="usdc"]',
+      '[class*="USDC"]',
+      'text=/\\$[0-9,.]+/',
+      'text=/[0-9,.]+ USDC/',
+      '[data-testid="balance"]',
+      '[class*="portfolio"]',
+      '[class*="Portfolio"]',
+    ];
+    
+    let isLoggedIn = false;
+    
+    // Try each selector
+    for (const selector of balanceSelectors) {
+      try {
+        const el = await this.page.locator(selector).first();
+        const visible = await el.isVisible().catch(() => false);
+        if (visible) {
+          console.log(`Found auth indicator with: ${selector}`);
+          isLoggedIn = true;
+          break;
+        }
+      } catch (e) {
+        // Continue to next selector
+      }
+    }
+    
+    // Also check for absence of Sign In button
+    if (!isLoggedIn) {
+      const signInButton = await this.page.$('text=Sign In');
+      if (!signInButton) {
+        console.log('No Sign In button found, likely logged in');
+        isLoggedIn = true;
+      }
+    }
+    
+    // Try waiting more time for page load
+    if (!isLoggedIn) {
+      console.log('Auth indicators not found yet, waiting more...');
+      for (let i = 0; i < 10; i++) {
+        await this.page.waitForTimeout(2000);
+        
+        for (const selector of balanceSelectors) {
+          try {
+            const el = await this.page.locator(selector).first();
+            const visible = await el.isVisible().catch(() => false);
+            if (visible) {
+              console.log(`Found auth indicator after waiting with: ${selector}`);
+              isLoggedIn = true;
+              break;
+            }
+          } catch (e) {
+            // Continue
+          }
+        }
+        
+        if (isLoggedIn) break;
+      }
+    }
+    
+    if (isLoggedIn) {
+      this.session.isAuthenticated = true;
+      console.log('Discord auto-login successful!');
+      return true;
+    }
+    
+    console.log('Discord auto-login failed, falling back to manual...');
+    return false;
   }
 
   async getBalance(): Promise<number> {
