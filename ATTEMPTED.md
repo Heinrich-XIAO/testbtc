@@ -276,3 +276,40 @@ Generated from 7 winning templates: mean_revert_rsi, williams_r, ma_envelope, ch
 4. **Price Pattern template is completely broken** — 0% pass rate, needs fundamental redesign
 5. **Combo RSI+BB is hit-or-miss** — 65% pass rate, some variants produce 0 trades
 6. **Stochastic variants pass but with modest returns** — most under $50
+
+## Iteration 16 - Support/Resistance No-Trend-Filter Variants (v16) - 2026-02-17
+
+### Prepared Strategies (30 total) - Awaiting Optimization
+
+| # | Strategy | Params File | Status |
+|---|----------|------------|--------|
+| 01 | sr_ntf_v16_001 | strat_sr_ntf_v16_001.params.json | Prepared |
+| 02 | sr_ntf_v16_002 | strat_sr_ntf_v16_002.params.json | Prepared |
+| 03 | sr_ntf_v16_003 | strat_sr_ntf_v16_003.params.json | Prepared |
+| 04 | sr_ntf_v16_004 | strat_sr_ntf_v16_004.params.json | Prepared |
+| 05 | sr_ntf_v16_005 | strat_sr_ntf_v16_005.params.json | Prepared |
+| 06 | sr_ntf_v16_006 | strat_sr_ntf_v16_006.params.json | Prepared |
+| 07 | sr_ntf_v16_007 | strat_sr_ntf_v16_007.params.json | Prepared |
+| 08 | sr_ntf_v16_008 | strat_sr_ntf_v16_008.params.json | Prepared |
+| 09 | sr_ntf_v16_009 | strat_sr_ntf_v16_009.params.json | Prepared |
+| 10 | sr_ntf_v16_010 | strat_sr_ntf_v16_010.params.json | Prepared |
+| 11 | sr_ntf_v16_011 | strat_sr_ntf_v16_011.params.json | Prepared |
+| 12 | sr_ntf_v16_012 | strat_sr_ntf_v16_012.params.json | Prepared |
+| 13 | sr_ntf_v16_013 | strat_sr_ntf_v16_013.params.json | Prepared |
+| 14 | sr_ntf_v16_014 | strat_sr_ntf_v16_014.params.json | Prepared |
+| 15 | sr_ntf_v16_015 | strat_sr_ntf_v16_015.params.json | Prepared |
+| 16 | sr_ntf_v16_016 | strat_sr_ntf_v16_016.params.json | Prepared |
+| 17 | sr_ntf_v16_017 | strat_sr_ntf_v16_017.params.json | Prepared |
+| 18 | sr_ntf_v16_018 | strat_sr_ntf_v16_018.params.json | Prepared |
+| 19 | sr_ntf_v16_019 | strat_sr_ntf_v16_019.params.json | Prepared |
+| 20 | sr_ntf_v16_020 | strat_sr_ntf_v16_020.params.json | Prepared |
+| 21 | sr_ntf_v16_021 | strat_sr_ntf_v16_021.params.json | Prepared |
+| 22 | sr_ntf_v16_022 | strat_sr_ntf_v16_022.params.json | Prepared |
+| 23 | sr_ntf_v16_023 | strat_sr_ntf_v16_023.params.json | Prepared |
+| 24 | sr_ntf_v16_024 | strat_sr_ntf_v16_024.params.json | Prepared |
+| 25 | sr_ntf_v16_025 | strat_sr_ntf_v16_025.params.json | Prepared |
+| 26 | sr_ntf_v16_026 | strat_sr_ntf_v16_026.params.json | Prepared |
+| 27 | sr_ntf_v16_027 | strat_sr_ntf_v16_027.params.json | Prepared |
+| 28 | sr_ntf_v16_028 | strat_sr_ntf_v16_028.params.json | Prepared |
+| 29 | sr_ntf_v16_029 | strat_sr_ntf_v16_029.params.json | Prepared |
+| 30 | sr_ntf_v16_030 | strat_sr_ntf_v16_030.params.json | Prepared |
