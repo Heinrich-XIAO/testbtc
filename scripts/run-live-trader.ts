@@ -1,5 +1,5 @@
 import { LiveTradingEngine } from '../src/trading/trading-engine';
-import { SRNoTrendTightStoch309Strategy } from '../src/strategies/strat_sr_no_trend_tight_stoch_309';
+import { SRNoTrendFilter302Strategy } from '../src/strategies/strat_sr_no_trend_filter_302';
 import type { TradingConfig } from '../src/trading/types';
 import { config } from 'dotenv';
 import { existsSync } from 'fs';
@@ -22,7 +22,26 @@ async function main() {
     pollIntervalMs: 60000,
   };
 
-  const strategy = new SRNoTrendTightStoch309Strategy();
+  // sr_ntf_v21_022 - Best train/test consistency (0.95 ratio), $277 test return
+  const strategy = new SRNoTrendFilter302Strategy({
+    base_lookback: 24,
+    min_lookback: 9,
+    max_lookback: 29,
+    volatility_period: 6,
+    bounce_threshold: 0.0319,
+    stoch_k_period: 18,
+    stoch_d_period: 7,
+    stoch_oversold: 16,
+    stoch_overbought: 88,
+    momentum_period: 3,
+    momentum_threshold: 0.0066,
+    min_bounce_bars: 1,
+    stop_loss: 0.0864,
+    trailing_stop: 0.06,
+    profit_target: 0.2085,
+    max_hold_bars: 26,
+    risk_percent: 0.293
+  });
   
   // Get Discord credentials from environment
   const discordEmail = process.env.DISCORD_EMAIL;
@@ -32,7 +51,7 @@ async function main() {
     : undefined;
   
   console.log('=== Polymarket Live Trading Engine ===');
-  console.log(`Strategy: SR No Trend Tight Stoch 309`);
+  console.log(`Strategy: SR No Trend Filter v21_022 (optimized)`);
   console.log(`Mode: ${dryRun ? 'DRY RUN (no real trades)' : 'LIVE TRADING'}`);
   console.log(`Poll Interval: ${tradingConfig.pollIntervalMs! / 1000}s`);
   console.log(`Discord Auto-login: ${discordCredentials ? 'Enabled' : 'Disabled (manual login)'}`);
