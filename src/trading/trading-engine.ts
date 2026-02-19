@@ -18,6 +18,7 @@ interface StrategyState {
   entryPrice: Map<string, number>;
   highestPrice: Map<string, number>;
   barsHeld: Map<string, number>;
+  positionSize: Map<string, number>;
 }
 
 export class LiveTradingEngine {
@@ -32,6 +33,7 @@ export class LiveTradingEngine {
   private running: boolean = false;
   private lastUpdate: number = 0;
   private tradeHistory: { timestamp: number; tokenId: string; action: string; price: number; reason: string }[] = [];
+  private availableCapital: number = 0;
 
   constructor(
     strategy: Strategy,
@@ -60,6 +62,7 @@ export class LiveTradingEngine {
       entryPrice: new Map(),
       highestPrice: new Map(),
       barsHeld: new Map(),
+      positionSize: new Map(),
     };
   }
 
@@ -79,6 +82,12 @@ export class LiveTradingEngine {
     
     await this.loadMarkets();
     console.log(`Loaded ${this.markets.size} active markets`);
+    
+    const balance = await this.polySimClient.getBalance();
+    this.availableCapital = balance;
+    console.log(`Available capital: $${balance.toFixed(2)}`);
+    
+    await this.loadExistingPositions();
     
     this.running = true;
     await this.runLoop();
@@ -123,6 +132,50 @@ export class LiveTradingEngine {
       }
     }
     console.log(`Loaded history for ${loaded}/${tokenIds.length} tokens`);
+  }
+
+  private async loadExistingPositions(): Promise<void> {
+    console.log('Loading existing positions from PolySimulator...');
+    
+    try {
+      const positions = await this.polySimClient.getPositions();
+      
+      if (positions.length === 0) {
+        console.log('No existing positions found');
+        return;
+      }
+      
+      for (const pos of positions) {
+        let matchedTokenId: string | null = null;
+        
+        for (const [tokenId, market] of this.tokenToMarket) {
+          if (pos.marketQuestion && market.question) {
+            const posQuestion = pos.marketQuestion.toLowerCase().slice(0, 50);
+            const marketQuestion = market.question.toLowerCase().slice(0, 50);
+            if (posQuestion === marketQuestion || marketQuestion.includes(posQuestion) || posQuestion.includes(marketQuestion)) {
+              matchedTokenId = tokenId;
+              break;
+            }
+          }
+        }
+        
+        if (matchedTokenId && pos.avgPrice > 0) {
+          this.state.entryPrice.set(matchedTokenId, pos.avgPrice);
+          this.state.highestPrice.set(matchedTokenId, pos.avgPrice);
+          this.state.barsHeld.set(matchedTokenId, 0);
+          this.state.positionSize.set(matchedTokenId, pos.size);
+          
+          const deployedCapital = pos.size * pos.avgPrice;
+          this.availableCapital -= deployedCapital;
+          
+          console.log(`Loaded position: ${pos.size} shares @ $${pos.avgPrice.toFixed(4)} ($${deployedCapital.toFixed(2)} deployed)`);
+        }
+      }
+      
+      console.log(`Available capital after loading positions: $${this.availableCapital.toFixed(2)}`);
+    } catch (error) {
+      console.error('Failed to load existing positions:', error);
+    }
   }
 
   private async runLoop(): Promise<void> {
@@ -341,7 +394,8 @@ console.log(`Updated ${updated}/${tokenIds.length} prices`);
     
     // Force trade on score >= 3 (for testing)
     if (inRange && score >= 3) {
-      const size = (this.config.initialCapital * riskPercent * 0.995) / currentPrice;
+      const capitalToUse = Math.max(this.availableCapital, 0);
+      const size = (capitalToUse * riskPercent * 0.995) / currentPrice;
       return {
         signal: {
           tokenId,
@@ -389,21 +443,28 @@ console.log(`Updated ${updated}/${tokenIds.length} prices`);
         const order = await this.polySimClient.placeBuyOrder(signal.tokenId, signal.size, undefined, market.slug, market.conditionId);
         if (order.status === 'filled') {
           const price = this.priceCache.get(signal.tokenId)?.price ?? 0;
+          const cost = signal.size * price;
+          this.availableCapital -= cost;
           this.state.entryPrice.set(signal.tokenId, price);
           this.state.highestPrice.set(signal.tokenId, price);
           this.state.barsHeld.set(signal.tokenId, 0);
+          this.state.positionSize.set(signal.tokenId, signal.size);
           this.tradeHistory.push({ timestamp: Date.now(), tokenId: signal.tokenId, action: 'BUY', price, reason: signal.reason });
-          console.log('Buy order filled!');
+          console.log(`Buy order filled! Cost: $${cost.toFixed(2)}, Available: $${this.availableCapital.toFixed(2)}`);
         }
       } else if (signal.action === 'CLOSE' || signal.action === 'SELL') {
         const order = await this.polySimClient.placeSellOrder(signal.tokenId, 0, undefined, market.slug, market.conditionId);
         if (order.status === 'filled') {
           const price = this.priceCache.get(signal.tokenId)?.price ?? 0;
+          const size = this.state.positionSize.get(signal.tokenId) ?? 0;
+          const proceeds = size * price;
+          this.availableCapital += proceeds;
           this.tradeHistory.push({ timestamp: Date.now(), tokenId: signal.tokenId, action: 'SELL', price, reason: signal.reason });
           this.state.entryPrice.delete(signal.tokenId);
           this.state.highestPrice.delete(signal.tokenId);
           this.state.barsHeld.delete(signal.tokenId);
-          console.log('Position closed!');
+          this.state.positionSize.delete(signal.tokenId);
+          console.log(`Position closed! Proceeds: $${proceeds.toFixed(2)}, Available: $${this.availableCapital.toFixed(2)}`);
         }
       }
     }

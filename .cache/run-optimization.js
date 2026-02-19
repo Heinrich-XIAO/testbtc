@@ -1,4 +1,4 @@
-import { createRequire } from "node:module";
+// @bun
 var __create = Object.create;
 var __getProtoOf = Object.getPrototypeOf;
 var __defProp = Object.defineProperty;
@@ -17,7 +17,7 @@ var __toESM = (mod, isNodeMode, target) => {
 };
 var __commonJS = (cb, mod) => () => (mod || cb((mod = { exports: {} }).exports, mod), mod.exports);
 var __esm = (fn, res) => () => (fn && (res = fn(fn = 0)), res);
-var __require = /* @__PURE__ */ createRequire(import.meta.url);
+var __require = import.meta.require;
 
 // node_modules/commander/lib/error.js
 var require_error = __commonJS((exports) => {
@@ -739,11 +739,11 @@ var require_suggestSimilar = __commonJS((exports) => {
 
 // node_modules/commander/lib/command.js
 var require_command = __commonJS((exports) => {
-  var EventEmitter = __require("node:events").EventEmitter;
-  var childProcess = __require("node:child_process");
-  var path = __require("node:path");
-  var fs = __require("node:fs");
-  var process2 = __require("node:process");
+  var EventEmitter = __require("events").EventEmitter;
+  var childProcess = __require("child_process");
+  var path = __require("path");
+  var fs = __require("fs");
+  var process2 = __require("process");
   var { Argument, humanReadableArgName } = require_argument();
   var { CommanderError } = require_error();
   var { Help, stripColor } = require_help();
@@ -7587,8 +7587,8 @@ var require_legacy = __commonJS((exports, module) => {
 var require_shades_classic = __commonJS((exports, module) => {
   module.exports = {
     format: " {bar} {percentage}% | ETA: {eta}s | {value}/{total}",
-    barCompleteChar: "█",
-    barIncompleteChar: "░"
+    barCompleteChar: "\u2588",
+    barIncompleteChar: "\u2591"
   };
 });
 
@@ -7596,16 +7596,16 @@ var require_shades_classic = __commonJS((exports, module) => {
 var require_shades_grey = __commonJS((exports, module) => {
   module.exports = {
     format: " \x1B[90m{bar}\x1B[0m {percentage}% | ETA: {eta}s | {value}/{total}",
-    barCompleteChar: "█",
-    barIncompleteChar: "░"
+    barCompleteChar: "\u2588",
+    barIncompleteChar: "\u2591"
   };
 });
 
 // node_modules/cli-progress/presets/rect.js
 var require_rect = __commonJS((exports, module) => {
   module.exports = {
-    format: " {bar}■ {percentage}% | ETA: {eta}s | {value}/{total}",
-    barCompleteChar: "■",
+    format: " {bar}\u25A0 {percentage}% | ETA: {eta}s | {value}/{total}",
+    barCompleteChar: "\u25A0",
     barIncompleteChar: " "
   };
 });
@@ -49201,8 +49201,8 @@ class DifferentialEvolutionOptimizer {
     }
     const progressBar = !this.quiet ? new import_cli_progress.default.SingleBar({
       format: "Generation {bar} {percentage}% | Gen: {value}/{total} | Best: {sharpe}",
-      barCompleteChar: "█",
-      barIncompleteChar: "░",
+      barCompleteChar: "\u2588",
+      barIncompleteChar: "\u2591",
       hideCursor: true
     }) : null;
     if (progressBar) {
@@ -49454,6 +49454,336 @@ var strategies = {
       take_profit: { min: 0.05, max: 0.2, stepSize: 0.05 }
     },
     outputFile: "strat_support_06.params.json"
+  },
+  sr_ntf_v16_001: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 8, max: 36, stepSize: 4 },
+      bounce_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v16_001.params.json"
+  },
+  sr_ntf_v16_002: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 8, max: 36, stepSize: 4 },
+      bounce_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v16_002.params.json"
+  },
+  sr_ntf_v16_003: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 8, max: 36, stepSize: 4 },
+      bounce_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v16_003.params.json"
+  },
+  sr_ntf_v16_004: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 8, max: 36, stepSize: 4 },
+      bounce_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v16_004.params.json"
+  },
+  sr_ntf_v16_005: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 8, max: 36, stepSize: 4 },
+      bounce_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v16_005.params.json"
+  },
+  sr_ntf_v16_006: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 8, max: 36, stepSize: 4 },
+      bounce_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v16_006.params.json"
+  },
+  sr_ntf_v16_007: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 8, max: 36, stepSize: 4 },
+      bounce_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v16_007.params.json"
+  },
+  sr_ntf_v16_008: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 8, max: 36, stepSize: 4 },
+      bounce_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v16_008.params.json"
+  },
+  sr_ntf_v16_009: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 8, max: 36, stepSize: 4 },
+      bounce_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v16_009.params.json"
+  },
+  sr_ntf_v16_010: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 8, max: 36, stepSize: 4 },
+      bounce_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v16_010.params.json"
+  },
+  sr_ntf_v16_011: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 8, max: 36, stepSize: 4 },
+      bounce_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v16_011.params.json"
+  },
+  sr_ntf_v16_012: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 8, max: 36, stepSize: 4 },
+      bounce_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v16_012.params.json"
+  },
+  sr_ntf_v16_013: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 8, max: 36, stepSize: 4 },
+      bounce_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v16_013.params.json"
+  },
+  sr_ntf_v16_014: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 8, max: 36, stepSize: 4 },
+      bounce_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v16_014.params.json"
+  },
+  sr_ntf_v16_015: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 8, max: 36, stepSize: 4 },
+      bounce_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v16_015.params.json"
+  },
+  sr_ntf_v16_016: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 8, max: 36, stepSize: 4 },
+      bounce_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v16_016.params.json"
+  },
+  sr_ntf_v16_017: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 8, max: 36, stepSize: 4 },
+      bounce_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v16_017.params.json"
+  },
+  sr_ntf_v16_018: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 8, max: 36, stepSize: 4 },
+      bounce_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v16_018.params.json"
+  },
+  sr_ntf_v16_019: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 8, max: 36, stepSize: 4 },
+      bounce_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v16_019.params.json"
+  },
+  sr_ntf_v16_020: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 8, max: 36, stepSize: 4 },
+      bounce_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v16_020.params.json"
+  },
+  sr_ntf_v16_021: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 8, max: 36, stepSize: 4 },
+      bounce_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v16_021.params.json"
+  },
+  sr_ntf_v16_022: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 8, max: 36, stepSize: 4 },
+      bounce_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v16_022.params.json"
+  },
+  sr_ntf_v16_023: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 8, max: 36, stepSize: 4 },
+      bounce_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v16_023.params.json"
+  },
+  sr_ntf_v16_024: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 8, max: 36, stepSize: 4 },
+      bounce_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v16_024.params.json"
+  },
+  sr_ntf_v16_025: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 8, max: 36, stepSize: 4 },
+      bounce_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v16_025.params.json"
+  },
+  sr_ntf_v16_026: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 8, max: 36, stepSize: 4 },
+      bounce_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v16_026.params.json"
+  },
+  sr_ntf_v16_027: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 8, max: 36, stepSize: 4 },
+      bounce_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v16_027.params.json"
+  },
+  sr_ntf_v16_028: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 8, max: 36, stepSize: 4 },
+      bounce_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v16_028.params.json"
+  },
+  sr_ntf_v16_029: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 8, max: 36, stepSize: 4 },
+      bounce_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v16_029.params.json"
+  },
+  sr_ntf_v16_030: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 8, max: 36, stepSize: 4 },
+      bounce_threshold: { min: 0.01, max: 0.08, stepSize: 0.01 },
+      stop_loss: { min: 0.02, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.05, max: 0.35, stepSize: 0.05 },
+      take_profit: { min: 0.05, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v16_030.params.json"
   },
   momentum: {
     class: ShortTermStrategy,
@@ -54021,6 +54351,226 @@ var strategies = {
       risk_percent: { min: 0.22, max: 0.38, stepSize: 0.04 }
     },
     outputFile: "strat_sr_no_trend_higher_profit_312.params.json"
+  },
+  sr_ntf_v17_001: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 30, max: 40, stepSize: 2 },
+      bounce_threshold: { min: 0.018, max: 0.025, stepSize: 0.001 },
+      stop_loss: { min: 0.05, max: 0.08, stepSize: 0.005 },
+      risk_percent: { min: 0.3, max: 0.4, stepSize: 0.02 },
+      take_profit: { min: 0.08, max: 0.14, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v17_001.params.json"
+  },
+  sr_ntf_v17_002: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 32, max: 42, stepSize: 2 },
+      bounce_threshold: { min: 0.019, max: 0.024, stepSize: 0.001 },
+      stop_loss: { min: 0.055, max: 0.075, stepSize: 0.005 },
+      risk_percent: { min: 0.32, max: 0.38, stepSize: 0.02 },
+      take_profit: { min: 0.09, max: 0.13, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v17_002.params.json"
+  },
+  sr_ntf_v17_003: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 28, max: 38, stepSize: 2 },
+      bounce_threshold: { min: 0.017, max: 0.026, stepSize: 0.001 },
+      stop_loss: { min: 0.05, max: 0.09, stepSize: 0.005 },
+      risk_percent: { min: 0.28, max: 0.4, stepSize: 0.02 },
+      take_profit: { min: 0.08, max: 0.16, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v17_003.params.json"
+  },
+  sr_ntf_v17_004: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 34, max: 44, stepSize: 2 },
+      bounce_threshold: { min: 0.02, max: 0.023, stepSize: 0.001 },
+      stop_loss: { min: 0.058, max: 0.072, stepSize: 0.002 },
+      risk_percent: { min: 0.33, max: 0.37, stepSize: 0.01 },
+      take_profit: { min: 0.095, max: 0.115, stepSize: 0.005 }
+    },
+    outputFile: "strat_sr_ntf_v17_004.params.json"
+  },
+  sr_ntf_v17_005: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 10, max: 22, stepSize: 2 },
+      bounce_threshold: { min: 0.018, max: 0.025, stepSize: 0.001 },
+      stop_loss: { min: 0.05, max: 0.08, stepSize: 0.005 },
+      risk_percent: { min: 0.3, max: 0.4, stepSize: 0.02 },
+      take_profit: { min: 0.14, max: 0.2, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v17_005.params.json"
+  },
+  sr_ntf_v17_006: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 12, max: 24, stepSize: 2 },
+      bounce_threshold: { min: 0.019, max: 0.024, stepSize: 0.001 },
+      stop_loss: { min: 0.055, max: 0.075, stepSize: 0.005 },
+      risk_percent: { min: 0.32, max: 0.38, stepSize: 0.02 },
+      take_profit: { min: 0.15, max: 0.19, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v17_006.params.json"
+  },
+  sr_ntf_v17_007: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 35, max: 40, stepSize: 1 },
+      bounce_threshold: { min: 0.02, max: 0.022, stepSize: 0.0005 },
+      stop_loss: { min: 0.06, max: 0.07, stepSize: 0.002 },
+      risk_percent: { min: 0.33, max: 0.37, stepSize: 0.01 },
+      take_profit: { min: 0.095, max: 0.115, stepSize: 0.005 }
+    },
+    outputFile: "strat_sr_ntf_v17_007.params.json"
+  },
+  sr_ntf_v17_008: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 36, max: 38, stepSize: 1 },
+      bounce_threshold: { min: 0.0205, max: 0.0215, stepSize: 0.00025 },
+      stop_loss: { min: 0.062, max: 0.068, stepSize: 0.001 },
+      risk_percent: { min: 0.34, max: 0.36, stepSize: 0.005 },
+      take_profit: { min: 0.1, max: 0.11, stepSize: 0.002 }
+    },
+    outputFile: "strat_sr_ntf_v17_008.params.json"
+  },
+  sr_ntf_v17_009: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 24, max: 48, stepSize: 4 },
+      bounce_threshold: { min: 0.015, max: 0.03, stepSize: 0.003 },
+      stop_loss: { min: 0.04, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.25, max: 0.45, stepSize: 0.05 },
+      take_profit: { min: 0.06, max: 0.2, stepSize: 0.02 }
+    },
+    outputFile: "strat_sr_ntf_v17_009.params.json"
+  },
+  sr_ntf_v17_010: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 30, max: 42, stepSize: 3 },
+      bounce_threshold: { min: 0.016, max: 0.028, stepSize: 0.002 },
+      stop_loss: { min: 0.05, max: 0.08, stepSize: 0.005 },
+      risk_percent: { min: 0.28, max: 0.42, stepSize: 0.03 },
+      take_profit: { min: 0.08, max: 0.15, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v17_010.params.json"
+  },
+  sr_ntf_v17_011: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 32, max: 40, stepSize: 2 },
+      bounce_threshold: { min: 0.018, max: 0.025, stepSize: 0.001 },
+      stop_loss: { min: 0.05, max: 0.08, stepSize: 0.005 },
+      risk_percent: { min: 0.3, max: 0.4, stepSize: 0.02 },
+      take_profit: { min: 0.1, max: 0.14, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v17_011.params.json"
+  },
+  sr_ntf_v17_012: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 36, max: 42, stepSize: 2 },
+      bounce_threshold: { min: 0.02, max: 0.025, stepSize: 0.001 },
+      stop_loss: { min: 0.055, max: 0.075, stepSize: 0.005 },
+      risk_percent: { min: 0.33, max: 0.38, stepSize: 0.01 },
+      take_profit: { min: 0.09, max: 0.12, stepSize: 0.005 }
+    },
+    outputFile: "strat_sr_ntf_v17_012.params.json"
+  },
+  sr_ntf_v17_013: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 34, max: 40, stepSize: 2 },
+      bounce_threshold: { min: 0.019, max: 0.023, stepSize: 0.001 },
+      stop_loss: { min: 0.06, max: 0.07, stepSize: 0.002 },
+      risk_percent: { min: 0.34, max: 0.36, stepSize: 0.005 },
+      take_profit: { min: 0.1, max: 0.11, stepSize: 0.002 }
+    },
+    outputFile: "strat_sr_ntf_v17_013.params.json"
+  },
+  sr_ntf_v17_014: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 35, max: 37, stepSize: 1 },
+      bounce_threshold: { min: 0.02, max: 0.022, stepSize: 0.0005 },
+      stop_loss: { min: 0.063, max: 0.067, stepSize: 0.001 },
+      risk_percent: { min: 0.345, max: 0.355, stepSize: 0.002 },
+      take_profit: { min: 0.1, max: 0.108, stepSize: 0.002 }
+    },
+    outputFile: "strat_sr_ntf_v17_014.params.json"
+  },
+  sr_ntf_v17_015: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 10, max: 14, stepSize: 2 },
+      bounce_threshold: { min: 0.02, max: 0.025, stepSize: 0.001 },
+      stop_loss: { min: 0.06, max: 0.07, stepSize: 0.005 },
+      risk_percent: { min: 0.33, max: 0.38, stepSize: 0.01 },
+      take_profit: { min: 0.16, max: 0.18, stepSize: 0.005 }
+    },
+    outputFile: "strat_sr_ntf_v17_015.params.json"
+  },
+  sr_ntf_v17_016: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 18, max: 24, stepSize: 2 },
+      bounce_threshold: { min: 0.019, max: 0.023, stepSize: 0.001 },
+      stop_loss: { min: 0.06, max: 0.068, stepSize: 0.002 },
+      risk_percent: { min: 0.33, max: 0.37, stepSize: 0.01 },
+      take_profit: { min: 0.15, max: 0.18, stepSize: 0.005 }
+    },
+    outputFile: "strat_sr_ntf_v17_016.params.json"
+  },
+  sr_ntf_v17_017: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 40, max: 50, stepSize: 2 },
+      bounce_threshold: { min: 0.018, max: 0.025, stepSize: 0.001 },
+      stop_loss: { min: 0.05, max: 0.08, stepSize: 0.005 },
+      risk_percent: { min: 0.3, max: 0.4, stepSize: 0.02 },
+      take_profit: { min: 0.08, max: 0.12, stepSize: 0.01 }
+    },
+    outputFile: "strat_sr_ntf_v17_017.params.json"
+  },
+  sr_ntf_v17_018: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 42, max: 52, stepSize: 2 },
+      bounce_threshold: { min: 0.016, max: 0.022, stepSize: 0.001 },
+      stop_loss: { min: 0.055, max: 0.075, stepSize: 0.005 },
+      risk_percent: { min: 0.32, max: 0.38, stepSize: 0.02 },
+      take_profit: { min: 0.08, max: 0.11, stepSize: 0.005 }
+    },
+    outputFile: "strat_sr_ntf_v17_018.params.json"
+  },
+  sr_ntf_v17_019: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 20, max: 50, stepSize: 5 },
+      bounce_threshold: { min: 0.015, max: 0.03, stepSize: 0.003 },
+      stop_loss: { min: 0.04, max: 0.1, stepSize: 0.01 },
+      risk_percent: { min: 0.25, max: 0.45, stepSize: 0.05 },
+      take_profit: { min: 0.08, max: 0.2, stepSize: 0.02 }
+    },
+    outputFile: "strat_sr_ntf_v17_019.params.json"
+  },
+  sr_ntf_v17_020: {
+    class: SRNoTrendFilter302Strategy,
+    params: {
+      lookback: { min: 30, max: 50, stepSize: 5 },
+      bounce_threshold: { min: 0.017, max: 0.028, stepSize: 0.002 },
+      stop_loss: { min: 0.05, max: 0.09, stepSize: 0.01 },
+      risk_percent: { min: 0.3, max: 0.42, stepSize: 0.03 },
+      take_profit: { min: 0.08, max: 0.18, stepSize: 0.02 }
+    },
+    outputFile: "strat_sr_ntf_v17_020.params.json"
   }
 };
 function seededShuffle(array, seed) {
@@ -54174,17 +54724,17 @@ Attempt ` + attempt + "/" + attempts + "..."));
       bestTestReturn = testMetrics.return;
       bestResult = result;
       bestParams = result.finalParams;
-      console.log(kleur_default.green("  ★ NEW BEST"));
+      console.log(kleur_default.green("  \u2605 NEW BEST"));
       if (testMetrics.return >= minTestReturn) {
         console.log(kleur_default.green(`
-✓ Reached target test return of $` + minTestReturn));
+\u2713 Reached target test return of $` + minTestReturn));
         break;
       }
     }
   }
   if (!bestResult || !bestParams) {
     console.error(kleur_default.red(`
-✗ Failed to find valid parameters`));
+\u2717 Failed to find valid parameters`));
     process.exit(1);
   }
   const finalTestMetrics = testParams(test, StrategyClass, bestParams);
@@ -54236,7 +54786,7 @@ Optimization Progress
   const outputPath = path313.join(process.cwd(), "src", "strategies", outputFile);
   fs313.writeFileSync(outputPath, JSON.stringify(output, null, 2));
   console.log(kleur_default.green(`
-✓ Parameters saved to ` + outputFile));
+\u2713 Parameters saved to ` + outputFile));
   const historyPath = path313.join(process.cwd(), "data", "optimization-history.json");
   const historyData = {
     strategy: strategyName,
@@ -54255,6 +54805,6 @@ Optimization Progress
     }
   };
   fs313.writeFileSync(historyPath, JSON.stringify(historyData, null, 2));
-  console.log(kleur_default.green("✓ History saved to optimization-history.json"));
+  console.log(kleur_default.green("\u2713 History saved to optimization-history.json"));
 });
 program2.parse();

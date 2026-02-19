@@ -1,0 +1,19 @@
+{
+  "base_lookback": 14,
+  "min_lookback": 6,
+  "max_lookback": 47,
+  "volatility_period": 12,
+  "bounce_threshold": 0.0273,
+  "stoch_k_period": 14,
+  "stoch_d_period": 8,
+  "stoch_oversold": 20,
+  "stoch_overbought": 84,
+  "momentum_period": 3,
+  "momentum_threshold": 0.0178,
+  "min_bounce_bars": 1,
+  "stop_loss": 0.0397,
+  "trailing_stop": 0.0624,
+  "profit_target": 0.2137,
+  "max_hold_bars": 30,
+  "risk_percent": 0.3127
+}

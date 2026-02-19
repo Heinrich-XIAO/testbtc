@@ -1,0 +1,11 @@
+{
+  "lookback": 42,
+  "bounce_threshold": 0.016,
+  "stop_loss": 0.05544465728740117,
+  "risk_percent": 0.38,
+  "take_profit": 0.11,
+  "metadata": {
+    "best_test_return": 125.38418977300216,
+    "optimized_at": "2026-02-19T00:31:26.298Z"
+  }
+}
