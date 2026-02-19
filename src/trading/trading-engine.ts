@@ -100,7 +100,7 @@ export class LiveTradingEngine {
   }
 
   private async loadMarkets(): Promise<void> {
-    const markets = await this.dataClient.fetchActiveMarkets(100);
+    const markets = await this.dataClient.fetchActiveMarkets(200);
     
     for (const market of markets) {
       this.markets.set(market.conditionId, market);
