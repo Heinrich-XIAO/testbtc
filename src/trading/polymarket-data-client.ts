@@ -29,7 +29,7 @@ export interface Orderbook {
 }
 
 export class PolymarketDataClient {
-  async fetchActiveMarkets(limit: number = 200): Promise<MarketData[]> {
+  async fetchActiveMarkets(limit: number = 300): Promise<MarketData[]> {
     const params = new URLSearchParams();
     params.set('limit', String(limit));
     params.set('active', 'true');
