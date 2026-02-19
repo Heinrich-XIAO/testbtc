@@ -519,12 +519,6 @@ export class PolySimulatorClient {
         throw new Error('conditionId required for PolySimulator navigation');
       }
       
-      // Check if page loaded correctly (not a 404)
-      const notFoundText = await this.page.$('text=/not found|404/i');
-      if (notFoundText) {
-        throw new Error('Market not found on PolySimulator');
-      }
-      
       // Click Buy button (green button with specific class)
       // First, find all green buttons and pick the visible one
       const greenButtons = await this.page.$$('button[class*="accent-green"]');
@@ -590,12 +584,6 @@ try {
         await this.page.waitForTimeout(3000);
       } else {
         throw new Error('conditionId required for PolySimulator navigation');
-      }
-      
-      // Check if page loaded correctly (not a 404)
-      const notFoundText = await this.page.$('text=/not found|404/i');
-      if (notFoundText) {
-        throw new Error('Market not found on PolySimulator');
       }
       
       // Click Sell button - look for red/accent-red buttons or Sell text
