@@ -9,7 +9,6 @@
 
 When adding new logic or making changes to the trading strategy:
 1. Always parameterize any new logic so it can be easily toggled and tested
-2. Always run `bun run optimize --deterministic-slow` to test performance
 2. If performance is worse, always revert the changes and add the attempt to ATTEMPTED.md (failed section)
 3. If performance is better, add it to ATTEMPTED.md (successful section)
 
@@ -50,7 +49,6 @@ An **Iteration** is a coordinated round where subagents independently review, im
    - "Good/fixable": propose and implement an improvement (wild or incremental)
 4. **Test (local)**: Strategies are locally tested for sanity or improvement. 
 5. **Document**: Subagents write up rationale, results, and explicit next steps for each strategy. The main agent compiles these into a strict, sectioned `ITERATION_xx.md` (see below).
-6. **Global Optimization**: Only strategies clearing local improvement are run with `bun run optimize` for full-scale performance checks.
 7. **Reversion Guidance**: If a new version is worse, subagent notes tell the next iteration to reconsider the earlier baseline.
 
 ## Strict Markdown Structure for Iterations
