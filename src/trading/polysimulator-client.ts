@@ -511,51 +511,70 @@ export class PolySimulatorClient {
     };
 
     try {
-      // Navigate to market page using conditionId (PolySimulator uses this format)
       if (conditionId) {
+        console.log(`Navigating to market ${conditionId}...`);
         await this.page.goto(`https://polysimulator.com/markets/${conditionId}`, { waitUntil: 'domcontentloaded', timeout: 30000 });
-        await this.page.waitForTimeout(3000);
+        await this.page.waitForTimeout(2000);
       } else {
         throw new Error('conditionId required for PolySimulator navigation');
       }
       
-      // Click Buy button (green button with specific class)
-      // First, find all green buttons and pick the visible one
-      const greenButtons = await this.page.$$('button[class*="accent-green"]');
-      let clicked = false;
-      
-      for (const btn of greenButtons) {
-        const isVisible = await btn.isVisible();
-        if (isVisible) {
-          await btn.scrollIntoViewIfNeeded();
-          await btn.click({ force: true });
-          clicked = true;
-          break;
-        }
-      }
-      
-      if (!clicked) {
-        throw new Error('No visible Buy button found on market page');
-      }
-      await this.page.waitForTimeout(1500);
-
       // Find and fill amount input
       const amountInput = await this.page.$(
         'input[type="number"], input[placeholder*="amount"], input[placeholder*="Amount"], input[placeholder*="Shares"]'
       );
+      console.log(`Amount input found: ${!!amountInput}`);
       if (amountInput) {
         await amountInput.fill(String(amount));
+        console.log(`Filled amount: ${amount}`);
         await this.page.waitForTimeout(500);
+      } else {
+        throw new Error('Amount input not found');
       }
 
-      // Click confirm Buy button (in the modal, different from Buy Yes)
-      const confirmButton = await this.page.$('button:has-text("Buy"):not(:has-text("Yes"))');
-      if (confirmButton) {
-        await confirmButton.click();
-        await this.page.waitForTimeout(3000);
+      // Click confirm Buy button (prefer the "Buy Yes" button shown in the trade modal)
+      const confirmSelectors = [
+        'button:has-text("Buy Yes")',
+        'button:has-text("Confirm")',
+        'button:has-text("Place order")',
+        'button[type="submit"]',
+      ];
+
+      let confirmed = false;
+      for (const selector of confirmSelectors) {
+        const btn = await this.page.$(selector);
+        if (btn && await btn.isVisible().catch(() => false)) {
+          await btn.click();
+          console.log(`Clicked confirm button: ${selector}`);
+          confirmed = true;
+          break;
+        }
+      }
+      
+      if (!confirmed) {
+        throw new Error('Confirm button not found');
+      }
+      
+      await this.page.waitForTimeout(3000);
+      
+      // Wait for the "Trade Executed" toast or order filled banner to appear
+      const successSelector = 'text=/Trade Executed/i';
+      const orderFilledSelector = 'text=/Order #[0-9]+ • FILLED/i';
+      const successElement = await this.page.waitForSelector(successSelector, { timeout: 6000 }).catch(() => null);
+      const orderFilledElement = await this.page.waitForSelector(orderFilledSelector, { timeout: 6000 }).catch(() => null);
+
+      if (!successElement && !orderFilledElement) {
+        throw new Error('Trade confirmation not detected');
+      }
+
+      // Close the banner if possible
+      const closeButton = await this.page.$('button:has-text("✕"), button[aria-label="Close"]');
+      if (closeButton) {
+        await closeButton.click().catch(() => null);
       }
 
       order.status = 'filled';
+      console.log('Order marked as filled');
 
     } catch (error) {
       order.status = 'failed';
@@ -568,21 +587,21 @@ export class PolySimulatorClient {
   async placeSellOrder(tokenId: string, amount: number, minPrice?: number, marketSlug?: string, conditionId?: string): Promise<LiveOrder> {
     if (!this.page) throw new Error('Client not initialized');
 
-    const order: LiveOrder = {
-      id: `order_${Date.now()}`,
-      tokenId,
-      side: 'SELL',
-      size: amount,
-      price: minPrice ?? 0,
-      status: 'pending',
-      timestamp: Date.now(),
-    };
+      const order: LiveOrder = {
+        id: `order_${Date.now()}`,
+        tokenId,
+        side: 'SELL',
+        size: amount,
+        price: minPrice ?? 0,
+        status: 'pending',
+        timestamp: Date.now(),
+      };
 
-try {
-      if (conditionId) {
-        await this.page.goto(`https://polysimulator.com/markets/${conditionId}`, { waitUntil: 'domcontentloaded', timeout: 30000 });
-        await this.page.waitForTimeout(3000);
-      } else {
+      try {
+        if (conditionId) {
+          await this.page.goto(`https://polysimulator.com/markets/${conditionId}`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+          await this.page.waitForTimeout(3000);
+        } else {
         throw new Error('conditionId required for PolySimulator navigation');
       }
       
@@ -638,24 +657,43 @@ try {
 
       // Click confirm Sell button
       const confirmSelectors = [
-        'button:has-text("Sell")',
+        'button:has-text("Sell Yes")',
         'button:has-text("Confirm")',
+        'button:has-text("Place order")',
         'button[type="submit"]',
         'button[class*="accent-red"]',
       ];
-      
+      let confirmed = false;
       for (const selector of confirmSelectors) {
         const btn = await this.page.$(selector);
-        if (btn) {
-          const isVisible = await btn.isVisible().catch(() => false);
-          if (isVisible) {
-            const text = await btn.textContent();
-            console.log(`Clicking confirm: "${text?.trim()}"`);
-            await btn.click({ force: true });
-            await this.page.waitForTimeout(2000);
-            break;
-          }
+        if (btn && await btn.isVisible().catch(() => false)) {
+          const text = await btn.textContent();
+          console.log(`Clicking confirm: "${text?.trim()}"`);
+          await btn.click({ force: true });
+          confirmed = true;
+          break;
         }
+      }
+
+      if (!confirmed) {
+        throw new Error('Confirm Sell button not found');
+      }
+
+      await this.page.waitForTimeout(3000);
+
+      const successSelector = 'text=/Trade Executed/i';
+      const orderFilledSelector = 'text=/Order #[0-9]+ • FILLED/i';
+      const successElement = await this.page.waitForSelector(successSelector, { timeout: 6000 }).catch(() => null);
+      const orderFilledElement = await this.page.waitForSelector(orderFilledSelector, { timeout: 6000 }).catch(() => null);
+
+      if (!successElement && !orderFilledElement) {
+        throw new Error('Sell confirmation not detected');
+      }
+
+      // Close banner if it exists
+      const closeButton = await this.page.$('button:has-text("✕"), button[aria-label="Close"]');
+      if (closeButton) {
+        await closeButton.click().catch(() => null);
       }
 
       order.status = 'filled';
