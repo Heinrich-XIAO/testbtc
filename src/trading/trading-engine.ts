@@ -118,17 +118,29 @@ export class LiveTradingEngine {
     const tokenIds = Array.from(this.tokenToMarket.keys());
     let loaded = 0;
     
-    for (const tokenId of tokenIds) {
-      try {
-        const history = await this.dataClient.fetchPriceHistory(tokenId, 15, '1d');
-        if (history.length > 0) {
-          const prices = history.map(h => h.p);
-          this.state.prices.set(tokenId, prices);
+    // Load in parallel batches of 20 to avoid rate limiting
+    const batchSize = 20;
+    for (let i = 0; i < tokenIds.length; i += batchSize) {
+      const batch = tokenIds.slice(i, i + batchSize);
+      const results = await Promise.all(
+        batch.map(async (tokenId) => {
+          try {
+            const history = await this.dataClient.fetchPriceHistory(tokenId, 15, '1d');
+            if (history.length > 0) {
+              return { tokenId, prices: history.map(h => h.p) };
+            }
+          } catch (e) {
+            // Skip if history unavailable
+          }
+          return null;
+        })
+      );
+      
+      for (const result of results) {
+        if (result) {
+          this.state.prices.set(result.tokenId, result.prices);
           loaded++;
         }
-        await new Promise(r => setTimeout(r, 50));
-      } catch (e) {
-        // Skip if history unavailable
       }
     }
     console.log(`Loaded history for ${loaded}/${tokenIds.length} tokens`);
