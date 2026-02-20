@@ -532,25 +532,21 @@ export class PolySimulatorClient {
         throw new Error('Amount input not found');
       }
 
-      // Click confirm Buy button (prefer the "Buy Yes" button shown in the trade modal)
-      const confirmSelectors = [
-        'button:has-text("Buy Yes")',
-        'button:has-text("Confirm")',
-        'button:has-text("Place order")',
-        'button[type="submit"]',
-      ];
-
+      // Click confirm Buy button (look for a green "Buy Yes"/"Confirm" button)
+      const confirmButtons = await this.page.$$('button');
+      const confirmRegex = /(buy\s*yes|sell\s*yes|confirm|place order)/i;
       let confirmed = false;
-      for (const selector of confirmSelectors) {
-        const btn = await this.page.$(selector);
-        if (btn && await btn.isVisible().catch(() => false)) {
-          await btn.click();
-          console.log(`Clicked confirm button: ${selector}`);
-          confirmed = true;
-          break;
-        }
+      for (const btn of confirmButtons) {
+        if (!await btn.isVisible().catch(() => false)) continue;
+        const text = (await btn.textContent().catch(() => '') ?? '').replace(/\s+/g, ' ').trim();
+        if (!confirmRegex.test(text)) continue;
+        await btn.scrollIntoViewIfNeeded();
+        await btn.click({ force: true });
+        console.log(`Clicked confirm button: "${text}"`);
+        confirmed = true;
+        break;
       }
-      
+
       if (!confirmed) {
         throw new Error('Confirm button not found');
       }
@@ -656,23 +652,18 @@ export class PolySimulatorClient {
       }
 
       // Click confirm Sell button
-      const confirmSelectors = [
-        'button:has-text("Sell Yes")',
-        'button:has-text("Confirm")',
-        'button:has-text("Place order")',
-        'button[type="submit"]',
-        'button[class*="accent-red"]',
-      ];
+      const confirmButtons = await this.page.$$('button');
+      const confirmRegex = /(sell\s*yes|close\s*position|confirm|place order)/i;
       let confirmed = false;
-      for (const selector of confirmSelectors) {
-        const btn = await this.page.$(selector);
-        if (btn && await btn.isVisible().catch(() => false)) {
-          const text = await btn.textContent();
-          console.log(`Clicking confirm: "${text?.trim()}"`);
-          await btn.click({ force: true });
-          confirmed = true;
-          break;
-        }
+      for (const btn of confirmButtons) {
+        if (!await btn.isVisible().catch(() => false)) continue;
+        const text = (await btn.textContent().catch(() => '') ?? '').replace(/\s+/g, ' ').trim();
+        if (!confirmRegex.test(text)) continue;
+        await btn.scrollIntoViewIfNeeded();
+        await btn.click({ force: true });
+        console.log(`Clicking confirm: "${text}"`);
+        confirmed = true;
+        break;
       }
 
       if (!confirmed) {
