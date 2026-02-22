@@ -6,3 +6,4 @@ telemetry-id
 *.bson
 .env.local
 .env
+.cache/
