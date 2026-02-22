@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { BacktestEngine, loadStoredData } from '../src/backtest/engine';
 import { SRNoTrendFilter302Strategy, SRNoTrendFilter302Params } from '../src/strategies/strat_sr_no_trend_filter_302';
+import { SRNoTrendNoMomentum315Strategy, SRNoTrendNoMomentum315Params } from '../src/strategies/strat_sr_no_trend_no_momentum_315';
 import type { StoredData, PricePoint } from '../src/types';
 
 const STRATEGIES = [
@@ -10,7 +11,37 @@ const STRATEGIES = [
   { name: 'sr_ntf_v21_022', file: 'strat_sr_ntf_v21_022.params.json' },
   { name: 'sr_ntf_v22_030', file: 'strat_sr_ntf_v22_030.params.json' },
   { name: 'sr_ntf_v24_005', file: 'strat_sr_ntf_v24_005.params.json' },
+  { name: 'sr_ntf_315_no_momentum', strategy: 'no_momentum' as any },
 ];
+
+const HYBRID_HIGH_RISK_PARAMS: Partial<SRNoTrendFilter302Params> = {
+  base_lookback: 45,
+  bounce_threshold: 0.0206,
+  stoch_k_period: 18,
+  stoch_d_period: 5,
+  stop_loss: 0.066,
+  risk_percent: 0.45,
+  profit_target: 0.09,
+};
+
+function parseArgs(): { dataFile: string; ignoreParams: boolean; hybrid: boolean } {
+  const args = process.argv.slice(2);
+  let dataFile = 'data/test-data.bson';
+  let ignoreParams = false;
+  let hybrid = false;
+  
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--ignore-params') {
+      ignoreParams = true;
+    } else if (args[i] === '--hybrid') {
+      hybrid = true;
+    } else if (!args[i].startsWith('--')) {
+      dataFile = args[i];
+    }
+  }
+  
+  return { dataFile, ignoreParams, hybrid };
+}
 
 function splitData(data: StoredData, trainRatio: number = 0.7): { train: StoredData; test: StoredData } {
   const allTimestamps: number[] = [];
@@ -62,8 +93,10 @@ function splitData(data: StoredData, trainRatio: number = 0.7): { train: StoredD
 }
 
 async function main() {
-  const dataFile = process.argv[2] || 'data/test-data.bson';
+  const { dataFile, ignoreParams, hybrid } = parseArgs();
   console.log(`Loading data from ${dataFile}...`);
+  if (ignoreParams) console.log('--ignore-params: Using default parameters (ignoring saved params files)\n');
+  if (hybrid) console.log('--hybrid: Using hybrid high-risk params (lookback=45, stoch_k=18, risk=45%)\n');
   const data = await loadStoredData(dataFile);
   
   const { train: trainData, test: testData } = splitData(data, 0.7);
@@ -77,32 +110,48 @@ async function main() {
   console.log('| Strategy | Train Return | Test Return | Full Return | Train/Test | Test/Full | Train Trades | Test Trades | Train Sharpe | Test Sharpe | Overfit? |');
   console.log('|----------|-------------|-------------|-------------|------------|-----------|--------------|-------------|--------------|-------------|----------|');
   
-  for (const { name, file } of STRATEGIES) {
-    const paramsPath = path.join(process.cwd(), 'src/strategies', file);
+  for (const s of STRATEGIES) {
+    let params: SRNoTrendFilter302Params | SRNoTrendNoMomentum315Params | Record<string, never> = {};
+    let useNoMomentum = false;
     
-    if (!fs.existsSync(paramsPath)) {
-      console.log(`| ${name} | FILE NOT FOUND | | | | | | | | | |`);
-      continue;
+    if ('strategy' in s && s.strategy === 'no_momentum') {
+      useNoMomentum = true;
+    } else if (!ignoreParams && s.file) {
+      const paramsPath = path.join(process.cwd(), 'src/strategies', s.file);
+      if (!fs.existsSync(paramsPath)) {
+        console.log(`| ${s.name} | FILE NOT FOUND | | | | | | | | | |`);
+        continue;
+      }
+      params = hybrid 
+        ? HYBRID_HIGH_RISK_PARAMS as any
+        : ignoreParams 
+          ? {} 
+          : JSON.parse(fs.readFileSync(paramsPath, 'utf-8'));
+    } else if (ignoreParams) {
+      params = {};
     }
-    
-    const paramsContent = fs.readFileSync(paramsPath, 'utf-8');
-    const params: SRNoTrendFilter302Params = JSON.parse(paramsContent);
     
     const originalLog = console.log;
     console.log = () => {};
     
     // Full backtest
-    const fullStrategy = new SRNoTrendFilter302Strategy(params);
+    const fullStrategy = useNoMomentum 
+      ? new SRNoTrendNoMomentum315Strategy(params as any)
+      : new SRNoTrendFilter302Strategy(params);
     const fullEngine = new BacktestEngine(data, fullStrategy, { initialCapital: 1000, feeRate: 0 });
     const fullResult = fullEngine.run();
     
     // Train backtest
-    const trainStrategy = new SRNoTrendFilter302Strategy(params);
+    const trainStrategy = useNoMomentum 
+      ? new SRNoTrendNoMomentum315Strategy(params as any)
+      : new SRNoTrendFilter302Strategy(params);
     const trainEngine = new BacktestEngine(trainData, trainStrategy, { initialCapital: 1000, feeRate: 0 });
     const trainResult = trainEngine.run();
     
     // Test backtest
-    const testStrategy = new SRNoTrendFilter302Strategy(params);
+    const testStrategy = useNoMomentum 
+      ? new SRNoTrendNoMomentum315Strategy(params as any)
+      : new SRNoTrendFilter302Strategy(params);
     const testEngine = new BacktestEngine(testData, testStrategy, { initialCapital: 1000, feeRate: 0 });
     const testResult = testEngine.run();
     
@@ -123,7 +172,7 @@ async function main() {
     const highOverfit = overfitRatio > 2;
     const overfitStatus = (lowTrades || highOverfit) ? '⚠️ YES' : '✓ OK';
     
-    console.log(`| ${name} | $${trainReturn.toFixed(2)} | $${testReturn.toFixed(2)} | $${fullReturn.toFixed(2)} | ${trainTestRatio} | ${testFullRatio} | ${trainResult.totalTrades} | ${testResult.totalTrades} | ${trainSharpe} | ${testSharpe} | ${overfitStatus} |`);
+    console.log(`| ${s.name} | $${trainReturn.toFixed(2)} | $${testReturn.toFixed(2)} | $${fullReturn.toFixed(2)} | ${trainTestRatio} | ${testFullRatio} | ${trainResult.totalTrades} | ${testResult.totalTrades} | ${trainSharpe} | ${testSharpe} | ${overfitStatus} |`);
   }
 }
 

@@ -1,6 +1,312 @@
 # ATTEMPTED.md
 
+## Iteration 26 Results (New Strategy Variants)
+
+### 385: Support Retest (double bottom) - SUCCESS ⭐ NEW WINNER
+- **Logic**: Require support to be tested twice within 15 bars at similar price level (within 2%) before entry
+- **Result**:
+  - 385 (retest): $1109.66 return (107 trades, 66% win) on small, $2027.69 (893 trades, 69.7% win) on large
+  - 362 (prev winner): $1109.66 return (107 trades, 66% win) on small, $1926.63 (903 trades, 69.3% win) on large
+- **Verdict**: +5% on large dataset with same small performance, retest filter improves signal quality
+
+### 384: Stochastic Turn Up - SUCCESS
+- **Logic**: Require K to be rising from oversold (stoch.k > prevK) instead of just oversold
+- **Result**:
+  - 384: $1109.66 (small), $1962.92 (large)
+  - 362: $1109.66 (small), $1926.63 (large)
+- **Verdict**: +2% on large, matching on small, catches actual reversal moment
+
+### 390: Volatility-Sized Risk - FAILED (overfits)
+- **Logic**: Scale position size inversely to volatility (smaller positions when vol is high)
+- **Result**:
+  - 390: $1997.47 (small), $1542.22 (large)
+  - 362: $1109.66 (small), $1926.63 (large)
+- **Verdict**: +80% on small but -20% on large, overfits to small dataset
+
+### 392: Minimal Exit - FAILED (overfits)
+- **Logic**: Remove most exits (profit target, trailing stop, max bars, stoch overbought), keep only stop loss + resistance
+- **Result**:
+  - 392: $1433.76 (small), $1228.61 (large)
+  - 362: $1109.66 (small), $1926.63 (large)
+- **Verdict**: +29% on small but -36% on large, overfits to small dataset
+
+### 386: Momentum Turn Exit - FAILED
+- **Logic**: Exit when momentum turns negative (after being positive)
+- **Result**:
+  - 386: $608.85 (small), $892.46 (large)
+  - 362: $1109.66 (small), $1926.63 (large)
+- **Verdict**: -45% on small, -54% on large, momentum exit cuts winners too early
+
+### 387: Weighted Support - FAILED
+- **Logic**: Use weighted average of support levels (recent lows weighted higher)
+- **Result**:
+  - 387: $320.58 (small), $503.51 (large)
+- **Verdict**: -71% on small, -74% on large, weighted averaging dilutes signal quality
+
+### 388: Stochastic Cross Exit - FAILED
+- **Logic**: Exit on K/D bearish crossover instead of overbought
+- **Result**:
+  - 388: $741.80 (small), $824.19 (large)
+- **Verdict**: -33% on small, -57% on large, crossover exit triggers too early
+
+### 389: Support Strength - FAILED
+- **Logic**: Score support by bounce count, require min bounces
+- **Result**: 0 trades on small dataset
+- **Verdict**: Too restrictive, blocks all entries
+
+### 391: Price Action Entry - NEUTRAL
+- **Logic**: Require close > previous bar's high
+- **Result**: Identical to 362 (entry condition already implicitly satisfied)
+- **Verdict**: No change, redundant with existing conditions
+
+### 393: Clustered Support - FAILED
+- **Logic**: Find support zones where multiple lows cluster together
+- **Result**:
+  - 393: $800.27 (small), $635.22 (large)
+- **Verdict**: -28% on small, -67% on large, clustering finds weaker support levels
+
+## Iteration 25 Results (New Strategy Variants)
+
+### 380: Wider bounce_threshold (0.040 vs 0.028) + max_lookback 50 - FAILED
+- **Logic**: Increase bounce_threshold from 0.028 to 0.040 (wider support band) + max_lookback 50
+- **Result**:
+  - 380 (bounce 0.040, max_lookback 50): $181.49 return (123 trades, 54.1% win, 67.17% dd, 2.897 sharpe)
+  - 302 (base): $1046.59 return (121 trades, 65.0% win, 79.25% dd, 3.361 sharpe)
+- **Verdict**: -82.7% vs base, wider bounce threshold causes entries at less optimal support levels, significantly hurts win rate (65%→54.1%), wider max_lookback compounds the issue by finding stale support levels
+
+### 376: Wider min_lookback (20 vs 10) - FAILED
+- **Logic**: Increase min_lookback from 10 to 20 (wider range for adaptive lookback)
+- **Result**:
+  - 376 (min_lookback 20): $191.47 return (113 trades, 55.4% win, 67.17% dd, 2.909 sharpe)
+  - 302 (base): $1046.59 return (121 trades, 65.0% win, 79.25% dd, 3.361 sharpe)
+- **Verdict**: -81.7% vs base, wider min_lookback restricts adaptive lookback too much, reduces trade frequency and significantly hurts win rate (65%→55.4%), tighter 10-period min is better for capturing recent relevant support
+
+### 372: Medium Lookup (max_lookback 45 vs 36/50) - SUCCESS
+- **Logic**: Test max_lookback 45 (between 36 in 302 and 50 in 362)
+- **Result**:
+  - 372 (max_lookback 45): $1119.94 return (109 trades, 66.7% win, 79.25% dd, 3.405 sharpe)
+  - 362 (max_lookback 50): $1109.66 return (107 trades, 66.0% win, 79.25% dd, 3.407 sharpe)
+  - 302 (base): $1046.59 return (121 trades, 65.0% win, 79.25% dd, 3.361 sharpe)
+- **Verdict**: +7% vs 302, +0.9% vs 362, max_lookback 45 is optimal - slightly better than both 36 and 50, best win rate (66.7%)
+
+## Iteration 24 Results (New Strategy Variants)
+
+### 371: Wider Lookup (50) + Stoch K Period (18) - FAILED
+- **Logic**: Combine wider lookup (max_lookback 50) with stoch_k_period=18 (insight from ITERATION_19)
+- **Result**:
+  - 371 (max_lookback 50, stoch_k_period 18): $568.36 return (139 trades, 58.0% win, 83.95% dd, 2.980 sharpe)
+  - 302 (base): $1046.59 return (121 trades, 65.0% win, 79.25% dd, 3.361 sharpe)
+- **Verdict**: -45.7% vs base, combining wider lookup with stoch_k_period=18 does not improve performance, win rate drops (65%→58%), more trades but lower quality
+
+### 370: Wider Resistance Band (10% below resistance) - FAILED
+- **Logic**: Exit when price reaches 10% below resistance instead of exact resistance level
+- **Result**:
+  - 370 (wide resistance band): $179.55 return (116 trades, 56.9% win, 66.46% dd, 3.003 sharpe)
+  - 302 (base): $1046.59 return (121 trades, 65.0% win, 79.25% dd, 3.361 sharpe)
+- **Verdict**: -82.8% vs base, wider resistance band exits too early and misses significant profits, exact resistance level is better for exit timing
+
+### 366: Wider Lookup (50) + No Momentum - FAILED
+- **Logic**: Combine wider lookup (max_lookback 50 from 362) with no momentum filter (like 315)
+- **Result**:
+  - 366 (max_lookback 50, no momentum): $416.86 return (342 trades, 50.0% win, 81.24% dd, 2.894 sharpe)
+  - 302 (base): $1046.59 return (121 trades, 65.0% win, 79.25% dd, 3.361 sharpe)
+- **Verdict**: -60% vs base, removing momentum filter causes too many false signals (trades 121→342), win rate drops significantly (65%→50%), wider lookup amplifies the noise from no momentum filter
+
+### 365: Higher Base Lookback (30 vs 18) - FAILED
+- **Logic**: Higher base_lookback (30 instead of 18) for longer-term support/resistance
+- **Result**:
+  - 365 (base_lookback 30): $123.41 return (97 trades, 54.2% win, 66.22% dd, 2.894 sharpe)
+  - 302 (base): $1046.59 return (121 trades, 65.0% win, 79.25% dd, 3.361 sharpe)
+- **Verdict**: -88.2% vs base, higher lookback (30 vs 18) finds support levels that are too old/stale, reduces trade frequency (121→97) and significantly hurts win rate (65%→54.2%), shorter 18-period lookback is better for capturing recent relevant support
+
+### 362: Wider Support Lookup Range (max_lookback 50 vs 36) - SUCCESS
+- **Logic**: Wider support/resistance lookup range using max_lookback 50 instead of 36
+- **Result**:
+  - 362 (max_lookback 50): $1109.66 return (107 trades, 66.0% win, 79.25% dd, 3.407 sharpe)
+  - 302 (base): $1046.59 return (121 trades, 65.0% win, 79.25% dd, 3.361 sharpe)
+- **Verdict**: +6% vs base, wider lookup finds better support levels, fewer but higher quality trades
+
+## Iteration 23 Results (New Strategy Variants)
+
+### 360: Wider Stochastic K Period (28 vs 14) - FAILED
+- **Logic**: Wider stochastic K period (28 instead of 14) for smoother signals
+- **Result**:
+  - 360: $564.84 return (163 trades, 58.0% win, 79.24% dd, 2.967 sharpe)
+  - 302 (base): $1046.59 return (121 trades, 65.0% win, 79.25% dd, 3.361 sharpe)
+- **Verdict**: -46% vs base, wider stoch period generates more trades (163 vs 121) but lower win rate (58% vs 65%), tighter 14-period is better for signal quality
+
+### 356: Day-of-Week Filter (Skip Mon/Fri) - FAILED
+- **Logic**: Skip entries on Monday (1) and Friday (5) to avoid weekend gap risk
+- **Result**:
+  - 356: $191.47 return (113 trades, 55.4% win, 67.17% dd, 2.909 sharpe)
+  - 302 (base): $1046.59 return (121 trades, 65.0% win, 79.25% dd, 3.361 sharpe)
+- **Verdict**: -81.7% vs base, skipping Mon/Fri removes too many trading opportunities (~29% of potential trades), lower win rate (65%→55.4%)
+
+## Iteration 22 Results (New Strategy Variants)
+
+### 351: Close Within 2% of Resistance - FAILED
+- **Logic**: Exit when price is within 2% of resistance (instead of waiting for actual touch)
+- **Result**: 
+  - 351: $191.47 return (113 trades, 55.4% win, 67.17% dd, 2.909 sharpe)
+  - 302 (base): $1046.59 return (121 trades, 65.0% win, 79.25% dd, 3.361 sharpe)
+- **Verdict**: -81.7% vs base, exiting early (2% before resistance) misses significant profits, better to wait for actual resistance touch
+
+### 350: Triple Confirmation (RSI < 30) - FAILED
+- **Logic**: Triple confirmation - near support AND RSI < 30 AND stochastic oversold AND momentum positive
+- **Result**: 
+  - 350: -$130.26 return (57 trades, 46.4% win)
+  - 302 (base): $1046.59 return (121 trades, 65.0% win)
+- **Verdict**: -112% vs base, RSI < 30 filter too restrictive, trades reduced by 53% (121→57), win rate drops to 46.4%
+
+### 348: Strong Momentum (0.01 threshold) - FAILED
+- **Logic**: Higher momentum threshold (0.01 instead of 0.004) for stronger bounce quality
+- **Result**: 
+  - 348: $215.96 return (89 trades, 52.3% win)
+  - 302 (base): $1046.59 return (121 trades, 65.0% win)
+- **Verdict**: -79.4% vs base, higher momentum threshold restricts too many trades (121→89), lower win rate (65%→52.3%), the looser 0.004 threshold actually captures more profitable opportunities
+
+## Iteration 21 Results (New Strategy Variants)
+
+### 342: ROC Filter - FAILED
+- **Logic**: Add ROC(5) filter - only enter when ROC < 0 (price declining = better entry)
+- **Result**: 
+  - 342: $129.62 return (74 trades, 45.9% win)
+  - 302 (base): $1046.59 return (121 trades, 65.0% win)
+- **Verdict**: -87.6% vs base, ROC filter restricts too many trades (121→74), win rate drops significantly (65%→45.9%), negative price filter too restrictive for profitable entries
+
+### 341: ADX Filter - FAILED
+- **Logic**: Add ADX filter - only enter when ADX < 25 (low trend/ranging market)
+- **Result**: 
+  - 341: $337.61 return (56 trades, 57.1% win)
+  - 302 (base): $1046.59 return (121 trades, 65.0% win)
+- **Verdict**: -67.7% vs base, ADX filter restricts too many trades (121→56), ranging market filter doesn't improve this strategy
+
+### 337: ATR Filter - FAILED
+- **Logic**: Add ATR filter - only enter when current ATR < average ATR * 0.95 (low volatility = tighter entries)
+- **Result**: 
+  - 337: $882.84 return (78 trades, 61.5% win)
+  - 302 (base): $1046.59 return (121 trades, 65.0% win)
+- **Verdict**: -15.6% vs base, ATR filter reduces trades too aggressively (121→78), lower win rate, low volatility does NOT equal better entries for this strategy
+
+### 336: Bollinger Bands Filter - FAILED
+- **Logic**: Add Bollinger Bands filter - only enter when close < lower_band * 1.05 (price near lower band/oversold)
+- **Result**: 
+  - Small dataset (test-data.bson): 336: -$86.69 (39 trades, 52.6% win) vs 302: $1046.59 (121 trades, 65% win)
+  - Large dataset (test-data-15min-large.bson): 336: $153.06 (605 trades, 71.1% win) vs 302: $1737.24 (992 trades, 69% win)
+- **Verdict**: -108% (small) / -91% (large) vs base, Bollinger filter too restrictive, filters out many profitable trades
+
+### 334: RSI Filter - FAILED
+- **Logic**: Add RSI as additional filter - only enter when RSI < 40 (in addition to stochastic oversold)
+- **Result**: 
+  - 334: $26.60 return (89 trades, 50.0% win, 66.22% dd, 2.848 sharpe)
+  - 302 (base): $1046.59 return (121 trades, 65.0% win, 79.25% dd, 3.361 sharpe)
+- **Verdict**: -97% vs base, RSI filter too restrictive, filters out many profitable trades
+
+### 333: Multi Exit with BE - FAILED
+- **Logic**: Multiple exits (stop loss, trailing stop, profit target, max bars, resistance, stoch overbought) + time-based exit + BE exit when bars > max_hold_bars/2
+- **Result**: 
+  - 333: $189.46 return (113 trades, 53.6% win, 67.17% dd, 2.909 sharpe)
+  - 302 (base): $1046.59 return (121 trades, 65.0% win, 79.25% dd, 3.361 sharpe)
+- **Verdict**: -82% vs base, BE exit too aggressive, cuts off profitable trades
+
+## Iteration 20 Results (New Strategy Variants)
+
+### 332: Long Hold (max_hold_bars 50) - FAILED
+- **Logic**: Longer max hold bars (50 instead of 32) to let trades run longer
+- **Result**: 
+  - 332: $1025.23 return (121 trades, 65.0% win, 79.25% dd, 3.357 sharpe)
+  - 302 (base): $1046.59 return (121 trades, 65.0% win, 79.25% dd, 3.361 sharpe)
+- **Verdict**: Slightly worse (-2%), longer hold doesn't help
+
+### 328: Tight Stop Loss - FAILED
+- **Logic**: Tighter stop loss (0.04 instead of 0.08)
+- **Result**: 
+  - Small dataset: $135.81 vs $1046.59 base (-87%)
+  - Large dataset: $1335.89 vs $1737.24 base (-23%)
+- **Verdict**: Tighter stop exits positions too early; SR bounces need room to recover
+
+### 326: No Bounce - FAILED
+- **Logic**: Remove bounce requirement (min_bounce_bars = 0)
+- **Result**: -65% return ($364 vs $1046 base), 223 trades vs 121, 63.1% win rate
+- **Verdict**: More trades but worse returns, bounce filter helps quality
+
+### 324: Tight Stochastic - FAILED
+- **Logic**: Use tighter stochastic oversold (14 instead of 24) for earlier entry
+- **Result**: -80% return ($210 vs $1046 base), 38 trades vs 121
+- **Verdict**: Too restrictive, misses too many opportunities
+
+## Iteration 19 Results (New Strategy Variants)
+
+### 313: Volume Filter - FAILED
+- **Logic**: Add volume threshold filter to entry
+- **Result**: Return dropped 99.5% ($1046 → $4.65)
+- **Verdict**: Too restrictive, blocks most trades
+
+### 314: RSI Exit - FAILED
+- **Logic**: Add RSI overbought exit condition
+- **Result**: -82% vs base
+- **Verdict**: Premature exits hurt performance
+
+### 315: No Momentum - SUCCESS (on small dataset)
+- **Logic**: Remove momentum filter requirement
+- **Result**: +575% return on small dataset ($2444 vs $362)
+- **Verdict**: Best strategy on small dataset, but higher overfit
+
+### 316: Volatility Filter - FAILED
+- **Logic**: Only trade when volatility >= threshold
+- **Result**: -83% return
+- **Verdict**: Too strict, blocks profitable trades
+
+### 317: Dynamic Trail - MIXED
+- **Logic**: Volatility-based trailing stop
+- **Result**: Higher raw returns but lower Sharpe
+- **Verdict**: May help on some datasets
+
+### 318: Trend Back - FAILED
+- **Logic**: Add EMA(50) trend filter
+- **Result**: -99% return, blocks 97% of trades
+- **Verdict**: Trend filter destroys performance
+
+### 319: Multi-TP - FAILED
+- **Logic**: Partial take profits at multiple levels
+- **Result**: -63% return
+- **Verdict**: Higher overfit ratio
+
+### 320: Confluence - FAILED
+- **Logic**: Require higher lows pattern
+- **Result**: -82% return
+- **Verdict**: Filters good trades
+
+### 321: Time Filter - FAILED
+- **Logic**: Skip last 1/3 of dataset period
+- **Result**: -64% return
+- **Verdict**: Removes profitable late-period trades
+
+### 322: ATR Stop - MIXED
+- **Logic**: ATR-based trailing stop
+- **Result**: Worse on small, slightly better on large (+$70)
+- **Verdict**: Mixed results
+
+---
+
 ## Failed Attempts
+
+### Time-Based Filter (321)
+- **Strategy**: Based on 302 but adds time-based filter to avoid late-game volatility
+- **Logic Change**: Only enter trades in first 66% of dataset period (trade_cutoff_ratio=0.66)
+- **Base Return (302)**: $1046.59 (121 trades, 65% win)
+- **Time Filter Return (321)**: $377.96 (68 trades, 67.6% win)
+- **Result**: WORSE - Returns reduced by 64%, though win rate improved slightly
+- **Verdict**: FAILED - Time filter removes too many trading opportunities; late period appears to have good trades
+
+### Price Confluence (320)
+- **Strategy**: Based on 302 but adds price confluence check (higher lows pattern)
+- **Logic Change**: Added checkPriceConfluence() requiring rising lows in recent periods
+- **Parameters**: min_bounce_bars=1, confluence_lookback=2, min_higher_lows=1
+- **Base Return (302)**: $1046.59 (121 trades, 65% win)
+- **Confluence Return (320)**: $191.47 (113 trades, 55.4% win)
+- **Result**: WORSE - Confluence filter reduced returns by 82%
+- **Verdict**: FAILED - Price confluence check filters out good trades
 
 ### RSI Mean Reversion
 - **Strategy**: Buy when RSI < oversold, sell when RSI > overbought
@@ -401,3 +707,120 @@ Generated from 7 winning templates: mean_revert_rsi, williams_r, ma_envelope, ch
 ### Best Strategy: sr_ntf_v17_020
 - Test Return: $209.78 (NEW RECORD - beats v16_010's $188.87)
 - Parameters: lookback=45, bounce_threshold=0.021, stop_loss=0.066, risk=42%, take_profit=0.090
+
+## Iteration 19 - Dynamic Trailing Stop (317) - 2026-02-19
+
+### Strategy 317: SR No Trend Dynamic Trail
+- **Base**: Based on 302 with volatility-based trailing stop
+- **Change**: Trailing stop = recent_volatility * multiplier (clamped 0.02-0.15)
+- **Parameters**: trailing_stop_multiplier=2.0 (default)
+
+### Results (test-data-15min-10k.bson)
+
+| Metric | Strategy 317 (Dynamic) | Strategy 302 (Fixed) | Comparison |
+|--------|------------------------|----------------------|------------|
+| Return | $965.88 (96.59%) | $361.96 (36.20%) | **+167%** |
+| Final Capital | $1,965.88 | $1,361.96 | **+44%** |
+| Sharpe | 0.278 | 0.318 | -13% |
+| Max Drawdown | -100.00% | -100.00% | Same |
+| Trades | 3,365 | 2,512 | +34% |
+| Win Rate | 64.1% | 68.5% | -4.4% |
+
+### Verdict: FAILED - Higher Risk, Lower Sharpe
+- **Raw returns improved**: Dynamic stop generated 2.67x more profit
+- **Risk-adjusted returns worse**: Sharpe dropped from 0.318 to 0.278 (-13%)
+- **More frequent exits**: 853 more trades (+34%) indicates dynamic stop triggers more often
+- **Lower win rate**: Slightly less successful trades due to more aggressive trailing
+- **Core issue**: Volatility-based stops are too sensitive in this dataset, causing premature exits on volatile moves
+
+### Key Insight
+Fixed trailing stops (0.07 in 302) work better than volatility-based stops for this data. The dynamic approach overreacts to normal volatility, locking in gains too early and missing larger trends despite generating more total trades.
+
+## Iteration 19 - RSI Exit (314) - 2026-02-19
+
+### Strategy 314: SR No Trend RSI Exit
+- **Base**: Based on 302 (no trend filter)
+- **Change**: Added RSI-based exit when RSI > 70 (overbought) with 3% minimum profit
+- **Parameters**: rsi_period=14, rsi_overbought=70, rsi_exit_min_profit=0.03
+
+### Results (test-data.bson)
+
+| Metric | Strategy 314 (RSI Exit) | Strategy 302 (Base) | Comparison |
+|--------|------------------------|----------------------|------------|
+| Return | $191.47 (19.15%) | $1,046.59 (104.66%) | **-82%** |
+| Final Capital | $1,191.47 | $2,046.59 | -42% |
+| Sharpe | 2.909 | 3.361 | -13% |
+| Drawdown | -67.17% | -79.25% | +12% |
+| Trades | 113 | 121 | -8 |
+| Win Rate | 55.4% | 65.0% | -9.6% |
+
+### Verdict: FAILED - RSI Exit Hurts Performance
+- **RSI exit significantly underperforms**: 82% less return than base
+- **Lower win rate**: RSI exit causes exiting too early, missing bigger moves
+- **The stochastic overbought exit (82) already handles overbought conditions effectively**
+- Adding RSI exit (70) creates redundant/competing exit signals that reduce profitability
+
+### Key Insight
+The existing stochastic overbought exit (k >= 82) is sufficient for exit timing. Adding an earlier RSI exit (70) causes premature exits that cut off winning trades before they reach full potential. The base 302 strategy with stochastic overbought exit is optimal.
+
+## Iteration 19 - EMA Trend Filter (318) - 2026-02-19
+
+### Strategy 318: SR No Trend With Trend
+- **Base**: Based on 302 (no trend filter)
+- **Change**: Added EMA(50) trend filter - only enter when price > EMA
+- **Parameters**: trend_ema_period=50
+
+### Results (test-data.bson)
+
+| Metric | Strategy 318 (EMA Trend) | Strategy 302 (Base) | Comparison |
+|--------|------------------------|----------------------|------------|
+| Return | $8.65 (0.87%) | $1,046.59 (104.66%) | **-99%** |
+| Final Capital | $1,008.65 | $2,046.59 | -99% |
+| Sharpe | 8.683 | 3.361 | +158% |
+| Drawdown | -29.85% | -79.25% | +62% |
+| Trades | 4 | 121 | -97 |
+| Win Rate | 100.0% | 65.0% | +35% |
+
+### Verdict: FAILED - Trend Filter Too Restrictive
+- **Trend filter blocks almost all trades**: Only 4 trades vs 121 (-97%)
+- **Performance destroyed**: 99% less return than base
+- **While win rate is higher (100% vs 65%)**, the extremely low trade count means the strategy captures almost none of the available opportunities
+- **The no-trend-filter approach (302) is superior** - the momentum filter already provides quality screening without overly restricting entry
+
+### Key Insight
+Adding an EMA trend filter to the 302 strategy hurts performance dramatically. The existing momentum filter (momentum >= 0.004) already captures directional quality without being overly restrictive. The base 302 strategy with momentum filter (no trend filter) remains optimal.
+
+## Iteration 19 - Multi Take Profit (319) - 2026-02-19
+
+### Strategy 319: SR No Trend Multi TP
+- **Base**: Based on 302 (no trend filter)
+- **Change**: Multi-take-profit - closes 50% at first_tp_percent, trails remaining 50%
+- **Parameters**: first_tp_percent=0.08, second_tp_percent=0.15
+
+### Results (test-data.bson)
+
+| Metric | Strategy 319 (Multi TP) | Strategy 302 (Base) | Comparison |
+|--------|------------------------|----------------------|------------|
+| Return | $390.80 (39.08%) | $1,046.59 (104.66%) | **-63%** |
+| Final Capital | $1,390.80 | $2,046.59 | -32% |
+| Sharpe | 2.665 | 3.361 | -21% |
+| Drawdown | -67.38% | -79.25% | +15% |
+| Trades | 131 | 121 | +8% |
+| Win Rate | 58.1% | 65.0% | -6.9% |
+
+### Out-of-Sample Test (test-data-15min-large.bson)
+
+| Metric | Strategy 319 (Multi TP) | Strategy 302 (Base) |
+|--------|------------------------|----------------------|
+| Return | $1,045.20 (104.52%) | $1,737.24 (173.72%) |
+| Sharpe | 2.457 | 1.431 |
+| Overfit Ratio | 2.67x | 1.66x |
+
+### Verdict: FAILED - Multi TP Underperforms Base
+- **Lower returns**: 63% less return than base on test data
+- **Lower Sharpe**: 21% worse risk-adjusted returns
+- **Higher overfit ratio**: 2.67x vs 1.66x indicates more overfitting
+- **The base 302 strategy is superior** - single profit target works better than partial exits
+
+### Key Insight
+The partial exit logic (closing 50% at first TP) doesn't improve risk-adjusted returns. The base 302 strategy with single profit target (12%) outperforms the multi-TP approach. Partial exits may reduce exposure to winners too early, missing additional profit potential.

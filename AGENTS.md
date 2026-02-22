@@ -38,24 +38,39 @@ When asked about a trading strategy, default to simple_ma.
 
 **Important:** Never stop an iteration partway; always complete the full iteration protocol and only stop at the end of the complete iterations cycle.
 
-An **Iteration** is a coordinated round where subagents independently review, improve, or replace strategy variants from the previous iteration's summary (e.g., `ITERATION_15.md`). Each subagent receives a distinct strategy, has read-access to the full previous summary for context, and must ensure that their approach is distinct from other subagents in the current round.
+An **Iteration** is a coordinated round where the main agent ideates 10 distinct new strategies, and 10 subagents independently implement them. Each subagent receives a unique strategy concept, has read-access to the full previous summary for context, and must ensure their implementation is distinct from other subagents in the current round.
 
 ### Protocol
 
-1. **Input**: The main agent gathers strategy variants that performed well or have an obvious fixable problem from the last iteration.
-2. **Assignment**: Each subagent gets a unique strategy. Subagents reference the prior summary, but must avoid converging on the same improvements.
-3. **Assessment**: Each subagent determines if their assigned strategy is
-   - "Hopeless" (bad performance, no clear fix): mutate extensively or invent a fresh idea
-   - "Good/fixable": propose and implement an improvement (wild or incremental)
-4. **Test (local)**: Strategies are locally tested for sanity or improvement. 
-5. **Document**: Subagents write up rationale, results, and explicit next steps for each strategy. The main agent compiles these into a strict, sectioned `ITERATION_xx.md` (see below).
-7. **Reversion Guidance**: If a new version is worse, subagent notes tell the next iteration to reconsider the earlier baseline.
+1. **Ideation**: Main agent generates 10 distinct strategy ideas/concepts to explore
+2. **Assignment**: Each of 10 subagents receives a unique strategy concept to implement
+3. **Implementation**: Each subagent independently implements their assigned strategy, ensuring unique logic and avoiding convergence with other agents
+4. **Test (local)**: All 10 strategies are locally tested for sanity or improvement
+5. **Document**: Main agent compiles results into `ITERATION_xx.md` with strict markdown structure
+6. **Completion**: Only stop iterations after all 10 strategies have been implemented and documented
+
+### What "New Strategy" Means
+
+**Creating a new strategy means CHANGING THE LOGIC, not tweaking parameters.**
+
+Examples of valid "new strategy" changes:
+- **Adding conditions**: "Only enter if volume > average" or "Skip trades where spread is too wide"
+- **Removing conditions**: "Remove the trend filter" or "Drop the momentum requirement"
+- **Changing entry/exit logic**: "Exit on RSI overbought instead of profit target" or "Add trailing stop"
+- **Complete rewrites**: If a strategy is hopeless, create something fundamentally different
+
+**NOT valid (parameter tweaking):**
+- Changing `stop_loss` from 0.08 to 0.06
+- Changing `risk_percent` from 0.30 to 0.45
+- Changing `lookback` from 18 to 36
+
+Parameter tweaks can be part of testing, but the CORE of iteration work is LOGIC changes - new conditions, new rules, new behaviors that address specific observed problems in trades.
 
 ## Strict Markdown Structure for Iterations
 
 Every `ITERATION_xx.md` must contain:
-- Metadata (date, assignments)
-- Strategy Summary Table: key metrics, actions, notes
+- Metadata (date, number of strategies)
+- Strategy Summary Table: key metrics, actions, notes for all 10 strategies
 - Subagent Actions Section (for each agent/strategy)
 - List of "Hopeless/Discarded" strategies and reasons
 - Required "Key Insights" / Learnings

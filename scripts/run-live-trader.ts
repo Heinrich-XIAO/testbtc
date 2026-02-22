@@ -22,7 +22,6 @@ async function main() {
     pollIntervalMs: 60000,
   };
 
-  // sr_ntf_v21_022 - Best train/test consistency (0.95 ratio), $277 test return
   const strategy = new SRNoTrendFilter302Strategy({
     base_lookback: 24,
     min_lookback: 9,

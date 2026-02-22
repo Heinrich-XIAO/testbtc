@@ -76,6 +76,401 @@ const strategies: Record<string, {
     getStrategy: (params) => new (require('../src/strategies/strat_dual_ma_10').DualMAStrategy)(params),
     paramsFile: 'src/strategies/strat_dual_ma_10.params.json',
   },
+  'strat_sr_no_trend_filter_302': {
+    name: 'SR No Trend Filter (302)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_filter_302').SRNoTrendFilter302Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_filter_302.params.json',
+  },
+  'strat_sr_no_trend_lookup_55_378': {
+    name: 'SR No Trend Lookup 55 (378)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_lookup_55_378').SRNoTrendLookup55378Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_lookup_55_378.params.json',
+  },
+  'strat_sr_no_trend_lookup_45_372': {
+    name: 'SR No Trend Lookup 45 (372)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_lookup_45_372').SRNoTrendLookup45Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_lookup_45_372.params.json',
+  },
+  'strat_sr_no_trend_combo_366': {
+    name: 'SR No Trend Combo (366)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_combo_366').SRNoTrendCombo366Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_combo_366.params.json',
+  },
+  'strat_sr_no_trend_combo_wide_380': {
+    name: 'SR No Trend Combo Wide (380)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_combo_wide_380').SRNoTrendComboWide380Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_combo_wide_380.params.json',
+  },
+  'strat_sr_no_trend_base_30_365': {
+    name: 'SR No Trend Base 30 (365)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_base_30_365').SRNoTrendBase30_365Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_base_30_365.params.json',
+  },
+  'strat_sr_no_trend_late_exit_355': {
+    name: 'SR No Trend Late Exit (355)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_late_exit_355').SRNoTrendLateExit355Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_late_exit_355.params.json',
+  },
+  'strat_sr_no_trend_slow_stoch_360': {
+    name: 'SR No Trend Slow Stoch (360)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_slow_stoch_360').SRSlowStoch360Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_slow_stoch_360.params.json',
+  },
+  'strat_sr_no_trend_tight_bounce_354': {
+    name: 'SR No Trend Tight Bounce (354)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_tight_bounce_354').SRNoTrendTightBounce354Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_tight_bounce_354.params.json',
+  },
+  'strat_sr_no_trend_only_stoch_353': {
+    name: 'SR No Trend Only Stoch (353)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_only_stoch_353').SRNoTrendOnlyStoch353Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_only_stoch_353.params.json',
+  },
+  'strat_sr_no_trend_momentum_only_352': {
+    name: 'SR No Trend Momentum Only (352)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_momentum_only_352').SRNoTrendMomentumOnly352Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_momentum_only_352.params.json',
+  },
+  'strat_sr_no_trend_day_filter_356': {
+    name: 'SR No Trend Day Filter (356)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_day_filter_356').SRNoTrendDayFilter356Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_day_filter_356.params.json',
+  },
+  'strat_sr_no_trend_support_zone_345': {
+    name: 'SR No Trend Support Zone (345)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_support_zone_345').SRNoTrendSupportZone345Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_support_zone_345.params.json',
+  },
+  'strat_sr_no_trend_two_level_344': {
+    name: 'SR No Trend Two Level (344)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_two_level_344').SRNoTrendTwoLevel344Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_two_level_344.params.json',
+  },
+  'strat_sr_no_trend_adx_341': {
+    name: 'SR No Trend ADX (341)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_adx_341').SRNoTrendADX341Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_adx_341.params.json',
+  },
+  'strat_sr_no_trend_macd_339': {
+    name: 'SR No Trend MACD (339)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_macd_339').SRNoTrendMACD339Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_macd_339.params.json',
+  },
+  'strat_sr_no_trend_vwap_338': {
+    name: 'SR No Trend VWAP (338)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_vwap_338').SRNoTrendVwap338Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_vwap_338.params.json',
+  },
+  'strat_sr_no_trend_bollinger_336': {
+    name: 'SR No Trend Bollinger (336)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_bollinger_336').SRNoTrendBollinger336Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_bollinger_336.params.json',
+  },
+  'strat_sr_no_trend_wider_bounce_327': {
+    name: 'SR No Trend Wider Bounce (327)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_wider_bounce_327').SRNoTrendWiderBounce327Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_wider_bounce_327.params.json',
+  },
+  'strat_sr_no_trend_no_bounce_326': {
+    name: 'SR No Trend No Bounce (326)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_no_bounce_326').SRNoTrendNoBounce326Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_no_bounce_326.params.json',
+  },
+  'strat_sr_no_trend_with_trend_318': {
+    name: 'SR No Trend With Trend (318)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_with_trend_318').SRNoTrendWithTrend318Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_with_trend_318.params.json',
+  },
+  'strat_sr_no_trend_volatility_316': {
+    name: 'SR No Trend Volatility (316)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_volatility_316').SRNoTrendVolatility316Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_volatility_316.params.json',
+  },
+  'strat_sr_no_trend_dynamic_trail_317': {
+    name: 'SR No Trend Dynamic Trail (317)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_dynamic_trail_317').SRNoTrendDynamicTrail317Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_dynamic_trail_317.params.json',
+  },
+  'strat_sr_no_trend_no_momentum_315': {
+    name: 'SR No Trend No Momentum (315)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_no_momentum_315').SRNoTrendNoMomentum315Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_no_momentum_315.params.json',
+  },
+  'strat_sr_no_trend_rsi_exit_314': {
+    name: 'SR No Trend RSI Exit (314)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_rsi_exit_314').SRNoTrendRSIExit314Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_rsi_exit_314.params.json',
+  },
+  'strat_sr_no_trend_volume_313': {
+    name: 'SR No Trend Volume (313)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_volume_313').SRNoTrendVolume313Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_volume_313.params.json',
+  },
+  'strat_sr_no_trend_multi_tp_319': {
+    name: 'SR No Trend Multi TP (319)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_multi_tp_319').SRNoTrendMultiTP319Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_multi_tp_319.params.json',
+  },
+  'strat_sr_no_trend_confluence_320': {
+    name: 'SR No Trend Confluence (320)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_confluence_320').SRNoTrendConfluence320Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_confluence_320.params.json',
+  },
+  'strat_sr_no_trend_time_filter_321': {
+    name: 'SR No Trend Time Filter (321)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_time_filter_321').SRNoTrendTimeFilter321Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_time_filter_321.params.json',
+  },
+  'strat_sr_no_trend_atr_stop_322': {
+    name: 'SR No Trend ATR Stop (322)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_atr_stop_322').SRNoTrendATRStop322Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_atr_stop_322.params.json',
+  },
+  'strat_sr_no_trend_wider_bounce_323': {
+    name: 'SR No Trend Wider Bounce (323)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_wider_bounce_323').SRNoTrendWiderBounce323Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_wider_bounce_323.params.json',
+  },
+  'strat_sr_no_trend_tight_stoch_324': {
+    name: 'SR No Trend Tight Stoch (324)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_tight_stoch_324').SRNoTrendTightStoch324Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_tight_stoch_324.params.json',
+  },
+  'strat_sr_no_trend_wide_stoch_325': {
+    name: 'SR No Trend Wide Stoch (325)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_wide_stoch_325').SRNoTrendWideStoch325Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_wide_stoch_325.params.json',
+  },
+  'strat_sr_no_trend_tight_stop_328': {
+    name: 'SR No Trend Tight Stop (328)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_tight_stop_328').SRNoTrendTightStop328Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_tight_stop_328.params.json',
+  },
+  'strat_sr_no_trend_wide_stop_329': {
+    name: 'SR No Trend Wide Stop (329)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_wide_stop_329').SRNoTrendWideStop329Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_wide_stop_329.params.json',
+  },
+  'strat_sr_no_trend_wide_tp_330': {
+    name: 'SR No Trend Wide TP (330)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_wide_tp_330').SRNoTrendWideTP330Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_wide_tp_330.params.json',
+  },
+  'strat_sr_no_trend_no_trail_331': {
+    name: 'SR No Trend No Trail (331)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_no_trail_331').SRNoTrendNoTrail331Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_no_trail_331.params.json',
+  },
+  'strat_sr_no_trend_long_hold_332': {
+    name: 'SR No Trend Long Hold (332)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_long_hold_332').SRNoTrendLongHold332Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_long_hold_332.params.json',
+  },
+  'strat_sr_no_trend_multi_exit_333': {
+    name: 'SR No Trend Multi Exit (333)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_multi_exit_333').SRNoTrendMultiExit333Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_multi_exit_333.params.json',
+  },
+  'strat_sr_no_trend_rsi_filter_334': {
+    name: 'SR No Trend RSI Filter (334)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_rsi_filter_334').SRNoTrendRSIFilter334Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_rsi_filter_334.params.json',
+  },
+  'strat_sr_no_trend_ema_filter_335': {
+    name: 'SR No Trend EMA Filter (335)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_ema_filter_335').SRNoTrendEMAFilter335Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_ema_filter_335.params.json',
+  },
+  'strat_sr_no_trend_atr_filter_337': {
+    name: 'SR No Trend ATR Filter (337)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_atr_filter_337').SRNoTrendATRFilter337Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_atr_filter_337.params.json',
+  },
+  'strat_sr_no_trend_roc_342': {
+    name: 'SR No Trend ROC (342)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_roc_342').SRNoTrendRoc342Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_roc_342.params.json',
+  },
+  'strat_sr_no_trend_short_343': {
+    name: 'SR No Trend Short (343)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_short_343').SRNoTrendShort343Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_short_343.params.json',
+  },
+  'strat_sr_no_trend_willr_340': {
+    name: 'SR No Trend WillR (340)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_willr_340').SRNoTrendWillR340Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_willr_340.params.json',
+  },
+  'strat_sr_no_trend_progressive_346': {
+    name: 'SR No Trend Progressive (346)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_progressive_346').SRNoTrendProgressive346Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_progressive_346.params.json',
+  },
+  'strat_sr_no_trend_partial_347': {
+    name: 'SR No Trend Partial (347)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_partial_347').SRNoTrendPartial347Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_partial_347.params.json',
+  },
+  'strat_sr_no_trend_strong_momentum_348': {
+    name: 'SR No Trend Strong Momentum (348)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_strong_momentum_348').SRNoTrendStrongMomentum348Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_strong_momentum_348.params.json',
+  },
+  'strat_sr_no_trend_simple_349': {
+    name: 'SR No Trend Simple (349)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_simple_349').SRSimple349Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_simple_349.params.json',
+  },
+  'strat_sr_no_trend_triple_350': {
+    name: 'SR No Trend Triple (350)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_triple_350').SRNoTrendTriple350Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_triple_350.params.json',
+  },
+  'strat_sr_no_trend_close_resistance_351': {
+    name: 'SR No Trend Close Resistance (351)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_close_resistance_351').SRNoTrendCloseResistance351Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_close_resistance_351.params.json',
+  },
+  'strat_sr_no_trend_short_hold_357': {
+    name: 'SR No Trend Short Hold (357)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_short_hold_357').SRNoTrendShortHold357Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_short_hold_357.params.json',
+  },
+  'strat_sr_no_trend_vol_tp_358': {
+    name: 'SR No Trend Vol TP (358)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_vol_tp_358').SRSrNoTrendVolTp358Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_vol_tp_358.params.json',
+  },
+  'strat_sr_no_trend_no_bounce_359': {
+    name: 'SR No Trend No Bounce (359)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_no_bounce_359').SRNoTrendNoBounce359Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_no_bounce_359.params.json',
+  },
+  'strat_sr_no_trend_high_risk_361': {
+    name: 'SR No Trend High Risk (361)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_high_risk_361').SRNoTrendHighRisk361Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_high_risk_361.params.json',
+  },
+  'strat_sr_no_trend_wide_lookup_362': {
+    name: 'SR No Trend Wide Lookup (362)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_wide_lookup_362').SRNoTrendWideLookup362Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_wide_lookup_362.params.json',
+  },
+  'strat_sr_no_trend_lookup_48_382': {
+    name: 'SR No Trend Lookup 48 (382)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_lookup_48_382').SRNoTrendLookup382Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_lookup_48_382.params.json',
+  },
+  'strat_sr_no_trend_lookup_52_383': {
+    name: 'SR No Trend Lookup 52 (383)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_lookup_52_383').SRNoTrendLookup383Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_lookup_52_383.params.json',
+  },
+  'strat_sr_no_trend_lookup_60_377': {
+    name: 'SR No Trend Lookup 60 (377)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_lookup_60_377').SRNoTrendLookup60377Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_lookup_60_377.params.json',
+  },
+  'strat_sr_no_trend_smooth_stoch_364': {
+    name: 'SR No Trend Smooth Stoch (364)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_smooth_stoch_364').SRNoTrendSmoothStoch364Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_smooth_stoch_364.params.json',
+  },
+  'strat_sr_no_trend_wider_lookup_363': {
+    name: 'SR No Trend Wider Lookup (363)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_wider_lookup_363').SRNoTrendWiderLookup363Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_wider_lookup_363.params.json',
+  },
+  'strat_sr_no_trend_tight_trail_367': {
+    name: 'SR No Trend Tight Trail (367)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_tight_trail_367').SRNoTrendTightTrail367Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_tight_trail_367.params.json',
+  },
+  'strat_sr_no_trend_wide_res_370': {
+    name: 'SR No Trend Wide Res (370)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_wide_res_370').SRNoTrendWideRes370Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_wide_res_370.params.json',
+  },
+  'strat_sr_no_trend_combo3_371': {
+    name: 'SR No Trend Combo3 (371)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_combo3_371').SRSRNoTrendCombo3371Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_combo3_371.params.json',
+  },
+  'strat_sr_no_trend_vol_20_373': {
+    name: 'SR No Trend Vol 20 (373)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_vol_20_373').SRNoTrendVol20373Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_vol_20_373.params.json',
+  },
+  'strat_sr_no_trend_vol_6_374': {
+    name: 'SR No Trend Vol 6 (374)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_vol_6_374').SRNoTrendVol6374Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_vol_6_374.params.json',
+  },
+  'strat_sr_no_trend_combo_mom_375': {
+    name: 'SR No Trend Combo Mom (375)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_combo_mom_375').SRNoTrendComboMom375Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_combo_mom_375.params.json',
+  },
+  'strat_sr_no_trend_min_look_376': {
+    name: 'SR No Trend Min Look (376)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_min_look_376').SRNoTrendMinLook376Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_min_look_376.params.json',
+  },
+  'strat_sr_no_trend_combo_tight_379': {
+    name: 'SR No Trend Combo Tight (379)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_combo_tight_379').SRNoTrendComboTight379Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_combo_tight_379.params.json',
+  },
+  'strat_sr_no_trend_stoch_turn_384': {
+    name: 'SR No Trend Stoch Turn (384)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_stoch_turn_384').SRNoTrendStochTurn384Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_stoch_turn_384.params.json',
+  },
+  'strat_sr_no_trend_retest_385': {
+    name: 'SR No Trend Retest (385)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_retest_385').SRNoTrendRetest385Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_retest_385.params.json',
+  },
+  'strat_sr_no_trend_mom_exit_386': {
+    name: 'SR No Trend Mom Exit (386)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_mom_exit_386').SRNoTrendMomExit386Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_mom_exit_386.params.json',
+  },
+  'strat_sr_no_trend_weighted_support_387': {
+    name: 'SR No Trend Weighted Support (387)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_weighted_support_387').SRNoTrendWeightedSupport387Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_weighted_support_387.params.json',
+  },
+  'strat_sr_no_trend_stoch_cross_exit_388': {
+    name: 'SR No Trend Stoch Cross Exit (388)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_stoch_cross_exit_388').SRNoTrendStochCrossExit388Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_stoch_cross_exit_388.params.json',
+  },
+  'strat_sr_no_trend_support_strength_389': {
+    name: 'SR No Trend Support Strength (389)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_support_strength_389').SRNoTrendSupportStrength389Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_support_strength_389.params.json',
+  },
+  'strat_sr_no_trend_vol_sized_390': {
+    name: 'SR No Trend Vol Sized (390)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_vol_sized_390').SRNoTrendVolSized390Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_vol_sized_390.params.json',
+  },
+  'strat_sr_no_trend_price_action_391': {
+    name: 'SR No Trend Price Action (391)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_price_action_391').SRNoTrendPriceAction391Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_price_action_391.params.json',
+  },
+  'strat_sr_no_trend_minimal_exit_392': {
+    name: 'SR No Trend Minimal Exit (392)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_minimal_exit_392').SRNoTrendMinimalExit392Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_minimal_exit_392.params.json',
+  },
+  'strat_sr_no_trend_clustered_support_393': {
+    name: 'SR No Trend Clustered Support (393)',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_clustered_support_393').SRNoTrendClusteredSupport393Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_no_trend_clustered_support_393.params.json',
+  },
 };
 
 async function runBacktest(
@@ -143,7 +538,7 @@ const program = new Command();
 program
   .name('backtest')
   .description('Polymarket Backtest Runner')
-  .option('-s, --strategy <name>', 'Strategy to use (all, simple_ma, bollinger, rsi, breakout, ma_vol, support, momentum, range, mean_revert, dual_ma)', 'all')
+  .option('-s, --strategy <name>', 'Strategy to use (all, simple_ma, bollinger, rsi, breakout, ma_vol, support, momentum, range, mean_revert, dual_ma, strat_sr_no_trend_filter_302, strat_sr_no_trend_lookup_55_378, strat_sr_no_trend_combo_366, strat_sr_no_trend_combo_wide_380, strat_sr_no_trend_base_30_365, strat_sr_no_trend_late_exit_355, strat_sr_no_trend_slow_stoch_360, strat_sr_no_trend_tight_bounce_354, strat_sr_no_trend_adx_341, strat_sr_no_trend_vwap_338, strat_sr_no_trend_wider_bounce_327, strat_sr_no_trend_tight_stop_328, strat_sr_no_trend_volatility_316, strat_sr_no_trend_dynamic_trail_317, strat_sr_no_trend_no_momentum_315, strat_sr_no_trend_volume_313, strat_sr_no_trend_tight_stoch_324, strat_sr_no_trend_wide_res_370, strat_sr_no_trend_vol_6_374)', 'all')
   .option('-d, --data <file>', 'Data file path', DEFAULT_DATA_FILE)
   .option('-c, --capital <number>', 'Initial capital in USD', '1000')
   .option('-f, --fee <percent>', 'Fee rate as percentage', '0')

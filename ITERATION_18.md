@@ -106,9 +106,20 @@ Top performers converged to new optimal cluster:
 3. **Tighter take profit focus (8-10%)**: Lock in gains faster
 4. **Test on large dataset**: Run top v17 performers on `data/test-data-15min-large.bson`
 
+## Default Parameters Test (Post-Hoc)
+
+After optimization, the v17 params files were removed and the strategy was tested with default parameters:
+
+| Test | Train Return | Test Return | Full Return | Train Trades | Test Trades | Overfit? |
+|------|-------------|-------------|-------------|--------------|-------------|----------|
+| Default params | $368.27 | $592.80 | $1,046.59 | 71 | 49 | ✓ OK |
+
+**Critical Finding**: Default parameters ($592.80 test return) significantly outperformed optimized v17 params ($209.78). This suggests the optimization may have overfit to noise rather than signal.
+
 ## Files Modified
 
-- `src/strategies/strat_sr_ntf_v17_*.params.json` - Created with optimized parameters
+- `src/strategies/strat_sr_ntf_v17_*.params.json` - Deleted (removed optimized parameters)
 - `scripts/run-optimization.ts` - Added v17 strategy configurations
+- `scripts/check-overfitting.ts` - Added `--ignore-params` flag to test with defaults
 - `ATTEMPTED.md` - Added iteration 18 results
 - `data/batch-results.json` - Batch optimization results
