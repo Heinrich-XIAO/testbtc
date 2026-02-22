@@ -38,9 +38,57 @@ When asked about a trading strategy, default to simple_ma.
 
 **Important:** Never stop an iteration partway; always complete the full iteration protocol and only stop at the end of the complete iterations cycle.
 
-An **Iteration** is a coordinated round where the main agent ideates 10 distinct new strategies, and 10 subagents independently implement them. Each subagent receives a unique strategy concept, has read-access to the full previous summary for context, and must ensure their implementation is distinct from other subagents in the current round.
+An **Iteration** is a coordinated round where the main agent ideates 10 distinct new strategies, and 10 subagents independently implement them. Each subagent receives a unique strategy concept, has read-access to the full previous summary for context, and must ensure their implementation is distinct from other agents in the current round.
 
-### Protocol
+## Proven Effective Patterns (From 26 Prior Iterations)
+
+These patterns have been validated through extensive testing. Use them as building blocks:
+
+### What WORKS
+1. **No trend filter** - Trend filters hurt performance; remove them
+2. **Tight stochastic entry** - oversold: 14-18, overbought: 82-86
+3. **Tight momentum filter** - threshold: 0.008-0.012
+4. **Wider lookback** - max_lookback: 50 (not default 36)
+5. **Support retest requirement** - Require price to test support twice before entry
+6. **Simple exit rules** - Single profit target + stop loss (no multi-exit)
+
+### What DOESN'T WORK (Avoid These)
+1. **Multi-exit mechanisms** - Overcomplicates and hurts performance
+2. **Day/time filters** - Skip Monday/Friday, time-of-day filters don't help
+3. **Additional indicators** - ADX, VWAP, Bollinger, RSI exits all failed
+4. **Shorter hold times** - max_hold < 20 hurts returns
+5. **Higher risk** - risk > 0.30 increases volatility without improving returns
+6. **Multiple bounce requirements** - bounce=1 is optimal, bounce=2 is too restrictive
+
+## Phased Iteration Approach
+
+Iterations should follow a logical progression:
+
+### Phase 1: Baseline & Discovery (Iterations 0-5)
+- Establish baseline with simple stochastic strategies
+- Test core indicator combinations
+- Identify what works on both small and large datasets
+- Goal: Find initial winners with positive test returns
+
+### Phase 2: Filter Optimization (Iterations 6-12)
+- Remove harmful filters (trend filter was key discovery)
+- Optimize entry conditions (tight vs loose)
+- Test momentum requirements
+- Goal: Improve train/test consistency
+
+### Phase 3: Logic Refinement (Iterations 13-20)
+- Add entry confirmation logic (retest, bounce quality)
+- Optimize lookback periods
+- Fine-tune exit conditions
+- Goal: Incremental improvements on winner
+
+### Phase 4: Validation (Iterations 21-25)
+- Test winners on both small and large datasets
+- Verify no overfitting (test return should be positive)
+- Final parameter optimization
+- Goal: Confirm robust strategy
+
+## Protocol
 
 1. **Ideation**: Main agent generates 10 distinct strategy ideas/concepts to explore
 2. **Assignment**: Each of 10 subagents receives a unique strategy concept to implement
@@ -69,17 +117,18 @@ Parameter tweaks can be part of testing, but the CORE of iteration work is LOGIC
 ## Strict Markdown Structure for Iterations
 
 Every `ITERATION_xx.md` must contain:
-- Metadata (date, number of strategies)
+- Metadata (date, number of strategies, phase)
 - Strategy Summary Table: key metrics, actions, notes for all 10 strategies
 - Subagent Actions Section (for each agent/strategy)
 - List of "Hopeless/Discarded" strategies and reasons
 - Required "Key Insights" / Learnings
+- Comparison to best known strategy
 - Optional freeform/experimental notes
 
 ## Parameter and Permutation Ceiling
 
 In order to support practical iteration and avoid slowdowns from combinatorial explosions:
-- Limit the number of parameters varied simultaneously. Most effective strategies (see ITERATION 15) share core parameter values (e.g., tight stochastic + tight momentum).
+- Limit the number of parameters varied simultaneously. Most effective strategies share core parameter values (e.g., tight stochastic + tight momentum).
 - When running local tests or generating new variants:
   - **Keep the total number of permutations below 30**.
   - Prefer modifying one parameter at a time unless breakthrough context demands otherwise.
@@ -94,3 +143,14 @@ In order to support practical iteration and avoid slowdowns from combinatorial e
 - Only after local improvements are seen should broader sweeps or additional permutations be considered.
 
 This ceiling keeps iterations efficient, focused, and empirically guided by what works—while still allowing for creative exploration when appropriate.
+
+## Testing Requirements
+
+Every strategy must be tested on BOTH:
+1. **Small dataset**: `data/test-data.bson` (fast iteration)
+2. **Large dataset**: `data/test-data-15min-large.bson` (validation)
+
+A strategy is only considered a winner if:
+- Positive return on BOTH datasets
+- Large dataset return >= small dataset return (no overfitting)
+- At least 15 trades on small dataset (statistical significance)
