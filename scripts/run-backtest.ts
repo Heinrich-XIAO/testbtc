@@ -26,6 +26,11 @@ const strategies: Record<string, {
   getStrategy: (params: any) => Strategy;
   paramsFile: string;
 }> = {
+  'stoch_baseline_01': {
+    name: 'Stoch Baseline (01)',
+    getStrategy: (params) => new (require('../src/strategies/strat_stoch_baseline_01').StochBaseline01Strategy)(params),
+    paramsFile: 'src/strategies/strat_stoch_baseline_01.params.json',
+  },
   'simple_ma': {
     name: 'Simple MA (01)',
     getStrategy: (params) => new (require('../src/strategies/strat_simple_ma_01').SimpleMAStrategy)(params),
@@ -470,6 +475,16 @@ const strategies: Record<string, {
     name: 'SR No Trend Clustered Support (393)',
     getStrategy: (params) => new (require('../src/strategies/strat_sr_no_trend_clustered_support_393').SRNoTrendClusteredSupport393Strategy)(params),
     paramsFile: 'src/strategies/strat_sr_no_trend_clustered_support_393.params.json',
+  },
+  'stoch_baseline_02': {
+    name: 'Stoch Baseline 02',
+    getStrategy: (params) => new (require('../src/strategies/strat_stoch_baseline_02').StochBaseline02Strategy)(params),
+    paramsFile: 'src/strategies/strat_stoch_baseline_02.params.json',
+  },
+  'stoch_baseline_03': {
+    name: 'Stoch Baseline 03',
+    getStrategy: (params) => new (require('../src/strategies/strat_stoch_baseline_03').StochBaseline03Strategy)(params),
+    paramsFile: 'src/strategies/strat_stoch_baseline_03.params.json',
   },
 };
 
