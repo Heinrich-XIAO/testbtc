@@ -1,0 +1,19 @@
+{
+  "sr_lookback": 45,
+  "stoch_k_period": 14,
+  "stoch_oversold": 18,
+  "support_buffer": 0.02722164546567949,
+  "support_hold_buffer": 0.005513986074473057,
+  "meta_lookback_returns": 20,
+  "meta_horizon_bars": 14,
+  "meta_success_return": 0.009242590322476527,
+  "meta_prior_strength": 2.4760961992698665,
+  "meta_min_samples": 15,
+  "meta_entry_threshold": 0.5000972908337636,
+  "meta_decay_threshold": 0.38103008545222816,
+  "resistance_exit_buffer": 0.9857317923403675,
+  "stop_loss": 0.09720344266586814,
+  "profit_target": 0.19863591439262923,
+  "max_hold_bars": 24,
+  "risk_percent": 0.27086208232766923
+}

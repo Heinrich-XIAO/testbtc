@@ -1206,6 +1206,21 @@ const strategies: Record<string, {
     getStrategy: (params) => new (require('../src/strategies/strat_iter60_c').StratIter60CStrategy)(params),
     paramsFile: 'src/strategies/strat_iter60_c.params.json',
   },
+  'strat_iter61_a': {
+    name: 'Iter61 A - Reservoir Readout Support Reclaim',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter61_a').StratIter61AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter61_a.params.json',
+  },
+  'strat_iter61_b': {
+    name: 'Iter61 B - Bifurcation Flip Reversion',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter61_b').StratIter61BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter61_b.params.json',
+  },
+  'strat_iter61_c': {
+    name: 'Iter61 C - Meta-Label Confidence Stack',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter61_c').StratIter61CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter61_c.params.json',
+  },
 };
 
 async function runBacktest(

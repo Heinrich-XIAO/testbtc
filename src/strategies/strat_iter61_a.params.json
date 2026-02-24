@@ -1,0 +1,22 @@
+{
+  "sr_lookback": 55,
+  "support_buffer": 0.02116245241620275,
+  "support_reclaim_buffer": 0.007964063268284399,
+  "support_touch_lookback": 10,
+  "min_support_touches": 1,
+  "reservoir_size": 12,
+  "input_scale": 1.1987560070751744,
+  "recurrent_scale": 1.1311488568972536,
+  "leak_rate": 0.4780073742659244,
+  "return_lookback": 6,
+  "readout_return_weight": 2.140186901841397,
+  "readout_state_weight": 2.349596724490043,
+  "readout_bias": 0.05751109583908687,
+  "entry_threshold": 0.04620784133219215,
+  "readout_negative_exit": -0.13464244720411267,
+  "resistance_exit_buffer": 0.9773111562914779,
+  "stop_loss": 0.08909875707325907,
+  "profit_target": 0.21689619420728576,
+  "max_hold_bars": 32,
+  "risk_percent": 0.2704463765554886
+}

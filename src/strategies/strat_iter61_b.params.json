@@ -1,0 +1,23 @@
+{
+  "sr_lookback": 50,
+  "support_buffer": 0.02553343312796352,
+  "support_reclaim_buffer": 0.006391818837304204,
+  "bifurcation_window": 20,
+  "momentum_scale": 0.013862013425567142,
+  "logistic_r_base": 2.7165897011782483,
+  "logistic_r_momentum_gain": 0.8354611222775101,
+  "logistic_r_accel_gain": 1.3284112427619743,
+  "stable_var_max": 0.027670240448741647,
+  "unstable_var_min": 0.019502716138026614,
+  "stable_lyap_max": -0.027617534622622383,
+  "unstable_lyap_min": -0.008856000774197221,
+  "max_flip_age": 8,
+  "pullback_momentum_min": 0.006130441679356754,
+  "min_momentum_rebound": 0.0009678714747100197,
+  "min_logistic_rebound": 0.013983337445046146,
+  "resistance_exit_buffer": 0.9929837665304565,
+  "stop_loss": 0.09452991160444235,
+  "profit_target": 0.1675939338248898,
+  "max_hold_bars": 32,
+  "risk_percent": 0.22043644872374044
+}

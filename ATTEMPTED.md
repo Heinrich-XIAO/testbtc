@@ -1,5 +1,19 @@
 # ATTEMPTED.md
 
+## Iteration 61 Results (In Progress)
+
+### strat_iter61_b: Bifurcation Flip Reversion - SUCCESS
+- Small: +27.46% (90 trades), Large: +51.37% (1441 trades)
+- Verdict: Passes winner criteria (positive both, large >= small, >15 small trades).
+
+### strat_iter61_a: Reservoir Readout Support Reclaim - FAILED (overfit rule)
+- Small: +68.47% (76 trades), Large: +30.89% (808 trades)
+- Verdict: Positive on both datasets with sufficient trade count, but fails winner rule because large < small.
+
+### strat_iter61_c: Meta-Label Confidence Stack - FAILED (overfit rule)
+- Small: +176.46% (52 trades), Large: +14.66% (22 trades)
+- Verdict: Positive on both datasets with sufficient trade count, but fails winner rule because large < small.
+
 ## Iteration 60 Results (In Progress)
 
 ### strat_iter60_c: Counterfactual Transition Utility Ensemble - SUCCESS

@@ -177,6 +177,9 @@ import { StratIter59CStrategy } from '../src/strategies/strat_iter59_c';
 import { StratIter60AStrategy } from '../src/strategies/strat_iter60_a';
 import { StratIter60BStrategy } from '../src/strategies/strat_iter60_b';
 import { StratIter60CStrategy } from '../src/strategies/strat_iter60_c';
+import { StratIter61AStrategy } from '../src/strategies/strat_iter61_a';
+import { StratIter61BStrategy } from '../src/strategies/strat_iter61_b';
+import { StratIter61CStrategy } from '../src/strategies/strat_iter61_c';
 import { DifferentialEvolutionOptimizer } from '../src/optimization';
 import type { ParamConfig, OptimizationResult } from '../src/optimization/types';
 import type { StoredData } from '../src/types';
@@ -3245,6 +3248,82 @@ const strategies: Record<string, { class: any; params: Record<string, ParamConfi
       risk_percent: { min: 0.20, max: 0.30, stepSize: 0.05 },
     },
     outputFile: 'strat_iter60_c.params.json',
+  },
+  strat_iter61_a: {
+    class: StratIter61AStrategy,
+    params: {
+      sr_lookback: { min: 45, max: 55, stepSize: 5 },
+      support_buffer: { min: 0.01, max: 0.03, stepSize: 0.005 },
+      support_reclaim_buffer: { min: 0.001, max: 0.012, stepSize: 0.001 },
+      support_touch_lookback: { min: 8, max: 24, stepSize: 2 },
+      min_support_touches: { min: 1, max: 3, stepSize: 1 },
+      reservoir_size: { min: 6, max: 16, stepSize: 2 },
+      input_scale: { min: 0.8, max: 3.2, stepSize: 0.2 },
+      recurrent_scale: { min: 0.2, max: 1.2, stepSize: 0.1 },
+      leak_rate: { min: 0.15, max: 0.85, stepSize: 0.05 },
+      return_lookback: { min: 2, max: 16, stepSize: 2 },
+      readout_return_weight: { min: 0.2, max: 2.2, stepSize: 0.2 },
+      readout_state_weight: { min: 0.2, max: 2.4, stepSize: 0.2 },
+      readout_bias: { min: -0.2, max: 0.2, stepSize: 0.02 },
+      entry_threshold: { min: -0.05, max: 0.25, stepSize: 0.02 },
+      readout_negative_exit: { min: -0.2, max: 0.05, stepSize: 0.01 },
+      resistance_exit_buffer: { min: 0.97, max: 0.995, stepSize: 0.005 },
+      stop_loss: { min: 0.06, max: 0.10, stepSize: 0.02 },
+      profit_target: { min: 0.14, max: 0.22, stepSize: 0.02 },
+      max_hold_bars: { min: 20, max: 36, stepSize: 4 },
+      risk_percent: { min: 0.20, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter61_a.params.json',
+  },
+  strat_iter61_b: {
+    class: StratIter61BStrategy,
+    params: {
+      sr_lookback: { min: 45, max: 55, stepSize: 5 },
+      support_buffer: { min: 0.01, max: 0.03, stepSize: 0.005 },
+      support_reclaim_buffer: { min: 0.001, max: 0.012, stepSize: 0.001 },
+      bifurcation_window: { min: 12, max: 40, stepSize: 2 },
+      momentum_scale: { min: 0.006, max: 0.03, stepSize: 0.002 },
+      logistic_r_base: { min: 2.7, max: 3.3, stepSize: 0.1 },
+      logistic_r_momentum_gain: { min: 0.8, max: 2.8, stepSize: 0.2 },
+      logistic_r_accel_gain: { min: 0.2, max: 2.0, stepSize: 0.2 },
+      stable_var_max: { min: 0.005, max: 0.03, stepSize: 0.002 },
+      unstable_var_min: { min: 0.01, max: 0.05, stepSize: 0.004 },
+      stable_lyap_max: { min: -0.12, max: 0.02, stepSize: 0.01 },
+      unstable_lyap_min: { min: -0.02, max: 0.12, stepSize: 0.01 },
+      max_flip_age: { min: 2, max: 12, stepSize: 1 },
+      pullback_momentum_min: { min: 0.001, max: 0.01, stepSize: 0.001 },
+      min_momentum_rebound: { min: -0.001, max: 0.004, stepSize: 0.0005 },
+      min_logistic_rebound: { min: 0.003, max: 0.05, stepSize: 0.003 },
+      resistance_exit_buffer: { min: 0.97, max: 0.995, stepSize: 0.005 },
+      stop_loss: { min: 0.06, max: 0.10, stepSize: 0.02 },
+      profit_target: { min: 0.14, max: 0.22, stepSize: 0.02 },
+      max_hold_bars: { min: 20, max: 36, stepSize: 4 },
+      risk_percent: { min: 0.20, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter61_b.params.json',
+  },
+  strat_iter61_c: {
+    class: StratIter61CStrategy,
+    params: {
+      sr_lookback: { min: 45, max: 55, stepSize: 5 },
+      stoch_k_period: { min: 14, max: 18, stepSize: 2 },
+      stoch_oversold: { min: 14, max: 22, stepSize: 2 },
+      support_buffer: { min: 0.01, max: 0.03, stepSize: 0.005 },
+      support_hold_buffer: { min: 0.002, max: 0.012, stepSize: 0.002 },
+      meta_lookback_returns: { min: 8, max: 28, stepSize: 2 },
+      meta_horizon_bars: { min: 4, max: 16, stepSize: 2 },
+      meta_success_return: { min: 0.004, max: 0.02, stepSize: 0.002 },
+      meta_prior_strength: { min: 1.0, max: 5.0, stepSize: 0.5 },
+      meta_min_samples: { min: 10, max: 40, stepSize: 5 },
+      meta_entry_threshold: { min: 0.5, max: 0.72, stepSize: 0.02 },
+      meta_decay_threshold: { min: 0.35, max: 0.55, stepSize: 0.02 },
+      resistance_exit_buffer: { min: 0.97, max: 0.995, stepSize: 0.005 },
+      stop_loss: { min: 0.06, max: 0.10, stepSize: 0.02 },
+      profit_target: { min: 0.14, max: 0.22, stepSize: 0.02 },
+      max_hold_bars: { min: 20, max: 36, stepSize: 4 },
+      risk_percent: { min: 0.20, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter61_c.params.json',
   },
 };
 
