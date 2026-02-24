@@ -1,0 +1,19 @@
+{
+  "sr_lookback": 45,
+  "support_buffer": 0.021460925674463588,
+  "support_reclaim_buffer": 0.005625313615387169,
+  "crowding_window": 16,
+  "min_abs_return": 0.0009304242664331938,
+  "persistence_ratio_weight": 1.7544271633680737,
+  "persistence_run_weight": 0.703352691232978,
+  "participation_weight": 1.5551058204378465,
+  "extreme_threshold": 0.3037739796492186,
+  "unwind_delta": 0.016778439816745934,
+  "reextend_delta": 0.09314345584870096,
+  "reextend_floor": 0.4241291739993437,
+  "resistance_exit_buffer": 0.9804975068063291,
+  "stop_loss": 0.06981862478303905,
+  "profit_target": 0.16654053187463852,
+  "max_hold_bars": 32,
+  "risk_percent": 0.2606116372666871
+}

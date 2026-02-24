@@ -1,0 +1,17 @@
+{
+  "sr_lookback": 50,
+  "support_buffer": 0.015241524270127201,
+  "support_reclaim_buffer": 0.008067433421467023,
+  "return_scale_lookback": 14,
+  "cusum_drift": 0.09766410626611786,
+  "cusum_threshold": 1.714885837939371,
+  "hysteresis_upper": 2.01517924263967,
+  "hysteresis_lower": 0.9649651234719288,
+  "hysteresis_confirm_bars": 3,
+  "signal_max_age": 8,
+  "resistance_exit_buffer": 0.990099620021087,
+  "stop_loss": 0.09838379740983152,
+  "profit_target": 0.1943952185393913,
+  "max_hold_bars": 32,
+  "risk_percent": 0.2974649713463948
+}

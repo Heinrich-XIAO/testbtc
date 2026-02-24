@@ -1,5 +1,15 @@
 # ATTEMPTED.md
 
+## Iteration 62 Results (In Progress)
+
+### strat_iter62_c: Symbolic Grammar Motif Model - SUCCESS
+- Small: +59.83% (2279 trades), Large: +141.34% (30962 trades)
+- Verdict: Passes winner criteria (positive both, large >= small, >15 small trades).
+
+### strat_iter62_e: CUSUM Hysteresis Change-Point Reclaim - FAILED (overfit rule)
+- Small: +79.89% (350 trades), Large: +41.76% (6412 trades)
+- Verdict: Positive on both datasets with strong trade count, but fails winner rule because large < small.
+
 ## Iteration 61 Results (In Progress)
 
 ### strat_iter61_b: Bifurcation Flip Reversion - SUCCESS

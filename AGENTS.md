@@ -34,7 +34,7 @@ When asked about a trading strategy, default to simple_ma.
 
 **Important:** Never stop an iteration partway; always complete the full iteration protocol and only stop at the end of the complete iterations cycle.
 
-An **Iteration** is a coordinated round where the main agent ideates 3 distinct new strategies, and 3 subagents independently implement them. Each subagent receives a unique strategy concept and must ensure their implementation is distinct from other agents in the current round.
+An **Iteration** is a coordinated round where the main agent ideates 5 distinct new strategies, and 5 subagents independently implement them. Each subagent receives a unique strategy concept and must ensure their implementation is distinct from other agents in the current round.
 
 ## Proven Effective Patterns (From 26 Prior Iterations)
 
@@ -86,15 +86,15 @@ Iterations should follow a logical progression:
 
 ## Protocol
 
-1. **Ideation**: Main agent generates 3 DISTINCT new strategy LOGICS to explore
-2. **ASSIGNMENT**: ALL 3 subagents start work SIMULTANEOUSLY (same message)
+1. **Ideation**: Main agent generates 5 DISTINCT new strategy LOGICS to explore
+2. **ASSIGNMENT**: ALL 5 subagents start work SIMULTANEOUSLY (same message)
 3. **Implementation**: Each subagent implements their strategy with FUNDAMENTALLY DIFFERENT logic
 4. **Optimization**: The optimization script tunes parameters (NOT the subagent's job)
-5. **Test**: All 3 strategies are tested via backtest on both datasets
+5. **Test**: All 5 strategies are tested via backtest on both datasets
 6. **Document**: Main agent compiles results into `ITERATION_xx.md`
-7. **Completion**: Only stop iterations after all 3 strategies have been tested
+7. **Completion**: Only stop iterations after all 5 strategies have been tested
 
-**WARNING TO SUBAGENTS:** All 3 strategies in a single iteration MUST start and run in parallel. Do NOT run them sequentially. The main agent must also briefly explain how the optimization script works so each subagent knows how their logic will be tuned.
+**WARNING TO SUBAGENTS:** All 5 strategies in a single iteration MUST start and run in parallel. Do NOT run them sequentially. The main agent must also briefly explain how the optimization script works so each subagent knows how their logic will be tuned.
 
 ### What "New Strategy" Means
 
@@ -129,7 +129,7 @@ When creating strategies, follow these principles:
 
 Every `ITERATION_xx.md` must contain:
 - Metadata (date, number of strategies, phase)
-- Strategy Summary Table: key metrics, actions, notes for all 3 strategies
+- Strategy Summary Table: key metrics, actions, notes for all 5 strategies
 - Subagent Actions Section (for each agent/strategy)
 - List of "Hopeless/Discarded" strategies and reasons
 - Required "Key Insights" / Learnings

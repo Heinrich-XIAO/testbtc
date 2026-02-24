@@ -180,6 +180,11 @@ import { StratIter60CStrategy } from '../src/strategies/strat_iter60_c';
 import { StratIter61AStrategy } from '../src/strategies/strat_iter61_a';
 import { StratIter61BStrategy } from '../src/strategies/strat_iter61_b';
 import { StratIter61CStrategy } from '../src/strategies/strat_iter61_c';
+import { StratIter62AStrategy } from '../src/strategies/strat_iter62_a';
+import { StratIter62BStrategy } from '../src/strategies/strat_iter62_b';
+import { StratIter62CStrategy } from '../src/strategies/strat_iter62_c';
+import { StratIter62DStrategy } from '../src/strategies/strat_iter62_d';
+import { StratIter62EStrategy } from '../src/strategies/strat_iter62_e';
 import { DifferentialEvolutionOptimizer } from '../src/optimization';
 import type { ParamConfig, OptimizationResult } from '../src/optimization/types';
 import type { StoredData } from '../src/types';
@@ -189,7 +194,44 @@ import * as path from 'path';
 
 kleur.enabled = true;
 
-const strategies: Record<string, { class: any; params: Record<string, ParamConfig>; outputFile: string }> = {
+// Auto-discover strategy configs from .optimization.ts files
+function discoverStrategyConfigs(): Record<string, any> {
+  const configs: Record<string, any> = {};
+  const strategiesDir = path.join(__dirname, '../src/strategies');
+  
+  try {
+    const files = fs.readdirSync(strategiesDir);
+    for (const file of files) {
+      if (!file.endsWith('.optimization.ts')) continue;
+      const baseName = file.replace('.optimization.ts', '');
+      try {
+        const configModule = require(path.join(strategiesDir, file));
+        if (configModule.optimizationConfig && configModule.outputFile) {
+          let StrategyClass: any = null;
+          try {
+            const strategyModule = require(path.join(strategiesDir, `${baseName}.ts`));
+            const className = baseName.replace(/_([a-z])/g, (_, c) => c.toUpperCase())
+              .split('').map((c: string, i: number) => i === 0 ? c.toUpperCase() : c).join('') + 'Strategy';
+            StrategyClass = strategyModule[className] || strategyModule.default;
+          } catch (e) { /* ignore */ }
+          if (StrategyClass) {
+            configs[baseName] = {
+              class: StrategyClass,
+              params: configModule.optimizationConfig,
+              outputFile: configModule.outputFile
+            };
+          }
+        }
+      } catch (e) { /* ignore */ }
+    }
+  } catch (e) { /* ignore */ }
+  
+  return configs;
+}
+
+const discoveredStrategies = discoverStrategyConfigs();
+
+const hardcodedStrategies: Record<string, { class: any; params: Record<string, ParamConfig>; outputFile: string }> = {
   simple_ma: {
     class: SimpleMAStrategy,
     params: {
@@ -3325,7 +3367,127 @@ const strategies: Record<string, { class: any; params: Record<string, ParamConfi
     },
     outputFile: 'strat_iter61_c.params.json',
   },
+  strat_iter62_a: {
+    class: StratIter62AStrategy,
+    params: {
+      sr_lookback: { min: 45, max: 55, stepSize: 5 },
+      support_buffer: { min: 0.01, max: 0.03, stepSize: 0.005 },
+      support_reclaim_buffer: { min: 0.001, max: 0.012, stepSize: 0.001 },
+      stoch_k_period: { min: 14, max: 18, stepSize: 2 },
+      stoch_oversold: { min: 14, max: 22, stepSize: 2 },
+      stoch_rebound_delta: { min: 2, max: 8, stepSize: 1 },
+      trajectory_embed_len: { min: 2, max: 8, stepSize: 1 },
+      divergence_horizon: { min: 1, max: 6, stepSize: 1 },
+      divergence_window: { min: 16, max: 48, stepSize: 4 },
+      neighbor_tolerance: { min: 0.004, max: 0.03, stepSize: 0.002 },
+      min_pair_count: { min: 3, max: 20, stepSize: 1 },
+      divergence_spike_threshold: { min: 0.08, max: 0.5, stepSize: 0.02 },
+      collapse_lookback: { min: 2, max: 8, stepSize: 1 },
+      divergence_cool_ratio: { min: 0.3, max: 0.9, stepSize: 0.05 },
+      divergence_drop_min: { min: 0.02, max: 0.2, stepSize: 0.01 },
+      divergence_reaccel_delta: { min: 0.02, max: 0.2, stepSize: 0.01 },
+      divergence_reaccel_threshold: { min: 0.08, max: 0.5, stepSize: 0.02 },
+      resistance_exit_buffer: { min: 0.97, max: 0.995, stepSize: 0.005 },
+      stop_loss: { min: 0.06, max: 0.10, stepSize: 0.02 },
+      profit_target: { min: 0.14, max: 0.22, stepSize: 0.02 },
+      max_hold_bars: { min: 20, max: 36, stepSize: 4 },
+      risk_percent: { min: 0.20, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter62_a.params.json',
+  },
+  strat_iter62_b: {
+    class: StratIter62BStrategy,
+    params: {
+      sr_lookback: { min: 45, max: 55, stepSize: 5 },
+      support_buffer: { min: 0.01, max: 0.03, stepSize: 0.005 },
+      support_reclaim_buffer: { min: 0.001, max: 0.012, stepSize: 0.001 },
+      support_touch_window: { min: 6, max: 20, stepSize: 2 },
+      min_support_touches: { min: 1, max: 3, stepSize: 1 },
+      particle_count: { min: 21, max: 71, stepSize: 10 },
+      trend_persistence: { min: 0.7, max: 0.96, stepSize: 0.02 },
+      drift_from_recent_return: { min: 2.0, max: 9.0, stepSize: 0.5 },
+      process_noise: { min: 0.05, max: 0.35, stepSize: 0.02 },
+      observation_window: { min: 5, max: 21, stepSize: 2 },
+      likelihood_sigma_floor: { min: 0.001, max: 0.006, stepSize: 0.0005 },
+      reversal_trend_cutoff: { min: -0.5, max: -0.05, stepSize: 0.05 },
+      rebound_return_min: { min: -0.001, max: 0.004, stepSize: 0.0005 },
+      posterior_entry_threshold: { min: 0.5, max: 0.85, stepSize: 0.02 },
+      posterior_defensive_threshold: { min: 0.2, max: 0.6, stepSize: 0.02 },
+      resistance_exit_buffer: { min: 0.97, max: 0.995, stepSize: 0.005 },
+      stop_loss: { min: 0.06, max: 0.10, stepSize: 0.02 },
+      profit_target: { min: 0.14, max: 0.22, stepSize: 0.02 },
+      max_hold_bars: { min: 20, max: 36, stepSize: 4 },
+      risk_percent: { min: 0.20, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter62_b.params.json',
+  },
+  strat_iter62_c: {
+    class: StratIter62CStrategy,
+    params: {
+      sr_lookback: { min: 45, max: 55, stepSize: 5 },
+      motif_lookback: { min: 120, max: 320, stepSize: 40 },
+      symbol_step: { min: 0.002, max: 0.006, stepSize: 0.001 },
+      support_buffer: { min: 0.01, max: 0.03, stepSize: 0.005 },
+      support_hold_buffer: { min: 0.002, max: 0.012, stepSize: 0.002 },
+      bullish_lr_threshold: { min: 1.05, max: 1.45, stepSize: 0.05 },
+      bearish_dom_threshold: { min: 1.05, max: 1.40, stepSize: 0.05 },
+      resistance_exit_buffer: { min: 0.97, max: 0.995, stepSize: 0.005 },
+      motif_smoothing: { min: 0.2, max: 1.4, stepSize: 0.2 },
+      stop_loss: { min: 0.06, max: 0.10, stepSize: 0.02 },
+      profit_target: { min: 0.14, max: 0.22, stepSize: 0.02 },
+      max_hold_bars: { min: 20, max: 36, stepSize: 4 },
+      risk_percent: { min: 0.20, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter62_c.params.json',
+  },
+  strat_iter62_d: {
+    class: StratIter62DStrategy,
+    params: {
+      sr_lookback: { min: 45, max: 55, stepSize: 5 },
+      support_buffer: { min: 0.01, max: 0.03, stepSize: 0.005 },
+      support_reclaim_buffer: { min: 0.001, max: 0.012, stepSize: 0.001 },
+      crowding_window: { min: 10, max: 32, stepSize: 2 },
+      min_abs_return: { min: 0.0005, max: 0.003, stepSize: 0.0005 },
+      persistence_ratio_weight: { min: 0.2, max: 1.8, stepSize: 0.1 },
+      persistence_run_weight: { min: 0.2, max: 1.8, stepSize: 0.1 },
+      participation_weight: { min: 0.2, max: 1.8, stepSize: 0.1 },
+      extreme_threshold: { min: 0.3, max: 1.2, stepSize: 0.05 },
+      unwind_delta: { min: 0.005, max: 0.1, stepSize: 0.005 },
+      reextend_delta: { min: 0.005, max: 0.1, stepSize: 0.005 },
+      reextend_floor: { min: 0.2, max: 1.0, stepSize: 0.05 },
+      resistance_exit_buffer: { min: 0.97, max: 0.995, stepSize: 0.005 },
+      stop_loss: { min: 0.06, max: 0.10, stepSize: 0.02 },
+      profit_target: { min: 0.14, max: 0.22, stepSize: 0.02 },
+      max_hold_bars: { min: 20, max: 36, stepSize: 4 },
+      risk_percent: { min: 0.20, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter62_d.params.json',
+  },
+  strat_iter62_e: {
+    class: StratIter62EStrategy,
+    params: {
+      sr_lookback: { min: 45, max: 55, stepSize: 5 },
+      support_buffer: { min: 0.01, max: 0.03, stepSize: 0.005 },
+      support_reclaim_buffer: { min: 0.001, max: 0.012, stepSize: 0.001 },
+      return_scale_lookback: { min: 8, max: 32, stepSize: 2 },
+      cusum_drift: { min: 0.01, max: 0.12, stepSize: 0.01 },
+      cusum_threshold: { min: 1.2, max: 3.6, stepSize: 0.2 },
+      hysteresis_upper: { min: 1.0, max: 2.8, stepSize: 0.2 },
+      hysteresis_lower: { min: 0.2, max: 1.4, stepSize: 0.1 },
+      hysteresis_confirm_bars: { min: 1, max: 4, stepSize: 1 },
+      signal_max_age: { min: 2, max: 12, stepSize: 1 },
+      resistance_exit_buffer: { min: 0.97, max: 0.995, stepSize: 0.005 },
+      stop_loss: { min: 0.06, max: 0.10, stepSize: 0.02 },
+      profit_target: { min: 0.14, max: 0.22, stepSize: 0.02 },
+      max_hold_bars: { min: 20, max: 36, stepSize: 4 },
+      risk_percent: { min: 0.20, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter62_e.params.json',
+  },
 };
+
+// Merge discovered and hardcoded strategies
+const strategies = { ...hardcodedStrategies, ...discoveredStrategies };
 
 async function loadDataset(datasetPath: string): Promise<StoredData> {
   const absolutePath = path.resolve(datasetPath);

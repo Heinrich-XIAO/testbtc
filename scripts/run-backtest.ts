@@ -21,7 +21,47 @@ function loadSavedParams(paramsFile: string): Record<string, number> | null {
   }
 }
 
-const strategies: Record<string, { 
+// Auto-discover strategy configs from .optimization.ts files
+function discoverStrategyConfigs(): Record<string, any> {
+  const configs: Record<string, any> = {};
+  const strategiesDir = path.join(__dirname, '../src/strategies');
+  
+  try {
+    const files = fs.readdirSync(strategiesDir);
+    for (const file of files) {
+      if (!file.endsWith('.optimization.ts')) continue;
+      const baseName = file.replace('.optimization.ts', '');
+      try {
+        const configModule = require(path.join(strategiesDir, file));
+        if (configModule.optimizationConfig && configModule.outputFile) {
+          let getStrategy: any = null;
+          try {
+            const strategyModule = require(path.join(strategiesDir, `${baseName}.ts`));
+            const className = baseName.replace(/_([a-z])/g, (_, c) => c.toUpperCase())
+              .split('').map((c: string, i: number) => i === 0 ? c.toUpperCase() : c).join('') + 'Strategy';
+            const StrategyClass = strategyModule[className] || strategyModule.default;
+            if (StrategyClass) {
+              getStrategy = (params: any) => new StrategyClass(params);
+            }
+          } catch (e) { /* ignore */ }
+          if (getStrategy) {
+            configs[baseName] = {
+              name: baseName,
+              getStrategy,
+              paramsFile: `src/strategies/${configModule.outputFile}`
+            };
+          }
+        }
+      } catch (e) { /* ignore */ }
+    }
+  } catch (e) { /* ignore */ }
+  
+  return configs;
+}
+
+const discoveredBacktestStrategies = discoverStrategyConfigs();
+
+const hardcodedStrategies: Record<string, { 
   name: string;
   getStrategy: (params: any) => Strategy;
   paramsFile: string;
@@ -1221,7 +1261,35 @@ const strategies: Record<string, {
     getStrategy: (params) => new (require('../src/strategies/strat_iter61_c').StratIter61CStrategy)(params),
     paramsFile: 'src/strategies/strat_iter61_c.params.json',
   },
+  'strat_iter62_a': {
+    name: 'Iter62 A - Lyapunov Instability Collapse Reversal',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter62_a').StratIter62AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter62_a.params.json',
+  },
+  'strat_iter62_b': {
+    name: 'Iter62 B - Particle Posterior Reversal Proxy',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter62_b').StratIter62BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter62_b.params.json',
+  },
+  'strat_iter62_c': {
+    name: 'Iter62 C - Symbolic Grammar Motif Model',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter62_c').StratIter62CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter62_c.params.json',
+  },
+  'strat_iter62_d': {
+    name: 'Iter62 D - Minority Crowd Unwind Reversal',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter62_d').StratIter62DStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter62_d.params.json',
+  },
+  'strat_iter62_e': {
+    name: 'Iter62 E - CUSUM Hysteresis Change-Point Reclaim',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter62_e').StratIter62EStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter62_e.params.json',
+  },
 };
+
+// Merge discovered and hardcoded strategies
+const strategies = { ...hardcodedStrategies, ...discoveredBacktestStrategies };
 
 async function runBacktest(
   strategyInfo: typeof strategies['simple_ma'],
