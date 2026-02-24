@@ -1,0 +1,19 @@
+{
+  "sr_lookback": 50,
+  "support_buffer": 0.01775790546605384,
+  "stoch_period": 14,
+  "stoch_oversold": 20,
+  "stoch_rebound_delta": 7,
+  "pivot_width": 2,
+  "extrema_invalidation_buffer": 0.00804313923387055,
+  "persistence_norm_bars": 24,
+  "max_active_extrema_age": 32,
+  "entry_basin_score": 0.2069765991574934,
+  "entry_basin_slope_min": 0.037089372018610754,
+  "exit_basin_score": -0.049124981310877,
+  "exit_basin_drop_from_entry": 0.2749837186441349,
+  "stop_loss": 0.08601937357983676,
+  "profit_target": 0.14926564918045246,
+  "max_hold_bars": 24,
+  "risk_percent": 0.2982688049395642
+}

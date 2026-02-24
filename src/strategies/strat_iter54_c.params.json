@@ -1,0 +1,23 @@
+{
+  "sr_lookback": 50,
+  "support_buffer": 0.010980408854224771,
+  "trend_short_mom_period": 6,
+  "trend_long_mom_period": 18,
+  "trend_entry_mom": 0.006100784303694487,
+  "trend_confirm_mom": 0.005703722857406068,
+  "trend_range_floor": 0.4982322808030616,
+  "mr_zscore_window": 14,
+  "mr_zscore_entry": 1.3558925885766693,
+  "breakout_window": 14,
+  "breakout_buffer": 0.00613109039272113,
+  "breakout_mom_period": 4,
+  "trend_weight": 0.9096767909065404,
+  "mean_revert_weight": 1.7990662771659496,
+  "breakout_weight": 0.6603386619534692,
+  "consensus_entry_threshold": 0.8724903415873845,
+  "consensus_negative_threshold": -0.3685676728253666,
+  "stop_loss": 0.0716680547521393,
+  "profit_target": 0.16335692063228777,
+  "max_hold_bars": 24,
+  "risk_percent": 0.25997587136151656
+}

@@ -1,0 +1,19 @@
+{
+  "sr_lookback": 45,
+  "support_buffer": 0.017659972045657932,
+  "recent_window": 8,
+  "baseline_window": 50,
+  "kl_bins": 20,
+  "kl_clip_return": 0.015745408946760905,
+  "kl_stats_window": 25,
+  "kl_spike_z": 2.0786756377252535,
+  "kl_min_spike": 0.14873337167479206,
+  "kl_reversion_ratio": 0.6365868802214232,
+  "shock_max_age": 10,
+  "kl_reexpand_multiplier": 1.9145715472173568,
+  "kl_reexpand_z": 0.9644629541985237,
+  "stop_loss": 0.08420834112918603,
+  "profit_target": 0.20358558242166042,
+  "max_hold_bars": 32,
+  "risk_percent": 0.24520683624926032
+}

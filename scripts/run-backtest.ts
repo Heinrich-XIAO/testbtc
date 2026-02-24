@@ -1061,6 +1061,151 @@ const strategies: Record<string, {
     getStrategy: (params) => new (require('../src/strategies/strat_iter50_c').StratIter50CStrategy)(params),
     paramsFile: 'src/strategies/strat_iter50_c.params.json',
   },
+  'strat_iter51_a': {
+    name: 'Iter51 A - Genetic Fitness Score',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter51_a').StratIter51AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter51_a.params.json',
+  },
+  'strat_iter51_b': {
+    name: 'Iter51 B - Shannon Entropy Regime',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter51_b').StratIter51BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter51_b.params.json',
+  },
+  'strat_iter51_c': {
+    name: 'Iter51 C - Autocorrelation Cycle Detection',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter51_c').StratIter51CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter51_c.params.json',
+  },
+  'strat_iter52_a': {
+    name: 'Iter52 A - Hurst Exponent Trending Regime',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter52_a').StratIter52AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter52_a.params.json',
+  },
+  'strat_iter52_b': {
+    name: 'Iter52 B - Quantum Stochastic Collapse',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter52_b').StratIter52BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter52_b.params.json',
+  },
+  'strat_iter52_c': {
+    name: 'Iter52 C - Swarm Intelligence',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter52_c').StratIter52CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter52_c.params.json',
+  },
+  'strat_iter53_a': {
+    name: 'Iter53 A - Wave Interference Oscillator',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter53_a').StratIter53AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter53_a.params.json',
+  },
+  'strat_iter53_b': {
+    name: 'Iter53 B - Fuzzy Logic Entry Controller',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter53_b').StratIter53BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter53_b.params.json',
+  },
+  'strat_iter53_c': {
+    name: 'Iter53 C - Bayesian Regime Updater',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter53_c').StratIter53CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter53_c.params.json',
+  },
+  'strat_iter54_a': {
+    name: 'Iter54 A - Cellular Automata Emergence',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter54_a').StratIter54AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter54_a.params.json',
+  },
+  'strat_iter54_b': {
+    name: 'Iter54 B - KL Shock Stabilization Regime',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter54_b').StratIter54BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter54_b.params.json',
+  },
+  'strat_iter54_c': {
+    name: 'Iter54 C - Agent Consensus Micro-Sim Proxy',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter54_c').StratIter54CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter54_c.params.json',
+  },
+  'strat_iter55_a': {
+    name: 'Iter55 A - Time-Warped Momentum',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter55_a').StratIter55AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter55_a.params.json',
+  },
+  'strat_iter55_b': {
+    name: 'Iter55 B - Nash Proxy Regime Game',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter55_b').StratIter55BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter55_b.params.json',
+  },
+  'strat_iter55_c': {
+    name: 'Iter55 C - Mutation-Crossover Signal Pool',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter55_c').StratIter55CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter55_c.params.json',
+  },
+  'strat_iter56_a': {
+    name: 'Iter56 A - Topological Persistence Basin Proxy',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter56_a').StratIter56AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter56_a.params.json',
+  },
+  'strat_iter56_b': {
+    name: 'Iter56 B - Hidden-State Markov Proxy',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter56_b').StratIter56BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter56_b.params.json',
+  },
+  'strat_iter56_c': {
+    name: 'Iter56 C - Wavelet Energy Regime Switching',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter56_c').StratIter56CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter56_c.params.json',
+  },
+  'strat_iter57_c': {
+    name: 'Iter57 C - Dynamic Risk Parity State Control',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter57_c').StratIter57CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter57_c.params.json',
+  },
+  'strat_iter57_b': {
+    name: 'Iter57 B - Behavioral Capitulation Detector',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter57_b').StratIter57BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter57_b.params.json',
+  },
+  'strat_iter57_a': {
+    name: 'Iter57 A - Mutual Information Predictability Spike',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter57_a').StratIter57AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter57_a.params.json',
+  },
+  'strat_iter58_a': {
+    name: 'Iter58 A - Recurrence Transition Support Rebound',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter58_a').StratIter58AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter58_a.params.json',
+  },
+  'strat_iter58_b': {
+    name: 'Iter58 B - Adaptive Bayesian Mini-Model Ensemble',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter58_b').StratIter58BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter58_b.params.json',
+  },
+  'strat_iter58_c': {
+    name: 'Iter58 C - Multi-Horizon Hurst Dispersion Persistence',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter58_c').StratIter58CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter58_c.params.json',
+  },
+  'strat_iter59_a': {
+    name: 'Iter59 A - Phase-Space Curvature Cusp Reversal',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter59_a').StratIter59AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter59_a.params.json',
+  },
+  'strat_iter59_b': {
+    name: 'Iter59 B - Predictive Residual Surprise Mean-Revert',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter59_b').StratIter59BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter59_b.params.json',
+  },
+  'strat_iter60_a': {
+    name: 'Iter60 A - SAX Motif Dictionary Reversal',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter60_a').StratIter60AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter60_a.params.json',
+  },
+  'strat_iter60_b': {
+    name: 'Iter60 B - Adaptive Kalman Residual Rebound Gate',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter60_b').StratIter60BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter60_b.params.json',
+  },
+  'strat_iter60_c': {
+    name: 'Iter60 C - Counterfactual Transition Utility Ensemble',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter60_c').StratIter60CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter60_c.params.json',
+  },
 };
 
 async function runBacktest(

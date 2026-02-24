@@ -1,0 +1,23 @@
+{
+  "sr_lookback": 45,
+  "stoch_k_period": 16,
+  "stoch_oversold": 22,
+  "rsi_period": 18,
+  "support_buffer": 0.01740167556003916,
+  "vol_short_period": 10,
+  "vol_long_period": 32,
+  "vol_contraction_ratio": 0.9384328729647375,
+  "evidence_decay": 0.8736412137923,
+  "evidence_stoch_weight": 1.2028666043991114,
+  "evidence_rsi_weight": 1.4,
+  "evidence_support_weight": 0.8,
+  "evidence_vol_weight": 0.29064442072938257,
+  "prior_alpha": 1,
+  "prior_beta": 2,
+  "entry_posterior_threshold": 0.6158594295204817,
+  "exit_posterior_threshold": 0.35,
+  "stop_loss": 0.08511854511238769,
+  "profit_target": 0.21443995445954672,
+  "max_hold_bars": 20,
+  "risk_percent": 0.21541555638845727
+}

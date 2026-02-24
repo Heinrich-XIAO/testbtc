@@ -1,0 +1,21 @@
+{
+  "sr_lookback": 50,
+  "support_buffer": 0.01195232320545445,
+  "support_hold_buffer": 0.010957847608178226,
+  "down_event_threshold": 0.008695899812012058,
+  "intensity_alpha": 0.2504703236304038,
+  "spike_lookback": 12,
+  "spike_floor": 0.28065647986380915,
+  "decay_ratio_max": 0.5496342490503145,
+  "decay_drop_min": 0.1345182152789214,
+  "decay_jump_min": 0.061198605818162236,
+  "recent_event_lookback": 10,
+  "min_recent_events": 1,
+  "respike_abs_threshold": 0.2956688283020174,
+  "respike_vs_entry_add": 0.07770983406483457,
+  "resistance_exit_buffer": 0.9869584117159805,
+  "stop_loss": 0.08468239449784731,
+  "profit_target": 0.20247000169278156,
+  "max_hold_bars": 28,
+  "risk_percent": 0.27814032634089897
+}

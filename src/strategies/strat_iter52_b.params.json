@@ -1,0 +1,13 @@
+{
+  "sr_lookback": 45,
+  "stoch_short_period": 10,
+  "stoch_medium_period": 14,
+  "stoch_long_period": 36,
+  "stoch_oversold": 20,
+  "stoch_exit_threshold": 35,
+  "support_buffer": 0.010342406134764177,
+  "stop_loss": 0.09771095257050356,
+  "profit_target": 0.15393144016112065,
+  "max_hold_bars": 32,
+  "risk_percent": 0.290650896625275
+}

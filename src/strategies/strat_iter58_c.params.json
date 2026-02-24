@@ -1,0 +1,22 @@
+{
+  "sr_lookback": 45,
+  "support_buffer": 0.021188064758999245,
+  "stoch_period": 12,
+  "stoch_oversold": 14,
+  "stoch_rebound_delta": 4,
+  "pullback_return_floor": 0.0045651724240023984,
+  "pullback_lookback": 3,
+  "short_hurst_period": 36,
+  "mid_hurst_period": 72,
+  "long_hurst_period": 104,
+  "persistent_hurst_floor": 0.5584031650300729,
+  "max_hurst_dispersion": 0.11621224943017587,
+  "min_short_vs_long_spread": -0.03712136942121169,
+  "disagreement_spike_threshold": 0.14057580323276708,
+  "disagreement_jump_threshold": 0.0656152074213027,
+  "resistance_exit_buffer": 0.9793790368831711,
+  "stop_loss": 0.09169549892975781,
+  "profit_target": 0.17279921197550302,
+  "max_hold_bars": 36,
+  "risk_percent": 0.29285061630799225
+}

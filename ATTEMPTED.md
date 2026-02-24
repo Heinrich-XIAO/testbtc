@@ -1,5 +1,109 @@
 # ATTEMPTED.md
 
+## Iteration 60 Results (In Progress)
+
+### strat_iter60_c: Counterfactual Transition Utility Ensemble - SUCCESS
+- Small: +89.87% (44 trades), Large: +345.57% (455 trades)
+- Verdict: Passes winner criteria (positive both, large >= small, >15 small trades).
+
+### strat_iter60_b: Adaptive Kalman Residual Rebound Gate - SUCCESS
+- Small: +62.69% (26 trades), Large: +69.41% (301 trades)
+- Verdict: Passes winner criteria (positive both, large >= small, >15 small trades).
+
+### strat_iter60_a: SAX Motif Dictionary Reversal - FAILED (overfit rule)
+- Small: +39.20% (348 trades), Large: +37.56% (9873 trades)
+- Verdict: Positive on both datasets with strong trade count, but fails winner rule because large < small.
+
+## Iteration 59 Results (In Progress)
+
+### strat_iter59_a: Phase-Space Curvature Cusp Reversal - SUCCESS
+- Small: +23.99% (119 trades), Large: +32.08% (4255 trades)
+- Verdict: Passes winner criteria (positive both, large >= small, >15 small trades).
+
+### strat_iter59_b: Predictive Residual Surprise Mean-Revert - SUCCESS
+- Small: +19.29% (44 trades), Large: +33.85% (675 trades)
+- Verdict: Passes winner criteria (positive both, large >= small, >15 small trades).
+
+### strat_iter59_c: Point-Process Aftershock Fade - FAILED (overfit rule)
+- Small: +110.70% (202 trades), Large: +91.78% (2505 trades)
+- Verdict: Positive on both datasets with strong trade counts, but fails winner rule because large < small.
+
+## Iteration 58 Results (In Progress)
+
+### strat_iter58_a: Recurrence Transition Support Rebound - FAILED
+- Small: +43.16% (12 trades), Large: -26.29% (242 trades)
+- Verdict: Optimization performed strongly on small data but failed validation with negative large-dataset return and also missed the 15-trade minimum on small.
+
+### strat_iter58_b: Adaptive Bayesian Mini-Model Ensemble - FAILED (overfit rule)
+- Small: +170.40% (305 trades), Large: +154.75% (3976 trades)
+- Verdict: Positive on both datasets with strong trade count, but fails winner rule because large < small.
+
+### strat_iter58_c: Multi-Horizon Hurst Dispersion Persistence - FAILED (overfit rule)
+- Small: +22.86% (81 trades), Large: +17.24% (1036 trades)
+- Verdict: Positive on both datasets with sufficient trade count, but fails winner rule because large < small.
+
+## Iteration 57 Results (In Progress)
+
+### strat_iter57_c: Dynamic Risk-Parity Drawdown State - FAILED (overfit rule)
+- Small: +22.82% (371 trades), Large: +20.47% (6518 trades)
+- Verdict: Positive on both datasets with strong trade count, but fails winner rule because large < small.
+
+### strat_iter57_a: Mutual-information Predictability Spike - FAILED (insufficient small-sample trades)
+- Small: +8.90% (6 trades), Large: +12.03% (72 trades)
+- Verdict: Positive on both datasets with large >= small, but fails minimum 15-trade requirement on small dataset.
+
+## Iteration 56 Results (In Progress)
+
+### strat_iter56_a: Topological Persistence Basin Proxy - FAILED (insufficient small-sample trades)
+- Small: +5.62% (8 trades), Large: +0.43% (444 trades)
+- Verdict: Positive on both datasets with large >= small, but fails minimum 15-trade requirement on small dataset.
+
+### strat_iter56_c: Wavelet-like Multi-scale Energy Ratio - FAILED (overfit rule)
+- Small: +40.94% (38 trades), Large: +31.97% (350 trades)
+- Verdict: Positive on both datasets with sufficient trade count, but fails winner rule because large < small.
+
+### strat_iter56_b: Hidden-State Markov Proxy - FAILED
+- Small: +65.79% (508 trades), Large: -6.07% (9784 trades)
+- Verdict: Optimized strongly on small data, but fails validation with negative large-dataset return.
+
+## Iteration 55 Results (In Progress)
+
+### strat_iter55_b: Nash Proxy Regime Game - FAILED (overfit rule)
+- Small: +163.87% (1042 trades), Large: +73.45% (17948 trades)
+- Verdict: Positive on both datasets with strong trade count, but fails winner rule because large < small.
+
+### strat_iter55_c: Mutation-Crossover Signal Pool - FAILED (instability)
+- Small: +432.29% (130 trades), Large: +9838.18% (2259 trades)
+- Verdict: Positive on both with sufficient trades, but behavior is highly unstable (extreme validation explosion) and fails robustness expectations.
+
+## Iteration 54 Results
+
+### strat_iter54_a: Cellular Automata Emergence - FAILED (overfit rule)
+- Small: +360.84% (272 trades), Large: +130.21% (5787 trades)
+- Verdict: Positive on both datasets with sufficient trade count, but fails winner rule because large < small.
+
+### strat_iter54_c: Agent Consensus Micro-Sim Proxy - SUCCESS ⭐ WINNER
+- Small: +113.60% (800 trades), Large: +238.03% (13369 trades)
+- Verdict: Passes winner criteria (positive both, large >= small, >15 small trades).
+
+### strat_iter54_b: KL Shock Stabilization Regime - FAILED (overfit rule)
+- Small: +106.40% (382 trades), Large: +83.35% (6068 trades)
+- Verdict: Strong on both datasets, but fails winner rule because large < small.
+
+## Iteration 51 Results
+
+### strat_iter51_c: Fractal Cycle Phase - SUCCESS ⭐ WINNER
+- Small: +4.92% (92 trades), Large: +56.70% (1707 trades)
+- Verdict: Passes winner criteria (positive both, large >= small, >15 small trades). Most conservative of the three.
+
+### strat_iter51_a: Genetic Fitness Proxy - MIXED
+- Small: +1752.47% (836 trades), Large: +1156.87% (9106 trades)
+- Verdict: High returns but extreme volatility (max DD > 8000%). Fails robustness criteria.
+
+### strat_iter51_b: Entropy Chaos Filter - MIXED
+- Small: +550.48% (1610 trades), Large: +404.94% (27491 trades)
+- Verdict: High returns but extreme volatility (max DD > 9000%). Fails robustness criteria.
+
 ## Iteration 50 Results
 
 ### strat_iter50_a: Under-support Reclaim v2 - FAILED (no trades)
@@ -1082,3 +1186,17 @@ Adding an EMA trend filter to the 302 strategy hurts performance dramatically. T
 
 ### Key Insight
 The partial exit logic (closing 50% at first TP) doesn't improve risk-adjusted returns. The base 302 strategy with single profit target (12%) outperforms the multi-TP approach. Partial exits may reduce exposure to winners too early, missing additional profit potential.
+
+## Iteration 53 - Strategy B (Fuzzy Logic Entry Controller) - 2026-02-23
+
+### Strategy: strat_iter53_b
+- **Logic**: Fuzzy-logic controller with 3 memberships (oversoldness, support proximity, momentum recovery), weighted fuzzy AND/OR confidence for entry, and confidence-collapse exit plus standard exits.
+- **Optimization**: `scripts/run-optimization.ts` auto-tuned parameters on `data/test-data.bson`.
+
+### Results
+- **Small (data/test-data.bson)**: Return **123.39%**, Win Rate **41.0%**, Trades **1384**
+- **Large (data/test-data-15min-large.bson)**: Return **199.42%**, Win Rate **43.0%**, Trades **24777**
+
+### Verdict: SUCCESSFUL
+- Positive return on both datasets.
+- Large-dataset return exceeds small-dataset return (no overfit signal by this heuristic).

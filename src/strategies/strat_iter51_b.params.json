@@ -1,0 +1,13 @@
+{
+  "sr_lookback": 50,
+  "entropy_lookback": 16,
+  "entropy_bins": 6,
+  "entropy_entry_threshold": 2.3245763579044816,
+  "entropy_exit_threshold": 2.403775999113029,
+  "stoch_k_period": 14,
+  "stoch_oversold": 18,
+  "stop_loss": 0.07105361147589927,
+  "profit_target": 0.14,
+  "max_hold_bars": 20,
+  "risk_percent": 0.2508039532587453
+}

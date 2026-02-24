@@ -1,0 +1,18 @@
+{
+  "sr_lookback": 55,
+  "support_buffer": 0.03,
+  "support_reclaim_buffer": 0.009948141136156686,
+  "momentum_lookback": 6,
+  "momentum_floor": 0.0014444178242576993,
+  "cusp_min_negative_curvature": 0.19332308744365723,
+  "cusp_positive_curvature": 0.010803462224519028,
+  "min_curvature_jump": 0.45,
+  "max_cusp_lookback_bars": 6,
+  "adverse_curvature_threshold": -0.23199921267292417,
+  "adverse_curvature_accel": 0.13183211980102583,
+  "resistance_exit_buffer": 0.9847666448835631,
+  "stop_loss": 0.09608528296884325,
+  "profit_target": 0.14,
+  "max_hold_bars": 24,
+  "risk_percent": 0.2535373976047747
+}

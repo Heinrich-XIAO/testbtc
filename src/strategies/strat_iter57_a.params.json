@@ -1,0 +1,19 @@
+{
+  "sr_lookback": 50,
+  "support_buffer": 0.022732327906683072,
+  "stoch_period": 16,
+  "stoch_oversold": 16,
+  "stoch_rebound_delta": 6,
+  "mi_window": 64,
+  "mi_lag": 5,
+  "mi_bins": 7,
+  "mi_floor": 0.10802602592227628,
+  "mi_rise_threshold": 0.022799961716933537,
+  "mi_collapse_threshold": 0.05891218062967253,
+  "mi_drop_from_entry": 0.09748579099416756,
+  "resistance_exit_buffer": 0.9825945705761865,
+  "stop_loss": 0.0846679743776768,
+  "profit_target": 0.19163947858316216,
+  "max_hold_bars": 32,
+  "risk_percent": 0.2704459065910425
+}

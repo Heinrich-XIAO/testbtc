@@ -1,0 +1,18 @@
+{
+  "sr_lookback": 55,
+  "support_buffer": 0.014747564471395266,
+  "support_reclaim_buffer": 0.01029447667914763,
+  "ar_window": 14,
+  "ar_last_return_weight": 0.4225626140398555,
+  "ar_mean_return_weight": 0.5048142333400241,
+  "residual_window": 12,
+  "entry_surprise_z": 1.5895739127164874,
+  "reversion_z_delta": 0.46287062697259496,
+  "min_rebound_return": -0.0018087449582610375,
+  "surprise_renew_z": 2.1357019190978543,
+  "resistance_exit_buffer": 0.9918773116843648,
+  "stop_loss": 0.08517590779816106,
+  "profit_target": 0.212085776406926,
+  "max_hold_bars": 24,
+  "risk_percent": 0.27985383987702545
+}

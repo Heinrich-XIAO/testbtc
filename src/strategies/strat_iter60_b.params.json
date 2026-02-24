@@ -1,0 +1,21 @@
+{
+  "sr_lookback": 45,
+  "support_buffer": 0.01604599794830733,
+  "support_reclaim_buffer": 0.008380504746536632,
+  "kalman_process_var": 0.0002,
+  "kalman_trend_gain": 0.28067068953320734,
+  "kalman_gain_floor": 0.25,
+  "kalman_gain_ceiling": 0.85,
+  "residual_var_alpha": 0.1502532496468873,
+  "residual_window": 12,
+  "entry_negative_z": 1.42991808832598,
+  "rebound_z_delta": 0.14836134088738734,
+  "min_rebound_return": -0.004,
+  "inversion_positive_z": 1.4150458435695221,
+  "inversion_persist_bars": 3,
+  "resistance_exit_buffer": 0.984275472870914,
+  "stop_loss": 0.08339609628002395,
+  "profit_target": 0.18288092658432592,
+  "max_hold_bars": 24,
+  "risk_percent": 0.3
+}

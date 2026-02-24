@@ -1,0 +1,21 @@
+{
+  "sr_lookback": 45,
+  "support_buffer": 0.022223074561200474,
+  "support_reclaim_buffer": 0.004173343842458431,
+  "support_touch_lookback": 10,
+  "min_support_touches": 2,
+  "sax_window": 26,
+  "paa_segments": 4,
+  "alphabet_size": 4,
+  "motif_horizon": 10,
+  "bullish_return_threshold": 0.0045721824918942095,
+  "bearish_return_threshold": 0.00762223764240943,
+  "motif_min_samples": 5,
+  "bullish_precision_min": 0.6513773954448557,
+  "bearish_precision_min": 0.6799426557520996,
+  "resistance_exit_buffer": 0.9904190483680345,
+  "stop_loss": 0.07088002892080304,
+  "profit_target": 0.2193780124674417,
+  "max_hold_bars": 28,
+  "risk_percent": 0.2804296452039406
+}

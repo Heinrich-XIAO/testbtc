@@ -1,0 +1,19 @@
+{
+  "sr_lookback": 55,
+  "stoch_k_period": 14,
+  "stoch_oversold": 16,
+  "support_buffer": 0.014441106203539285,
+  "short_momentum_window": 2,
+  "long_momentum_window": 27,
+  "short_norm_window": 10,
+  "long_norm_window": 32,
+  "short_phase_gain": 0.3480344479041664,
+  "long_phase_gain": 0.16043808818804287,
+  "phase_step_limit": 0.6741236440871585,
+  "interference_entry_threshold": 1.0188243655538076,
+  "destructive_exit_threshold": 0.8686823721580821,
+  "stop_loss": 0.07597008706855626,
+  "profit_target": 0.19517848388088405,
+  "max_hold_bars": 32,
+  "risk_percent": 0.3
+}

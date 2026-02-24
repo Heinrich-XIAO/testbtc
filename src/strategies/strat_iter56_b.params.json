@@ -1,0 +1,22 @@
+{
+  "sr_lookback": 55,
+  "support_buffer": 0.015907971713499038,
+  "support_touch_lookback": 10,
+  "support_hold_bars": 5,
+  "support_break_tolerance": 0.009338777596994962,
+  "support_reclaim_buffer": 0.00484616890687693,
+  "state_persistence": 0.8861593111926896,
+  "posterior_blend": 0.6279596786982256,
+  "volatility_window": 10,
+  "sigma_floor": 0.005938073432138301,
+  "bull_drift": 0.002333038337565445,
+  "bear_drift": 0.0018148286091796495,
+  "likelihood_ratio_gain": 1.6164526472516538,
+  "entry_posterior_threshold": 0.5680870876424641,
+  "defensive_posterior_threshold": 0.41022873106411967,
+  "resistance_exit_buffer": 0.9868774278756008,
+  "stop_loss": 0.08087012733924694,
+  "profit_target": 0.19807853054039437,
+  "max_hold_bars": 32,
+  "risk_percent": 0.2920124071857034
+}

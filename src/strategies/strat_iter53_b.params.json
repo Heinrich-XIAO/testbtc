@@ -1,0 +1,21 @@
+{
+  "sr_lookback": 55,
+  "stoch_k_period": 14,
+  "oversold_full_score_k": 12,
+  "oversold_zero_score_k": 18,
+  "support_full_score_dist": 0.004892863626335758,
+  "support_zero_score_dist": 0.02323113898227609,
+  "momentum_lookback": 7,
+  "momentum_min_return": -0.0058720371040847695,
+  "momentum_max_return": 0.007953660523844205,
+  "stoch_recovery_min": -3,
+  "stoch_recovery_max": 9,
+  "fuzzy_and_weight": 0.45594793638125236,
+  "fuzzy_or_weight": 0.5076828846681742,
+  "fuzzy_entry_threshold": 0.5378585352260083,
+  "fuzzy_exit_threshold": 0.21750972399156104,
+  "stop_loss": 0.07013548058804975,
+  "profit_target": 0.21521015544102606,
+  "max_hold_bars": 32,
+  "risk_percent": 0.2027990092316534
+}

@@ -1,0 +1,17 @@
+{
+  "sr_lookback": 45,
+  "support_buffer": 0.0239505462744561,
+  "support_hold_buffer": 0.006740011499484094,
+  "transition_lookback": 40,
+  "state_up_threshold": 0.005358030695161519,
+  "state_down_threshold": 0.0034488421124061197,
+  "min_transition_samples": 16,
+  "utility_positive_threshold": 0.0034235513963152965,
+  "utility_negative_threshold": -0.002382753808479853,
+  "downside_penalty": 1.153467079231611,
+  "resistance_exit_buffer": 0.9789799161768895,
+  "stop_loss": 0.09727190457132137,
+  "profit_target": 0.18241075444187385,
+  "max_hold_bars": 32,
+  "risk_percent": 0.29763820547545583
+}
