@@ -1,0 +1,12 @@
+{
+  "sr_lookback": 50,
+  "vwap_lookback": 16,
+  "deviation_threshold": 0.012910428079101154,
+  "reclaim_buffer": 0.004739413092349448,
+  "stoch_k_period": 16,
+  "stoch_oversold": 18,
+  "stop_loss": 0.08455280949643731,
+  "profit_target": 0.1845648319527132,
+  "max_hold_bars": 32,
+  "risk_percent": 0.2622746369706666
+}

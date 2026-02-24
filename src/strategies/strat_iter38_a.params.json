@@ -1,0 +1,11 @@
+{
+  "sr_lookback": 50,
+  "rsi_period": 12,
+  "rsi_percentile_lookback": 70,
+  "rsi_percentile_entry": 20,
+  "support_buffer": 0.01918671918844636,
+  "stop_loss": 0.07724048926613974,
+  "profit_target": 0.18707477660071786,
+  "max_hold_bars": 20,
+  "risk_percent": 0.29620736572759887
+}

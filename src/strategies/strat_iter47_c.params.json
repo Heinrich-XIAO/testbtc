@@ -1,0 +1,12 @@
+{
+  "sr_lookback": 45,
+  "stoch_k_period": 12,
+  "stoch_trigger": 20,
+  "dwell_bars": 5,
+  "support_band": 0.023389379848334953,
+  "breakout_buffer": 0.008741913525124897,
+  "stop_loss": 0.08444723536482333,
+  "profit_target": 0.17541607579928614,
+  "max_hold_bars": 24,
+  "risk_percent": 0.29271585002565903
+}

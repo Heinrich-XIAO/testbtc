@@ -86,27 +86,34 @@ Iterations should follow a logical progression:
 
 ## Protocol
 
-1. **Ideation**: Main agent generates 3 distinct strategy ideas/concepts to explore
-2. **Assignment**: Each of 3 subagents receives a unique strategy concept to implement
-3. **Implementation**: Each subagent independently implements their assigned strategy with fundamentally sound logic
-4. **Test**: All 3 strategies are tested via backtest
-5. **Document**: Main agent compiles results into `ITERATION_xx.md` with strict markdown structure
-6. **Completion**: Only stop iterations after all 3 strategies have been implemented and documented
+1. **Ideation**: Main agent generates 3 DISTINCT new strategy LOGICS to explore
+2. **ASSIGNMENT**: ALL 3 subagents start work SIMULTANEOUSLY (same message)
+3. **Implementation**: Each subagent implements their strategy with FUNDAMENTALLY DIFFERENT logic
+4. **Optimization**: The optimization script tunes parameters (NOT the subagent's job)
+5. **Test**: All 3 strategies are tested via backtest on both datasets
+6. **Document**: Main agent compiles results into `ITERATION_xx.md`
+7. **Completion**: Only stop iterations after all 3 strategies have been tested
+
+**WARNING TO SUBAGENTS:** All 3 strategies in a single iteration MUST start and run in parallel. Do NOT run them sequentially. The main agent must also briefly explain how the optimization script works so each subagent knows how their logic will be tuned.
 
 ### What "New Strategy" Means
 
 **Creating a new strategy means CHANGING THE LOGIC, not tweaking parameters.**
 
 Examples of valid "new strategy" changes:
-- **Adding conditions**: "Only enter if volume > average" or "Skip trades where spread is too wide"
+- **Adding NEW conditions**: "Only enter if volume > average" or "Skip trades where spread is too wide"
 - **Removing conditions**: "Remove the trend filter" or "Drop the momentum requirement"
-- **Changing entry/exit logic**: "Exit on RSI overbought instead of profit target" or "Add trailing stop"
+- **Changing exit logic**: "Exit on RSI overbought instead of profit target" or "Add trailing stop"
+- **Different indicators**: Use RSI instead of Stochastic, or MACD instead of MA
 - **Complete rewrites**: If a strategy is hopeless, create something fundamentally different
 
-**NOT valid (parameter tweaking):**
+**NEVER repeat the same logic with slightly different parameters - that is the optimization script's job.**
+
+**NOT valid (these get optimized automatically):**
 - Changing `stop_loss` from 0.08 to 0.06
 - Changing `risk_percent` from 0.30 to 0.45
 - Changing `lookback` from 18 to 36
+- Testing lookback 50, then 51, then 52 (all same logic!)
 
 ## Fundamentally Good Strategy Principles
 

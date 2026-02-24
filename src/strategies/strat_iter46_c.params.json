@@ -1,0 +1,12 @@
+{
+  "sr_lookback": 45,
+  "stoch_k_period": 16,
+  "wick_body_ratio_min": 1.115527187463677,
+  "reclaim_buffer": 0.006457458460163491,
+  "close_location_min": 0.7358033290201564,
+  "support_sweep_buffer": 0.003315074613420859,
+  "stop_loss": 0.060959191493829876,
+  "profit_target": 0.1753106876990157,
+  "max_hold_bars": 28,
+  "risk_percent": 0.20385698586811435
+}

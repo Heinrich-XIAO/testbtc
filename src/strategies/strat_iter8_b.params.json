@@ -1,0 +1,12 @@
+{
+  "stoch_k_period": 14,
+  "stoch_oversold": 18,
+  "stoch_overbought": 86,
+  "support_threshold": 0.03,
+  "resistance_threshold": 0.9873593144437649,
+  "stop_loss": 0.09727491618309621,
+  "profit_target": 0.18,
+  "max_hold_bars": 24,
+  "risk_percent": 0.20131667355418031,
+  "sr_lookback": 60
+}

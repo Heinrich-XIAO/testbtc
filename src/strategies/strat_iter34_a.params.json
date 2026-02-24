@@ -1,0 +1,13 @@
+{
+  "donchian_breakout_lookback": 12,
+  "donchian_resistance_lookback": 50,
+  "breakout_buffer": 0.006774506933773716,
+  "retest_tolerance": 0.0050244448694804645,
+  "retest_window_bars": 9,
+  "breakout_fail_pct": 0.015124704697417503,
+  "resistance_threshold": 0.9634944812766724,
+  "stop_loss": 0.09373594260729629,
+  "profit_target": 0.19581912467732013,
+  "max_hold_bars": 36,
+  "risk_percent": 0.2823693676107959
+}

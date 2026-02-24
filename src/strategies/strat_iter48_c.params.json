@@ -1,0 +1,11 @@
+{
+  "sr_lookback": 55,
+  "z_lookback": 32,
+  "z_entry": -1.3372679753993735,
+  "z_release": 0.12012339760993107,
+  "stoch_k_period": 16,
+  "stop_loss": 0.07082858634807507,
+  "profit_target": 0.18968763831226035,
+  "max_hold_bars": 32,
+  "risk_percent": 0.22640292823897296
+}

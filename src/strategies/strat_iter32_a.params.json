@@ -1,0 +1,14 @@
+{
+  "stoch_k_period": 18,
+  "stoch_d_period": 4,
+  "stoch_oversold": 14,
+  "support_threshold": 0.01636362610839141,
+  "resistance_threshold": 0.9673482829287757,
+  "atr_period": 14,
+  "atr_regime_threshold": 0.03498354035932049,
+  "stop_loss": 0.07671295058858862,
+  "profit_target": 0.17398894833996012,
+  "max_hold_bars": 40,
+  "risk_percent": 0.2797272157685015,
+  "sr_lookback": 40
+}

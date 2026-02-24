@@ -1,0 +1,18 @@
+{
+  "stoch_k_period": 16,
+  "stoch_d_period": 4,
+  "stoch_oversold": 22,
+  "support_threshold": 0.01480436660672791,
+  "resistance_threshold": 0.9659098488939812,
+  "stop_loss": 0.08526249710076446,
+  "profit_target": 0.20936753582628823,
+  "max_hold_bars": 28,
+  "risk_percent": 0.24951263040200927,
+  "sr_lookback": 50,
+  "contraction_lookback": 12,
+  "baseline_lookback": 24,
+  "contraction_ratio_threshold": 0.510020868688772,
+  "breakout_buffer": 0.005465489419994836,
+  "expansion_check_bars": 3,
+  "expansion_factor": 1.4786089687006634
+}

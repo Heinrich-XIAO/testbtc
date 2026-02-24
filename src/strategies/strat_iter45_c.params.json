@@ -1,0 +1,10 @@
+{
+  "sr_lookback": 45,
+  "stoch_k_period": 14,
+  "shock_threshold": 0.030591480307917314,
+  "setup_window": 3,
+  "stop_loss": 0.07101294580395569,
+  "profit_target": 0.18009150532431273,
+  "max_hold_bars": 32,
+  "risk_percent": 0.2616540764238757
+}

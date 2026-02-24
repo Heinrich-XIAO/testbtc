@@ -1,0 +1,11 @@
+{
+  "sr_lookback": 45,
+  "stoch_k_period": 14,
+  "divergence_window": 9,
+  "min_price_break": 0.005850254638632506,
+  "min_stoch_lift": 5,
+  "stop_loss": 0.06168024085847157,
+  "profit_target": 0.17309905854401403,
+  "max_hold_bars": 32,
+  "risk_percent": 0.2572781052772943
+}

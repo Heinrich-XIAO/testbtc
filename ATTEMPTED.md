@@ -1,5 +1,263 @@
 # ATTEMPTED.md
 
+## Iteration 50 Results
+
+### strat_iter50_a: Under-support Reclaim v2 - FAILED (no trades)
+- Small: +0.00% (0 trades), Large: +0.00% (0 trades)
+- Verdict: Under-support dwell/reclaim constraints were too restrictive.
+
+### strat_iter50_b: Narrow Range Impulse - FAILED (no trades)
+- Small: +0.00% (0 trades), Large: +0.00% (0 trades)
+- Verdict: Compression + impulse trigger did not fire on either dataset.
+
+### strat_iter50_c: Pressure Flip Reversal - FAILED (no trades)
+- Small: +0.00% (0 trades), Large: +0.00% (0 trades)
+- Verdict: Pressure-flip setup did not generate entries.
+
+## Iteration 49 Results
+
+### strat_iter49_b: Distance-scaled Target v2 - SUCCESS ⭐ WINNER
+- Small: +25.75% (344 trades), Large: +39.99% (6571 trades)
+- Verdict: Passes winner criteria (positive both, large >= small, >15 small trades).
+
+### strat_iter49_c: Dual Support Alignment - SUCCESS
+- Small: +27.37% (343 trades), Large: +38.22% (6748 trades)
+- Verdict: Valid robust strategy, slightly below winner on large return.
+
+### strat_iter49_a: Loss-cluster Higher-low Reversal - FAILED (overfit rule)
+- Small: +10.43% (16 trades), Large: +6.17% (334 trades)
+- Verdict: Positive on both, but fails winner rule because large < small.
+
+## Iteration 48 Results
+
+### strat_iter48_b: ATR-normalized Discount Reversion - FAILED (overfit rule)
+- Small: +28.43% (97 trades), Large: +28.04% (2001 trades)
+- Verdict: Near-robust but fails winner rule because large < small.
+
+### strat_iter48_a: Percentile Shock Snapback - FAILED (no trades)
+- Small: +0.00% (0 trades), Large: +0.00% (0 trades)
+- Verdict: Shock arm + rebound release was too restrictive.
+
+### strat_iter48_c: Z-score Release Reversal - FAILED (no trades)
+- Small: +0.00% (0 trades), Large: +0.00% (0 trades)
+- Verdict: Z-score release logic did not trigger entries.
+
+## Iteration 47 Results
+
+### strat_iter47_b: Stochastic Velocity Burst - SUCCESS ⭐ WINNER
+- Small: +17.19% (341 trades), Large: +28.74% (6156 trades)
+- Verdict: Passes winner criteria (positive both, large >= small, >15 small trades).
+
+### strat_iter47_c: Support Dwell Breakout - FAILED (overfit rule)
+- Small: +108.13% (403 trades), Large: +11.27% (6402 trades)
+- Verdict: Positive on both, but fails winner rule because large < small.
+
+### strat_iter47_a: EMA Inflection Reclaim - FAILED
+- Small: +16.81% (91 trades), Large: -2.47% (1746 trades)
+- Verdict: Negative validation return on large dataset.
+
+## Iteration 46 Results
+
+### strat_iter46_b: Downside Exhaustion Ladder - FAILED (insufficient trades)
+- Small: +5.43% (8 trades), Large: +12.65% (148 trades)
+- Verdict: Positive on both and large >= small, but fails minimum 15-trade requirement on small dataset.
+
+### strat_iter46_a: Squeeze Release Support Reversion - FAILED (no trades)
+- Small: +0.00% (0 trades), Large: +0.00% (0 trades)
+- Verdict: Squeeze + release gating was too restrictive.
+
+### strat_iter46_c: Wick Reclaim Strength - FAILED (no trades)
+- Small: +0.00% (0 trades), Large: +0.00% (0 trades)
+- Verdict: Wick/reclaim stack produced no entries.
+
+## Iteration 45 Results
+
+### strat_iter45_a: Choppiness-gated Mean Reversion - SUCCESS ⭐ WINNER
+- Small: +9.17% (26 trades), Large: +39.00% (911 trades)
+- Verdict: Passes winner criteria (positive both, large >= small, >15 small trades).
+
+### strat_iter45_b: Oversold Persistence Release - SUCCESS
+- Small: +20.23% (325 trades), Large: +31.84% (4971 trades)
+- Verdict: Valid robust strategy, below winner by large-return ranking.
+
+### strat_iter45_c: Shock Reversal Inside Bar - FAILED (no trades)
+- Small: +0.00% (0 trades), Large: +0.00% (0 trades)
+- Verdict: Setup is too restrictive and produces no entries.
+
+## Iteration 44 Results
+
+### strat_iter44_c: Half-life Stop Tightening - SUCCESS ⭐ WINNER
+- Small: +17.73% (371 trades), Large: +32.75% (7198 trades)
+- Verdict: Passes winner criteria and leads iteration on large validation return.
+
+### strat_iter44_b: Loss-streak Adaptive Cooldown - SUCCESS
+- Small: +23.25% (387 trades), Large: +25.42% (7371 trades)
+- Verdict: Valid robust strategy, below winner by large-return ranking.
+
+### strat_iter44_a: Range-regime Hybrid - FAILED (overfit rule)
+- Small: +61.26% (389 trades), Large: +35.32% (7207 trades)
+- Verdict: Positive on both, but fails winner rule because large < small.
+
+## Iteration 43 Results
+
+### strat_iter43_a: ATR Expansion Kickoff - FAILED (overfit rule)
+- Small: +23.72% (87 trades), Large: +19.89% (2219 trades)
+- Verdict: Positive on both, but fails winner rule because large < small.
+
+### strat_iter43_b: Divergence Proxy - FAILED (no trades)
+- Small: +0.00% (0 trades), Large: +0.00% (0 trades)
+- Verdict: Entry conditions are too restrictive.
+
+### strat_iter43_c: Under-support Reclaim Duration - FAILED (no trades)
+- Small: +0.00% (0 trades), Large: +0.00% (0 trades)
+- Verdict: Reclaim duration logic did not trigger on either dataset.
+
+## Iteration 42 Results
+
+### strat_iter42_a: Rising Support Staircase - SUCCESS ⭐ WINNER
+- Small: +3.01% (20 trades), Large: +21.06% (854 trades)
+- Verdict: Passes winner criteria and is the only fully valid strategy in this iteration.
+
+### strat_iter42_b: Z-score + Support Holds - FAILED (overfit rule)
+- Small: +70.46% (225 trades), Large: +27.46% (3829 trades)
+- Verdict: Strong on both but fails winner rule because large < small.
+
+### strat_iter42_c: EMA Pullback Continuation - FAILED (no trades)
+- Small: +0.00% (0 trades), Large: +0.00% (0 trades)
+- Verdict: Multi-stage continuation setup produced no entries.
+
+## Iteration 41 Results
+
+### strat_iter41_c: Distance-scaled Target - SUCCESS ⭐ WINNER
+- Small: +30.94% (83 trades), Large: +34.49% (1876 trades)
+- Verdict: Passes winner criteria with large >= small and sufficient trades.
+
+### strat_iter41_a: Support Compression Breakout - FAILED (no trades)
+- Small: +0.00% (0 trades), Large: +0.00% (0 trades)
+- Verdict: Compression + breakout filters were too restrictive.
+
+### strat_iter41_b: Liquidity Sweep Reclaim - FAILED (no trades)
+- Small: +0.00% (0 trades), Large: +0.00% (0 trades)
+- Verdict: Sweep/reclaim constraints prevented entries.
+
+## Iteration 40 Results
+
+### strat_iter40_c: Range-normalized Momentum - FAILED (overfit rule)
+- Small: +19.61% (119 trades), Large: +12.35% (3006 trades)
+- Verdict: Positive on both, but fails winner rule because large < small.
+
+### strat_iter40_a: Multi-bar Confirmation Score - FAILED (overfit rule)
+- Small: +22.20% (112 trades), Large: +0.25% (2321 trades)
+- Verdict: Validation collapses vs small dataset.
+
+### strat_iter40_b: MACD Zero-line Retest - FAILED
+- Small: +1.42% (146 trades), Large: -12.99% (3322 trades)
+- Verdict: Negative validation return.
+
+## Iteration 39 Results
+
+### strat_iter39_b: Dynamic Resistance Threshold by Volatility - SUCCESS ⭐ WINNER
+- Small: +35.94% (334 trades), Large: +46.19% (6104 trades)
+- Verdict: Passes winner criteria (positive both, large >= small, >15 small trades).
+
+### strat_iter39_a: Time-decay Profit Target - SUCCESS
+- Small: +20.74% (351 trades), Large: +44.33% (6850 trades)
+- Verdict: Valid robust strategy, below winner by large-return ranking.
+
+### strat_iter39_c: Position Cooldown After Stopout - SUCCESS
+- Small: +19.44% (363 trades), Large: +33.58% (7109 trades)
+- Verdict: Valid robust strategy, below winner by large-return ranking.
+
+## Iteration 38 Results
+
+### strat_iter38_a: RSI Percentile Regime - FAILED (overfit rule)
+- Small: +462.75% (1283 trades), Large: +247.38% (19356 trades)
+- Verdict: Strong absolute results but fails winner rule because large < small.
+
+### strat_iter38_b: Donchian Mean-Revert Hybrid - FAILED (overfit rule)
+- Small: +390.44% (2562 trades), Large: +156.62% (37999 trades)
+- Verdict: Positive on both, but fails winner rule because large < small.
+
+### strat_iter38_c: Two-stage Entry Confirmation - FAILED
+- Small: +48.71% (115 trades), Large: -7.05% (1860 trades)
+- Verdict: Negative validation return.
+
+## Iteration 37 Results
+
+### strat_iter37_a: ATR Trailing Stop Variant - FAILED (overfit rule)
+- Small: +32.74% (403 trades), Large: +19.95% (7901 trades)
+- Verdict: Positive on both, but fails winner rule because large < small.
+
+### strat_iter37_b: Support-age Weighting - FAILED
+- Small: +11.78% (785 trades), Large: -2.78% (12533 trades)
+- Verdict: Negative validation return.
+
+### strat_iter37_c: Failed Breakout Fade - FAILED
+- Small: -22.73% (489 trades), Large: -10.80% (5014 trades)
+- Verdict: Negative on both datasets.
+
+## Iteration 36 Results
+
+### strat_iter36_c: Stochastic Hysteresis Bands - FAILED (overfit rule)
+- Small: +6.67% (352 trades), Large: +2.96% (6589 trades)
+- Verdict: Positive on both, but fails winner rule because large < small.
+
+### strat_iter36_a: VWAP Deviation Re-entry - FAILED (insufficient trades)
+- Small: +5.27% (8 trades), Large: +3.05% (160 trades)
+- Verdict: Fails minimum 15-trade requirement on small dataset.
+
+### strat_iter36_b: EMA Slope Regime Gate - FAILED (insufficient trades)
+- Small: +0.00% (4 trades), Large: +1.06% (118 trades)
+- Verdict: Fails minimum 15-trade requirement on small dataset.
+
+## Iteration 35 Results
+
+### Iter35 B: Break-even Stop Promotion - SUCCESS
+- **Logic**: Baseline stochastic support entry with standard exits (stop loss, profit target, resistance, max hold) plus dynamic break-even stop promotion after unrealized gain crosses a trigger.
+- **Result**:
+  - Small dataset (`data/test-data.bson`): +31.82% return, 348 trades, 39.4% win
+  - Large dataset (`data/test-data-15min-large.bson`): +36.37% return, 6479 trades, 38.9% win
+- **Verdict**: Passes iteration winner criteria (positive on both, large >= small, and >15 small-dataset trades).
+
+## Iteration 34 Results
+
+### Iter34 B: Z-Score Support Reversion - FAILED (overfit vs validation rule)
+- **Logic**: Enter on deep negative z-score (rolling mean/std) only when price is near support; exit at mean-reversion target, stop loss, or max hold.
+- **Result**:
+  - Small dataset (`data/test-data.bson`): +389.73% return, 700 trades, 29.6% win
+  - Large dataset (`data/test-data-15min-large.bson`): +303.80% return, 9229 trades, 32.3% win
+- **Verdict**: Positive on both datasets, but fails iteration winner rule because large return is lower than small return.
+
+### Iter34 A: Donchian Breakout Retest - FAILED (overfit vs validation rule)
+- **Logic**: Detect breakout above short Donchian high, then require pullback retest near the breakout level before long entry; exit on stop, profit target, Donchian resistance, or max hold.
+- **Result**:
+  - Small dataset (`data/test-data.bson`): +148.23% return, 300 trades, 39.3% win
+  - Large dataset (`data/test-data-15min-large.bson`): +51.21% return, 3747 trades, 39.4% win
+- **Verdict**: Positive on both datasets, but fails iteration winner rule because large return is lower than small return.
+
+## Iteration 24 Results (Lookback Variations)
+
+### iter24_a: Lookback 51 - SUCCESS
+- **Logic**: Stochastic + Support/Resistance with lookback 51, max_hold 32
+- **Result**:
+  - Small dataset: $226.07 (22.6%), 385 trades, 42.3% win
+  - Large dataset: $289.82 (29.0%), 7413 trades, 78.9% win
+- **Verdict**: Positive on both datasets, moderate returns
+
+### iter24_b: Lookback 52 - SUCCESS
+- **Logic**: Stochastic + Support/Resistance with lookback 52, max_hold 32
+- **Result**:
+  - Small dataset: $235.92 (23.6%), 383 trades, 42.3% win
+  - Large dataset: $253.79 (25.4%), 7408 trades, 78.6% win
+- **Verdict**: Positive on both datasets, moderate returns
+
+### iter24_c: Lookback 50 - SUCCESS ⭐ WINNER
+- **Logic**: Stochastic + Support/Resistance with lookback 50, max_hold 32
+- **Result**:
+  - Small dataset: $232.23 (23.2%), 393 trades, 42.0% win
+  - Large dataset: $464.63 (46.5%), 7522 trades, 79.3% win
+- **Verdict**: Highest large dataset return among the three, positive on both
+
 ## Iteration 26 Results (New Strategy Variants)
 
 ### 385: Support Retest (double bottom) - SUCCESS ⭐ NEW WINNER

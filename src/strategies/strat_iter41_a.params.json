@@ -1,0 +1,13 @@
+{
+  "sr_lookback": 45,
+  "stoch_k_period": 12,
+  "stoch_oversold": 16,
+  "compression_window": 7,
+  "compression_ratio_max": 0.8194311866877337,
+  "support_buffer": 0.009430626041224906,
+  "breakout_buffer": 0.0027060288761377015,
+  "stop_loss": 0.0974595812241053,
+  "profit_target": 0.17345663807213224,
+  "max_hold_bars": 28,
+  "risk_percent": 0.28187809652913876
+}

@@ -1,0 +1,11 @@
+{
+  "sr_lookback": 45,
+  "shock_window": 20,
+  "shock_pct_rank": 0.1790432320399159,
+  "arm_window": 8,
+  "support_buffer": 0.016995276737256294,
+  "stop_loss": 0.0685771536589292,
+  "profit_target": 0.20034735235033854,
+  "max_hold_bars": 28,
+  "risk_percent": 0.23089709741234976
+}

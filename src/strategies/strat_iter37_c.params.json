@@ -1,0 +1,12 @@
+{
+  "sr_lookback": 45,
+  "breakout_buffer": 0.002730139312085021,
+  "reclaim_buffer": 0.006813890163407156,
+  "fail_window": 9,
+  "stoch_k_period": 16,
+  "stoch_oversold": 14,
+  "stop_loss": 0.09530350060038044,
+  "profit_target": 0.2142759032665092,
+  "max_hold_bars": 24,
+  "risk_percent": 0.25297857008647057
+}

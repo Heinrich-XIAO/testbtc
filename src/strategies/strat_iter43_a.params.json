@@ -1,0 +1,12 @@
+{
+  "sr_lookback": 55,
+  "stoch_k_period": 16,
+  "stoch_oversold": 16,
+  "atr_short": 4,
+  "atr_long": 14,
+  "expansion_ratio": 1.108052563557006,
+  "stop_loss": 0.08506575907521541,
+  "profit_target": 0.20646388860173986,
+  "max_hold_bars": 28,
+  "risk_percent": 0.27598356669346386
+}

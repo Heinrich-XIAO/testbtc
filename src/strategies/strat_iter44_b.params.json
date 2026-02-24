@@ -1,0 +1,11 @@
+{
+  "sr_lookback": 55,
+  "stoch_k_period": 12,
+  "stoch_oversold": 18,
+  "cooldown_base": 5,
+  "cooldown_step": 4,
+  "stop_loss": 0.08918731079737446,
+  "profit_target": 0.21945736238274718,
+  "max_hold_bars": 28,
+  "risk_percent": 0.26217431446932304
+}

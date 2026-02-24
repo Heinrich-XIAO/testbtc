@@ -1,0 +1,11 @@
+{
+  "sr_lookback": 50,
+  "z_lookback": 36,
+  "z_entry_threshold": -0.6,
+  "hold_window": 6,
+  "min_support_holds": 2,
+  "stop_loss": 0.0835503418371187,
+  "profit_target": 0.2187223010236078,
+  "max_hold_bars": 24,
+  "risk_percent": 0.28815679537758676
+}

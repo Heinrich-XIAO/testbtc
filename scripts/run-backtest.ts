@@ -486,6 +486,581 @@ const strategies: Record<string, {
     getStrategy: (params) => new (require('../src/strategies/strat_stoch_baseline_03').StochBaseline03Strategy)(params),
     paramsFile: 'src/strategies/strat_stoch_baseline_03.params.json',
   },
+  'sr_stoch_02': {
+    name: 'SR Stoch 02',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_stoch_02').SrStoch02Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_stoch_02.params.json',
+  },
+  'sr_stoch_03': {
+    name: 'SR Stoch 03',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_stoch_03').SrStoch03Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_stoch_03.params.json',
+  },
+  'sr_stoch_01': {
+    name: 'SR Stoch 01',
+    getStrategy: (params) => new (require('../src/strategies/strat_sr_stoch_01').SrStoch01Strategy)(params),
+    paramsFile: 'src/strategies/strat_sr_stoch_01.params.json',
+  },
+  'strat_iter2_02': {
+    name: 'Iter2 02 - No Trend Filter',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter2_02').StratIter202Strategy)(params),
+    paramsFile: 'src/strategies/strat_iter2_02.params.json',
+  },
+  'iter2_03': {
+    name: 'Iter2 03 - Wider Lookback 60',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter2_03').StratIter203Strategy)(params),
+    paramsFile: 'src/strategies/strat_iter2_03.params.json',
+  },
+  'iter2_01': {
+    name: 'Iter2 01 - Momentum + Tight Stoch',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter2_01').StratIter201Strategy)(params),
+    paramsFile: 'src/strategies/strat_iter2_01.params.json',
+  },
+  'iter4_a': {
+    name: 'Iter4 A - Lookback 70',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter4_a').StratIter4AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter4_a.params.json',
+  },
+  'iter4_b': {
+    name: 'Iter4 B - Higher Profit Target',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter4_b').StratIter4BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter4_b.params.json',
+  },
+  'iter4_c': {
+    name: 'Iter4 C - Exit at Resistance',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter4_c').StratIter4CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter4_c.params.json',
+  },
+  'iter5_b': {
+    name: 'Iter5 B - Tight Stochastic + PT 18%',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter5_b').StratIter5BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter5_b.params.json',
+  },
+  'iter5_c': {
+    name: 'Iter5 C - Lookback 50 + PT 18%',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter5_c').StratIter5CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter5_c.params.json',
+  },
+  'iter6_a': {
+    name: 'Iter6 A - Lower Risk 20%',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter6_a').StratIter6AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter6_a.params.json',
+  },
+  'iter6_b': {
+    name: 'Iter6 B - Wider Stop 10%',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter6_b').StratIter6BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter6_b.params.json',
+  },
+  'iter6_c': {
+    name: 'Iter6 C - Tight Overbought 86',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter6_c').StratIter6CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter6_c.params.json',
+  },
+  'iter7_a': {
+    name: 'Iter7 A - Support Retest',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter7_a').StratIter7AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter7_a.params.json',
+  },
+  'iter7_b': {
+    name: 'Iter7 B - No Trend Filter',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter7_b').StratIter7BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter7_b.params.json',
+  },
+  'iter7_c': {
+    name: 'Iter7 C - Simple Exit',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter7_c').StratIter7CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter7_c.params.json',
+  },
+  'iter8_a': {
+    name: 'Iter8 A - No Overbought Exit',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter8_a').StratIter8AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter8_a.params.json',
+  },
+  'iter8_b': {
+    name: 'Iter8 B - Wider Lookback',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter8_b').StratIter8BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter8_b.params.json',
+  },
+  'iter8_c': {
+    name: 'Iter8 C - Momentum Filter',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter8_c').StratIter8CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter8_c.params.json',
+  },
+  'iter9_a': {
+    name: 'Iter9 A - No Overbought Exit',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter9_a').StratIter9AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter9_a.params.json',
+  },
+  'iter9_b': {
+    name: 'Iter9 B - K/D Crossover',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter9_b').StratIter9BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter9_b.params.json',
+  },
+  'iter9_c': {
+    name: 'Iter9 C - Tight Support',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter9_c').StratIter9CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter9_c.params.json',
+  },
+  'iter11_c': {
+    name: 'Iter11 C - Lookback 45',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter11_c').StratIter11CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter11_c.params.json',
+  },
+  'iter14_c': {
+    name: 'Iter14 C - Lookback 48',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter14_c').StratIter14CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter14_c.params.json',
+  },
+  'iter15_a': {
+    name: 'Iter15 A - Lookback 51',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter15_a').StratIter15AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter15_a.params.json',
+  },
+  'iter15_b': {
+    name: 'Iter15 B - Lookback 53',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter15_b').StratIter15BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter15_b.params.json',
+  },
+  'iter15_c': {
+    name: 'Iter15 C - Lookback 49',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter15_c').StratIter15CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter15_c.params.json',
+  },
+  'iter16_a': {
+    name: 'Iter16 A - Lookback 51, PT 0.16',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter16_a').StratIter16AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter16_a.params.json',
+  },
+  'iter16_b': {
+    name: 'Iter16 B - Lookback 51, PT 0.14',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter16_b').StratIter16BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter16_b.params.json',
+  },
+  'iter16_c': {
+    name: 'Iter16 C - Lookback 51, No PT',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter16_c').StratIter16CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter16_c.params.json',
+  },
+  'iter17_a': {
+    name: 'Iter17 A - Tighter Stoch 14',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter17_a').StratIter17AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter17_a.params.json',
+  },
+  'iter17_c': {
+    name: 'Iter17 C - Max Hold 24',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter17_c').StratIter17CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter17_c.params.json',
+  },
+  'iter18_a': {
+    name: 'Iter18 A - Risk 0.20',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter18_a').StratIter18AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter18_a.params.json',
+  },
+  'iter18_b': {
+    name: 'Iter18 B - Risk 0.30',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter18_b').StratIter18BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter18_b.params.json',
+  },
+  'iter18_c': {
+    name: 'Iter18 C - Stop Loss 0.10',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter18_c').StratIter18CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter18_c.params.json',
+  },
+  'iter19_c': {
+    name: 'Iter19 C - Resistance 0.95',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter19_c').StratIter19CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter19_c.params.json',
+  },
+  'iter20_a': {
+    name: 'Iter20 A - Max Hold 32',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter20_a').StratIter20AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter20_a.params.json',
+  },
+  'iter20_b': {
+    name: 'Iter20 B - Max Hold 15',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter20_b').StratIter20BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter20_b.params.json',
+  },
+  'iter20_c': {
+    name: 'Iter20 C - Tighter Stochastic',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter20_c').StratIter20CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter20_c.params.json',
+  },
+  'iter21_a': {
+    name: 'Iter21 A - Max Hold 36',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter21_a').StratIter21AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter21_a.params.json',
+  },
+  'iter21_b': {
+    name: 'Iter21 B - Max Hold 32',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter21_b').StratIter21BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter21_b.params.json',
+  },
+  'iter21_c': {
+    name: 'Iter21 C - Profit Target 0.16',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter21_c').StratIter21CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter21_c.params.json',
+  },
+  'iter22_a': {
+    name: 'Iter22 A - Lookback 52',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter22_a').StratIter22AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter22_a.params.json',
+  },
+  'iter23_a': {
+    name: 'Iter23 A - Stoch Period 18',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter23_a').StratIter23AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter23_a.params.json',
+  },
+  'iter23_b': {
+    name: 'Iter23 B - Stoch Period 10',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter23_b').StratIter23BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter23_b.params.json',
+  },
+  'iter24_a': {
+    name: 'Iter24 A - Lookback 51',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter24_a').StratIter24AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter24_a.params.json',
+  },
+  'iter24_b': {
+    name: 'Iter24 B - Lookback 52',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter24_b').StratIter24BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter24_b.params.json',
+  },
+  'iter24_c': {
+    name: 'Iter24 C - Lookback 50',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter24_c').StratIter24CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter24_c.params.json',
+  },
+  'iter25_a': {
+    name: 'Iter25 A - Lookback 48',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter25_a').StratIter25AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter25_a.params.json',
+  },
+  'iter25_b': {
+    name: 'Iter25 B - Lookback 55',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter25_b').StratIter25BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter25_b.params.json',
+  },
+  'iter25_c': {
+    name: 'Iter25 C - Lookback 50',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter25_c').StratIter25CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter25_c.params.json',
+  },
+  'strat_iter30_a': {
+    name: 'Iter30 A - Volume Confirmation',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter30_a').StratIter30AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter30_a.params.json',
+  },
+  'strat_iter30_b': {
+    name: 'Iter30 B - RSI Filter',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter30_b').StratIter30BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter30_b.params.json',
+  },
+  'strat_iter30_c': {
+    name: 'Iter30 C - Trailing Stop Exit',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter30_c').StratIter30CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter30_c.params.json',
+  },
+  'strat_iter31_a': {
+    name: 'Iter31 A - MACD Entry',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter31_a').StratIter31AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter31_a.params.json',
+  },
+  'strat_iter31_b': {
+    name: 'Iter31 B - Bollinger Entry',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter31_b').StratIter31BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter31_b.params.json',
+  },
+  'strat_iter31_c': {
+    name: 'Iter31 C - Mean Reversion',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter31_c').StratIter31CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter31_c.params.json',
+  },
+  'strat_iter32_a': {
+    name: 'Iter32 A - ATR Regime + Stoch Support',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter32_a').StratIter32AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter32_a.params.json',
+  },
+  'strat_iter32_b': {
+    name: 'Iter32 B - RSI Divergence Proxy',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter32_b').StratIter32BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter32_b.params.json',
+  },
+  'strat_iter32_c': {
+    name: 'Iter32 C - MACD Histogram Acceleration',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter32_c').StratIter32CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter32_c.params.json',
+  },
+  'strat_iter33_a': {
+    name: 'Iter33 A - False Breakdown Reclaim',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter33_a').StratIter33AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter33_a.params.json',
+  },
+  'strat_iter33_b': {
+    name: 'Iter33 B - Stoch Support + Range Filter',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter33_b').StratIter33BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter33_b.params.json',
+  },
+  'strat_iter33_c': {
+    name: 'Iter33 C - RSI Regime-Switch Exit',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter33_c').StratIter33CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter33_c.params.json',
+  },
+  'strat_iter34_a': {
+    name: 'Iter34 A - Donchian Breakout Retest',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter34_a').StratIter34AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter34_a.params.json',
+  },
+  'strat_iter34_c': {
+    name: 'Iter34 C - ROC Momentum Exhaustion Exit',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter34_c').StratIter34CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter34_c.params.json',
+  },
+  'strat_iter34_b': {
+    name: 'Iter34 B - Z-Score Support Reversion',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter34_b').StratIter34BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter34_b.params.json',
+  },
+  'strat_iter35_a': {
+    name: 'Iter35 A - Support Touch Count + Stoch Cross',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter35_a').StratIter35AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter35_a.params.json',
+  },
+  'strat_iter35_b': {
+    name: 'Iter35 B - Break-even Stop Promotion',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter35_b').StratIter35BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter35_b.params.json',
+  },
+  'strat_iter35_c': {
+    name: 'Iter35 C - Volatility Contraction Reclaim',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter35_c').StratIter35CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter35_c.params.json',
+  },
+  'strat_iter36_a': {
+    name: 'Iter36 A - VWAP Deviation Re-entry',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter36_a').StratIter36AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter36_a.params.json',
+  },
+  'strat_iter36_b': {
+    name: 'Iter36 B - EMA Slope Regime Gate',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter36_b').StratIter36BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter36_b.params.json',
+  },
+  'strat_iter36_c': {
+    name: 'Iter36 C - Stochastic Hysteresis Bands',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter36_c').StratIter36CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter36_c.params.json',
+  },
+  'strat_iter37_a': {
+    name: 'Iter37 A - ATR Trailing Stop Variant',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter37_a').StratIter37AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter37_a.params.json',
+  },
+  'strat_iter37_b': {
+    name: 'Iter37 B - Support Age Weighting',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter37_b').StratIter37BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter37_b.params.json',
+  },
+  'strat_iter37_c': {
+    name: 'Iter37 C - Failed Breakout Fade',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter37_c').StratIter37CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter37_c.params.json',
+  },
+  'strat_iter38_a': {
+    name: 'Iter38 A - RSI Percentile Regime',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter38_a').StratIter38AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter38_a.params.json',
+  },
+  'strat_iter38_b': {
+    name: 'Iter38 B - Donchian Mean Revert Hybrid',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter38_b').StratIter38BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter38_b.params.json',
+  },
+  'strat_iter38_c': {
+    name: 'Iter38 C - Two-Stage Confirmation',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter38_c').StratIter38CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter38_c.params.json',
+  },
+  'strat_iter39_a': {
+    name: 'Iter39 A - Time-decay Profit Target',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter39_a').StratIter39AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter39_a.params.json',
+  },
+  'strat_iter39_b': {
+    name: 'Iter39 B - Dynamic Volatility Resistance',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter39_b').StratIter39BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter39_b.params.json',
+  },
+  'strat_iter39_c': {
+    name: 'Iter39 C - Stopout Cooldown',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter39_c').StratIter39CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter39_c.params.json',
+  },
+  'strat_iter40_a': {
+    name: 'Iter40 A - Multi-bar Score Confirmation',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter40_a').StratIter40AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter40_a.params.json',
+  },
+  'strat_iter40_b': {
+    name: 'Iter40 B - MACD Zero-line Retest',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter40_b').StratIter40BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter40_b.params.json',
+  },
+  'strat_iter40_c': {
+    name: 'Iter40 C - Range-normalized Momentum',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter40_c').StratIter40CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter40_c.params.json',
+  },
+  'strat_iter41_a': {
+    name: 'Iter41 A - Support Compression Breakout',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter41_a').StratIter41AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter41_a.params.json',
+  },
+  'strat_iter41_b': {
+    name: 'Iter41 B - Liquidity Sweep Reclaim',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter41_b').StratIter41BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter41_b.params.json',
+  },
+  'strat_iter41_c': {
+    name: 'Iter41 C - Distance-scaled Target',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter41_c').StratIter41CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter41_c.params.json',
+  },
+  'strat_iter42_a': {
+    name: 'Iter42 A - Rising Support Staircase',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter42_a').StratIter42AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter42_a.params.json',
+  },
+  'strat_iter42_b': {
+    name: 'Iter42 B - Z-score Support Holds',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter42_b').StratIter42BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter42_b.params.json',
+  },
+  'strat_iter42_c': {
+    name: 'Iter42 C - EMA Pullback Continuation',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter42_c').StratIter42CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter42_c.params.json',
+  },
+  'strat_iter43_a': {
+    name: 'Iter43 A - ATR Expansion Kickoff',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter43_a').StratIter43AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter43_a.params.json',
+  },
+  'strat_iter43_b': {
+    name: 'Iter43 B - Divergence Proxy',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter43_b').StratIter43BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter43_b.params.json',
+  },
+  'strat_iter43_c': {
+    name: 'Iter43 C - Under-support Reclaim Duration',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter43_c').StratIter43CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter43_c.params.json',
+  },
+  'strat_iter44_a': {
+    name: 'Iter44 A - Range Regime Hybrid',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter44_a').StratIter44AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter44_a.params.json',
+  },
+  'strat_iter44_b': {
+    name: 'Iter44 B - Loss-streak Cooldown',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter44_b').StratIter44BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter44_b.params.json',
+  },
+  'strat_iter44_c': {
+    name: 'Iter44 C - Half-life Stop Tightening',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter44_c').StratIter44CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter44_c.params.json',
+  },
+  'strat_iter45_a': {
+    name: 'Iter45 A - Choppiness Mean Revert',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter45_a').StratIter45AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter45_a.params.json',
+  },
+  'strat_iter45_b': {
+    name: 'Iter45 B - Oversold Persistence Release',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter45_b').StratIter45BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter45_b.params.json',
+  },
+  'strat_iter45_c': {
+    name: 'Iter45 C - Shock Reversal Inside Bar',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter45_c').StratIter45CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter45_c.params.json',
+  },
+  'strat_iter46_a': {
+    name: 'Iter46 A - Squeeze Release Support Reversion',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter46_a').StratIter46AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter46_a.params.json',
+  },
+  'strat_iter46_b': {
+    name: 'Iter46 B - Downside Exhaustion Ladder',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter46_b').StratIter46BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter46_b.params.json',
+  },
+  'strat_iter46_c': {
+    name: 'Iter46 C - Wick Reclaim Strength',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter46_c').StratIter46CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter46_c.params.json',
+  },
+  'strat_iter47_a': {
+    name: 'Iter47 A - EMA Inflection Reclaim',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter47_a').StratIter47AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter47_a.params.json',
+  },
+  'strat_iter47_b': {
+    name: 'Iter47 B - Stochastic Velocity Burst',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter47_b').StratIter47BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter47_b.params.json',
+  },
+  'strat_iter47_c': {
+    name: 'Iter47 C - Support Dwell Breakout',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter47_c').StratIter47CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter47_c.params.json',
+  },
+  'strat_iter48_a': {
+    name: 'Iter48 A - Percentile Shock Snapback',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter48_a').StratIter48AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter48_a.params.json',
+  },
+  'strat_iter48_b': {
+    name: 'Iter48 B - ATR Discount Reversion',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter48_b').StratIter48BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter48_b.params.json',
+  },
+  'strat_iter48_c': {
+    name: 'Iter48 C - Z-score Release Reversal',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter48_c').StratIter48CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter48_c.params.json',
+  },
+  'strat_iter49_a': {
+    name: 'Iter49 A - Loss Cluster Higher-low',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter49_a').StratIter49AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter49_a.params.json',
+  },
+  'strat_iter49_b': {
+    name: 'Iter49 B - Distance-scaled Target v2',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter49_b').StratIter49BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter49_b.params.json',
+  },
+  'strat_iter49_c': {
+    name: 'Iter49 C - Dual Support Alignment',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter49_c').StratIter49CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter49_c.params.json',
+  },
+  'strat_iter50_a': {
+    name: 'Iter50 A - Under-support Reclaim v2',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter50_a').StratIter50AStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter50_a.params.json',
+  },
+  'strat_iter50_b': {
+    name: 'Iter50 B - Narrow Range Impulse',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter50_b').StratIter50BStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter50_b.params.json',
+  },
+  'strat_iter50_c': {
+    name: 'Iter50 C - Pressure Flip Reversal',
+    getStrategy: (params) => new (require('../src/strategies/strat_iter50_c').StratIter50CStrategy)(params),
+    paramsFile: 'src/strategies/strat_iter50_c.params.json',
+  },
 };
 
 async function runBacktest(
@@ -553,7 +1128,7 @@ const program = new Command();
 program
   .name('backtest')
   .description('Polymarket Backtest Runner')
-  .option('-s, --strategy <name>', 'Strategy to use (all, simple_ma, bollinger, rsi, breakout, ma_vol, support, momentum, range, mean_revert, dual_ma, strat_sr_no_trend_filter_302, strat_sr_no_trend_lookup_55_378, strat_sr_no_trend_combo_366, strat_sr_no_trend_combo_wide_380, strat_sr_no_trend_base_30_365, strat_sr_no_trend_late_exit_355, strat_sr_no_trend_slow_stoch_360, strat_sr_no_trend_tight_bounce_354, strat_sr_no_trend_adx_341, strat_sr_no_trend_vwap_338, strat_sr_no_trend_wider_bounce_327, strat_sr_no_trend_tight_stop_328, strat_sr_no_trend_volatility_316, strat_sr_no_trend_dynamic_trail_317, strat_sr_no_trend_no_momentum_315, strat_sr_no_trend_volume_313, strat_sr_no_trend_tight_stoch_324, strat_sr_no_trend_wide_res_370, strat_sr_no_trend_vol_6_374)', 'all')
+  .option('-s, --strategy <name>', 'Strategy to use (all, simple_ma, bollinger, rsi, breakout, ma_vol, support, momentum, range, mean_revert, dual_ma, strat_sr_no_trend_filter_302, strat_sr_no_trend_lookup_55_378, strat_sr_no_trend_combo_366, strat_sr_no_trend_combo_wide_380, strat_sr_no_trend_base_30_365, strat_sr_no_trend_late_exit_355, strat_sr_no_trend_slow_stoch_360, strat_sr_no_trend_tight_bounce_354, strat_sr_no_trend_adx_341, strat_sr_no_trend_vwap_338, strat_sr_no_trend_wider_bounce_327, strat_sr_no_trend_tight_stop_328, strat_sr_no_trend_volatility_316, strat_sr_no_trend_dynamic_trail_317, strat_sr_no_trend_no_momentum_315, strat_sr_no_trend_volume_313, strat_sr_no_trend_tight_stoch_324, strat_sr_no_trend_wide_res_370, strat_sr_no_trend_vol_6_374, strat_iter34_a, strat_iter34_c, strat_iter34_b, strat_iter35_a, strat_iter35_b, strat_iter35_c)', 'all')
   .option('-d, --data <file>', 'Data file path', DEFAULT_DATA_FILE)
   .option('-c, --capital <number>', 'Initial capital in USD', '1000')
   .option('-f, --fee <percent>', 'Fee rate as percentage', '0')

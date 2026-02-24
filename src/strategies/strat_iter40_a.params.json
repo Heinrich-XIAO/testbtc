@@ -1,0 +1,11 @@
+{
+  "sr_lookback": 50,
+  "stoch_k_period": 16,
+  "stoch_oversold": 16,
+  "momentum_lookback": 2,
+  "score_threshold": 4,
+  "stop_loss": 0.09870750489477165,
+  "profit_target": 0.1967671578920074,
+  "max_hold_bars": 28,
+  "risk_percent": 0.2872441100139015
+}

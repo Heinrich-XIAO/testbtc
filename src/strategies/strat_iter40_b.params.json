@@ -1,0 +1,11 @@
+{
+  "sr_lookback": 45,
+  "macd_fast": 10,
+  "macd_slow": 20,
+  "macd_signal": 10,
+  "zero_retest_band": 0.009130999371173024,
+  "stop_loss": 0.08890695253358222,
+  "profit_target": 0.152619980756796,
+  "max_hold_bars": 32,
+  "risk_percent": 0.204396337394404
+}

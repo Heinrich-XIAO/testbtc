@@ -1,0 +1,14 @@
+{
+  "sr_lookback": 55,
+  "stoch_k_period": 14,
+  "stoch_oversold": 16,
+  "short_range_window": 8,
+  "long_range_window": 24,
+  "squeeze_ratio_max": 0.5641986048120747,
+  "release_range_ratio_min": 1.522909731066354,
+  "support_buffer": 0.022567037911653317,
+  "stop_loss": 0.08236057242456532,
+  "profit_target": 0.17742254141919658,
+  "max_hold_bars": 28,
+  "risk_percent": 0.2939718401071569
+}

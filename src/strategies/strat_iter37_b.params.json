@@ -1,0 +1,13 @@
+{
+  "sr_lookback": 55,
+  "support_touch_threshold": 0.01694131194867848,
+  "max_touch_age": 16,
+  "age_decay_bars": 4,
+  "weighted_min_score": 0.5516728944898674,
+  "stoch_k_period": 14,
+  "stoch_oversold": 16,
+  "stop_loss": 0.08848890168055089,
+  "profit_target": 0.17356888297688838,
+  "max_hold_bars": 36,
+  "risk_percent": 0.2091166192619955
+}

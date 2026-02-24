@@ -1,0 +1,11 @@
+{
+  "sr_lookback": 55,
+  "stoch_k_period": 12,
+  "persistence_bars": 5,
+  "oversold_band": 14,
+  "release_band": 22,
+  "stop_loss": 0.09855013271142951,
+  "profit_target": 0.15280748545172348,
+  "max_hold_bars": 28,
+  "risk_percent": 0.2248924566578272
+}

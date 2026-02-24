@@ -1,0 +1,9 @@
+{
+  "donchian_lookback": 36,
+  "revert_band": 0.10944532613510186,
+  "sr_lookback": 45,
+  "stop_loss": 0.09157461698476896,
+  "midline_take_profit": 0.3907145126406387,
+  "max_hold_bars": 28,
+  "risk_percent": 0.2795464622271241
+}

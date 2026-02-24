@@ -1,0 +1,12 @@
+{
+  "sr_lookback": 50,
+  "ema_period": 16,
+  "breakout_lookback": 5,
+  "pullback_buffer": 0.007341037451522393,
+  "stoch_k_period": 14,
+  "stoch_trigger": 22,
+  "stop_loss": 0.07746035629341574,
+  "profit_target": 0.14297776146667132,
+  "max_hold_bars": 24,
+  "risk_percent": 0.24601651211660988
+}
