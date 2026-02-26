@@ -5,6 +5,17 @@ import { SimpleMAStrategy } from '../src/strategies/strat_simple_ma_01';
 import { SrStoch02Strategy } from '../src/strategies/strat_sr_stoch_02';
 import { SrStoch03Strategy } from '../src/strategies/strat_sr_stoch_03';
 import { StratIterStock001Strategy } from '../src/strategies/strat_iter_stock_001';
+import { StratIterStock002Strategy } from '../src/strategies/strat_iter_stock_002';
+import { StratIterStock003Strategy } from '../src/strategies/strat_iter_stock_003';
+import { StratIterStock004Strategy } from '../src/strategies/strat_iter_stock_004';
+import { StratIterStock005Strategy } from '../src/strategies/strat_iter_stock_005';
+import { StratIterStock006Strategy } from '../src/strategies/strat_iter_stock_006';
+import { StratIterStock007Strategy } from '../src/strategies/strat_iter_stock_007';
+import { StratIterStock008Strategy, StratIterStock009Strategy, StratIterStock010Strategy } from '../src/strategies/strat_iter_stock_008';
+import { StratIterStock011Strategy, StratIterStock012Strategy, StratIterStock013Strategy, StratIterStock014Strategy, StratIterStock015Strategy } from '../src/strategies/strat_iter_stock_011';
+import { StratIterStock016Strategy, StratIterStock017Strategy, StratIterStock018Strategy, StratIterStock019Strategy, StratIterStock020Strategy } from '../src/strategies/strat_iter_stock_016';
+import { StratIterStock021Strategy, StratIterStock022Strategy, StratIterStock023Strategy, StratIterStock024Strategy, StratIterStock025Strategy } from '../src/strategies/strat_iter_stock_021';
+import { StratIterStock026Strategy, StratIterStock027Strategy, StratIterStock028Strategy, StratIterStock029Strategy, StratIterStock030Strategy, StratIterStock031Strategy } from '../src/strategies/strat_iter_stock_026';
 import { StratIter201Strategy } from '../src/strategies/strat_iter2_01';
 import { StratIter202Strategy } from '../src/strategies/strat_iter2_02';
 import { StratIter203Strategy } from '../src/strategies/strat_iter2_03';
@@ -3499,6 +3510,349 @@ const hardcodedStrategies: Record<string, { class: any; params: Record<string, P
       risk_percent: { min: 0.15, max: 0.35, stepSize: 0.05 },
     },
     outputFile: 'strat_iter_stock_001.params.json',
+  },
+  strat_iter_stock_002: {
+    class: StratIterStock002Strategy,
+    params: {
+      rsi_period: { min: 8, max: 16, stepSize: 2 },
+      rsi_oversold: { min: 20, max: 35, stepSize: 5 },
+      rsi_recover: { min: 30, max: 45, stepSize: 5 },
+      sr_lookback: { min: 30, max: 60, stepSize: 5 },
+      near_support_pct: { min: 1.01, max: 1.05, stepSize: 0.01 },
+      stop_loss: { min: 0.05, max: 0.10, stepSize: 0.01 },
+      profit_target: { min: 0.10, max: 0.20, stepSize: 0.02 },
+      max_hold_bars: { min: 15, max: 30, stepSize: 3 },
+      risk_percent: { min: 0.15, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_002.params.json',
+  },
+  strat_iter_stock_003: {
+    class: StratIterStock003Strategy,
+    params: {
+      fast_ma: { min: 5, max: 20, stepSize: 5 },
+      slow_ma: { min: 20, max: 50, stepSize: 10 },
+      sr_lookback: { min: 30, max: 60, stepSize: 10 },
+      near_support_pct: { min: 1.01, max: 1.05, stepSize: 0.01 },
+      stop_loss: { min: 0.05, max: 0.10, stepSize: 0.01 },
+      profit_target: { min: 0.10, max: 0.20, stepSize: 0.02 },
+      max_hold_bars: { min: 15, max: 35, stepSize: 5 },
+      risk_percent: { min: 0.15, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_003.params.json',
+  },
+  strat_iter_stock_004: {
+    class: StratIterStock004Strategy,
+    params: {
+      stoch_period: { min: 10, max: 18, stepSize: 2 },
+      stoch_oversold: { min: 15, max: 25, stepSize: 2 },
+      sr_lookback: { min: 30, max: 60, stepSize: 10 },
+      near_support_pct: { min: 1.01, max: 1.05, stepSize: 0.01 },
+      stop_loss: { min: 0.05, max: 0.10, stepSize: 0.01 },
+      profit_target: { min: 0.10, max: 0.20, stepSize: 0.02 },
+      max_hold_bars: { min: 15, max: 35, stepSize: 5 },
+      risk_percent: { min: 0.15, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_004.params.json',
+  },
+  strat_iter_stock_005: {
+    class: StratIterStock005Strategy,
+    params: {
+      cci_period: { min: 10, max: 20, stepSize: 2 },
+      cci_extreme: { min: -120, max: -70, stepSize: 10 },
+      cci_tighten: { min: -90, max: -50, stepSize: 10 },
+      sr_lookback: { min: 30, max: 60, stepSize: 10 },
+      stop_loss: { min: 0.05, max: 0.10, stepSize: 0.01 },
+      profit_target: { min: 0.10, max: 0.20, stepSize: 0.02 },
+      max_hold_bars: { min: 15, max: 35, stepSize: 5 },
+      risk_percent: { min: 0.15, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_005.params.json',
+  },
+  strat_iter_stock_006: {
+    class: StratIterStock006Strategy,
+    params: {
+      roc_period: { min: 5, max: 15, stepSize: 2 },
+      roc_threshold: { min: -15, max: -5, stepSize: 2 },
+      sr_lookback: { min: 30, max: 60, stepSize: 10 },
+      stop_loss: { min: 0.05, max: 0.10, stepSize: 0.01 },
+      profit_target: { min: 0.10, max: 0.20, stepSize: 0.02 },
+      max_hold_bars: { min: 15, max: 35, stepSize: 5 },
+      risk_percent: { min: 0.15, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_006.params.json',
+  },
+  strat_iter_stock_007: {
+    class: StratIterStock007Strategy,
+    params: {
+      wr_period: { min: 10, max: 20, stepSize: 2 },
+      wr_extreme: { min: -90, max: -70, stepSize: 5 },
+      wr_recover: { min: -70, max: -40, stepSize: 5 },
+      sr_lookback: { min: 30, max: 60, stepSize: 10 },
+      stop_loss: { min: 0.05, max: 0.10, stepSize: 0.01 },
+      profit_target: { min: 0.10, max: 0.20, stepSize: 0.02 },
+      max_hold_bars: { min: 15, max: 35, stepSize: 5 },
+      risk_percent: { min: 0.15, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_007.params.json',
+  },
+  strat_iter_stock_008: {
+    class: StratIterStock008Strategy,
+    params: {
+      ma_period: { min: 15, max: 30, stepSize: 5 },
+      sr_lookback: { min: 30, max: 60, stepSize: 10 },
+      near_support_pct: { min: 1.01, max: 1.05, stepSize: 0.01 },
+      stop_loss: { min: 0.05, max: 0.10, stepSize: 0.01 },
+      profit_target: { min: 0.10, max: 0.20, stepSize: 0.02 },
+      max_hold_bars: { min: 15, max: 35, stepSize: 5 },
+      risk_percent: { min: 0.15, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_008.params.json',
+  },
+  strat_iter_stock_009: {
+    class: StratIterStock009Strategy,
+    params: {
+      lookback: { min: 10, max: 30, stepSize: 5 },
+      pct_below: { min: 0.05, max: 0.15, stepSize: 0.02 },
+      stop_loss: { min: 0.05, max: 0.10, stepSize: 0.01 },
+      profit_target: { min: 0.10, max: 0.20, stepSize: 0.02 },
+      max_hold_bars: { min: 15, max: 35, stepSize: 5 },
+      risk_percent: { min: 0.15, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_009.params.json',
+  },
+  strat_iter_stock_010: {
+    class: StratIterStock010Strategy,
+    params: {
+      period: { min: 3, max: 10, stepSize: 1 },
+      threshold: { min: 0.02, max: 0.08, stepSize: 0.01 },
+      sr_lookback: { min: 30, max: 60, stepSize: 10 },
+      stop_loss: { min: 0.05, max: 0.10, stepSize: 0.01 },
+      profit_target: { min: 0.10, max: 0.20, stepSize: 0.02 },
+      max_hold_bars: { min: 15, max: 35, stepSize: 5 },
+      risk_percent: { min: 0.15, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_010.params.json',
+  },
+  strat_iter_stock_011: {
+    class: StratIterStock011Strategy,
+    params: {
+      lookback: { min: 5, max: 20, stepSize: 3 },
+      pct_drop: { min: 0.03, max: 0.12, stepSize: 0.02 },
+      stop_loss: { min: 0.05, max: 0.10, stepSize: 0.01 },
+      profit_target: { min: 0.10, max: 0.20, stepSize: 0.02 },
+      max_hold_bars: { min: 10, max: 30, stepSize: 5 },
+      risk_percent: { min: 0.15, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_011.params.json',
+  },
+  strat_iter_stock_012: {
+    class: StratIterStock012Strategy,
+    params: {
+      period: { min: 3, max: 10, stepSize: 1 },
+      level: { min: 0.03, max: 0.10, stepSize: 0.01 },
+      stop_loss: { min: 0.05, max: 0.10, stepSize: 0.01 },
+      profit_target: { min: 0.10, max: 0.20, stepSize: 0.02 },
+      max_hold_bars: { min: 10, max: 30, stepSize: 5 },
+      risk_percent: { min: 0.15, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_012.params.json',
+  },
+  strat_iter_stock_013: {
+    class: StratIterStock013Strategy,
+    params: {
+      period: { min: 2, max: 5, stepSize: 1 },
+      stop_loss: { min: 0.05, max: 0.10, stepSize: 0.01 },
+      profit_target: { min: 0.10, max: 0.20, stepSize: 0.02 },
+      max_hold_bars: { min: 8, max: 20, stepSize: 3 },
+      risk_percent: { min: 0.15, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_013.params.json',
+  },
+  strat_iter_stock_014: {
+    class: StratIterStock014Strategy,
+    params: {
+      period: { min: 3, max: 10, stepSize: 1 },
+      stop_loss: { min: 0.05, max: 0.10, stepSize: 0.01 },
+      profit_target: { min: 0.10, max: 0.20, stepSize: 0.02 },
+      max_hold_bars: { min: 10, max: 30, stepSize: 5 },
+      risk_percent: { min: 0.15, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_014.params.json',
+  },
+  strat_iter_stock_015: {
+    class: StratIterStock015Strategy,
+    params: {
+      period: { min: 5, max: 20, stepSize: 3 },
+      stop_loss: { min: 0.05, max: 0.10, stepSize: 0.01 },
+      profit_target: { min: 0.10, max: 0.20, stepSize: 0.02 },
+      max_hold_bars: { min: 15, max: 40, stepSize: 5 },
+      risk_percent: { min: 0.15, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_015.params.json',
+  },
+  strat_iter_stock_016: {
+    class: StratIterStock016Strategy,
+    params: {
+      lookback: { min: 10, max: 25, stepSize: 3 },
+      pct: { min: 0.05, max: 0.15, stepSize: 0.02 },
+      stop_loss: { min: 0.05, max: 0.10, stepSize: 0.01 },
+      profit_target: { min: 0.10, max: 0.20, stepSize: 0.02 },
+      max_hold_bars: { min: 10, max: 30, stepSize: 5 },
+      risk_percent: { min: 0.15, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_016.params.json',
+  },
+  strat_iter_stock_017: {
+    class: StratIterStock017Strategy,
+    params: {
+      stop_loss: { min: 0.05, max: 0.10, stepSize: 0.01 },
+      profit_target: { min: 0.10, max: 0.20, stepSize: 0.02 },
+      max_hold_bars: { min: 15, max: 40, stepSize: 5 },
+      risk_percent: { min: 0.15, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_017.params.json',
+  },
+  strat_iter_stock_018: {
+    class: StratIterStock018Strategy,
+    params: {
+      stop_loss: { min: 0.05, max: 0.10, stepSize: 0.01 },
+      profit_target: { min: 0.10, max: 0.20, stepSize: 0.02 },
+      max_hold_bars: { min: 15, max: 35, stepSize: 5 },
+      risk_percent: { min: 0.15, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_018.params.json',
+  },
+  strat_iter_stock_019: {
+    class: StratIterStock019Strategy,
+    params: {
+      period: { min: 5, max: 15, stepSize: 2 },
+      stop_loss: { min: 0.05, max: 0.10, stepSize: 0.01 },
+      profit_target: { min: 0.10, max: 0.20, stepSize: 0.02 },
+      max_hold_bars: { min: 10, max: 30, stepSize: 5 },
+      risk_percent: { min: 0.15, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_019.params.json',
+  },
+  strat_iter_stock_020: {
+    class: StratIterStock020Strategy,
+    params: {
+      stop_loss: { min: 0.06, max: 0.12, stepSize: 0.02 },
+      profit_target: { min: 0.12, max: 0.25, stepSize: 0.02 },
+      max_hold_bars: { min: 15, max: 35, stepSize: 5 },
+      risk_percent: { min: 0.15, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_020.params.json',
+  },
+  strat_iter_stock_021: {
+    class: StratIterStock021Strategy,
+    params: {
+      stop_loss: { min: 0.05, max: 0.10, stepSize: 0.01 },
+      profit_target: { min: 0.10, max: 0.20, stepSize: 0.02 },
+      max_hold_bars: { min: 15, max: 40, stepSize: 5 },
+      risk_percent: { min: 0.15, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_021.params.json',
+  },
+  strat_iter_stock_022: {
+    class: StratIterStock022Strategy,
+    params: {
+      stop_loss: { min: 0.05, max: 0.10, stepSize: 0.01 },
+      profit_target: { min: 0.10, max: 0.20, stepSize: 0.02 },
+      max_hold_bars: { min: 15, max: 35, stepSize: 5 },
+      risk_percent: { min: 0.15, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_022.params.json',
+  },
+  strat_iter_stock_023: {
+    class: StratIterStock023Strategy,
+    params: {
+      lookback: { min: 8, max: 20, stepSize: 2 },
+      stop_loss: { min: 0.05, max: 0.10, stepSize: 0.01 },
+      profit_target: { min: 0.10, max: 0.20, stepSize: 0.02 },
+      max_hold_bars: { min: 10, max: 30, stepSize: 5 },
+      risk_percent: { min: 0.15, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_023.params.json',
+  },
+  strat_iter_stock_024: {
+    class: StratIterStock024Strategy,
+    params: {
+      stop_loss: { min: 0.05, max: 0.10, stepSize: 0.01 },
+      profit_target: { min: 0.10, max: 0.20, stepSize: 0.02 },
+      max_hold_bars: { min: 15, max: 35, stepSize: 5 },
+      risk_percent: { min: 0.15, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_024.params.json',
+  },
+  strat_iter_stock_025: {
+    class: StratIterStock025Strategy,
+    params: {
+      stop_loss: { min: 0.05, max: 0.10, stepSize: 0.01 },
+      profit_target: { min: 0.10, max: 0.20, stepSize: 0.02 },
+      max_hold_bars: { min: 15, max: 40, stepSize: 5 },
+      risk_percent: { min: 0.15, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_025.params.json',
+  },
+  strat_iter_stock_026: {
+    class: StratIterStock026Strategy,
+    params: {
+      stop_loss: { min: 0.05, max: 0.10, stepSize: 0.01 },
+      profit_target: { min: 0.10, max: 0.20, stepSize: 0.02 },
+      max_hold_bars: { min: 15, max: 35, stepSize: 5 },
+      risk_percent: { min: 0.15, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_026.params.json',
+  },
+  strat_iter_stock_027: {
+    class: StratIterStock027Strategy,
+    params: {
+      stop_loss: { min: 0.05, max: 0.10, stepSize: 0.01 },
+      profit_target: { min: 0.10, max: 0.20, stepSize: 0.02 },
+      max_hold_bars: { min: 15, max: 40, stepSize: 5 },
+      risk_percent: { min: 0.15, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_027.params.json',
+  },
+  strat_iter_stock_028: {
+    class: StratIterStock028Strategy,
+    params: {
+      stop_loss: { min: 0.05, max: 0.10, stepSize: 0.01 },
+      profit_target: { min: 0.10, max: 0.20, stepSize: 0.02 },
+      max_hold_bars: { min: 15, max: 35, stepSize: 5 },
+      risk_percent: { min: 0.15, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_028.params.json',
+  },
+  strat_iter_stock_029: {
+    class: StratIterStock029Strategy,
+    params: {
+      stop_loss: { min: 0.05, max: 0.10, stepSize: 0.01 },
+      profit_target: { min: 0.10, max: 0.20, stepSize: 0.02 },
+      max_hold_bars: { min: 10, max: 30, stepSize: 5 },
+      risk_percent: { min: 0.15, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_029.params.json',
+  },
+  strat_iter_stock_030: {
+    class: StratIterStock030Strategy,
+    params: {
+      stop_loss: { min: 0.05, max: 0.10, stepSize: 0.01 },
+      profit_target: { min: 0.10, max: 0.20, stepSize: 0.02 },
+      max_hold_bars: { min: 15, max: 35, stepSize: 5 },
+      risk_percent: { min: 0.15, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_030.params.json',
+  },
+  strat_iter_stock_031: {
+    class: StratIterStock031Strategy,
+    params: {
+      stop_loss: { min: 0.05, max: 0.10, stepSize: 0.01 },
+      profit_target: { min: 0.10, max: 0.20, stepSize: 0.02 },
+      max_hold_bars: { min: 20, max: 45, stepSize: 5 },
+      risk_percent: { min: 0.15, max: 0.30, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_031.params.json',
   },
 };
 
