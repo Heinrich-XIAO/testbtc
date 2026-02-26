@@ -1,0 +1,19 @@
+{
+  "td_lookback": 30,
+  "td_lambda": 0.8,
+  "td_alpha": 0.1,
+  "td_gamma": 0.95,
+  "td_low": 0.15,
+  "td_high": 0.85,
+  "stoch_k_period": 14,
+  "stoch_oversold": 16,
+  "stoch_overbought": 84,
+  "stoch_rebound_delta": 3,
+  "sr_lookback": 50,
+  "support_buffer": 0.018,
+  "support_reclaim_buffer": 0.004,
+  "stop_loss": 0.08,
+  "profit_target": 0.18,
+  "max_hold_bars": 28,
+  "risk_percent": 0.25
+}

@@ -1,0 +1,23 @@
+{
+  "reservoir_size": 24,
+  "leak_rate": 0.4728015421329136,
+  "spectral_radius": 1.055830482701701,
+  "input_scale": 0.7018009534365928,
+  "readout_size": 4,
+  "learning_rate": 0.0053350218196820546,
+  "lookback": 40,
+  "stoch_k_period": 14,
+  "stoch_oversold": 16,
+  "stoch_overbought": 84,
+  "stoch_rebound_delta": 2,
+  "sr_lookback": 50,
+  "support_buffer": 0.029334256206579805,
+  "support_reclaim_buffer": 0.008151694839761265,
+  "readout_threshold": 0.015369190513997214,
+  "prediction_horizon": 7,
+  "resistance_exit_buffer": 0.9861505256677654,
+  "stop_loss": 0.08983463897737651,
+  "profit_target": 0.21527025278362955,
+  "max_hold_bars": 36,
+  "risk_percent": 0.2951419422522198
+}

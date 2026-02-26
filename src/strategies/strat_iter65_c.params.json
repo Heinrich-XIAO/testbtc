@@ -1,0 +1,19 @@
+{
+  "wavelet_lookback": 24,
+  "wavelet_levels": 3,
+  "entropy_threshold_low": 0.3118692763237963,
+  "entropy_threshold_high": 0.6801938297502608,
+  "energy_ratio_low": 0.43129132964344646,
+  "energy_ratio_high": 0.8045835482159475,
+  "stoch_k_period": 14,
+  "stoch_oversold": 16,
+  "stoch_overbought": 84,
+  "stoch_rebound_delta": 5,
+  "sr_lookback": 60,
+  "support_buffer": 0.03,
+  "support_reclaim_buffer": 0.001,
+  "stop_loss": 0.0875933248066906,
+  "profit_target": 0.15788895188772667,
+  "max_hold_bars": 32,
+  "risk_percent": 0.28215247214235656
+}

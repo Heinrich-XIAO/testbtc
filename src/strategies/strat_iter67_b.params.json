@@ -1,0 +1,13 @@
+{
+  "loop_lookback": 16,
+  "loop_normfactor": 1.897194464041238,
+  "loop_threshold_low": 0.25,
+  "loop_threshold_high": 0.75,
+  "sr_lookback": 40,
+  "stoch_k_period": 14,
+  "stoch_oversold": 18,
+  "stop_loss": 0.09482158018078678,
+  "profit_target": 0.1936295521463308,
+  "max_hold_bars": 28,
+  "risk_percent": 0.2689649946592764
+}

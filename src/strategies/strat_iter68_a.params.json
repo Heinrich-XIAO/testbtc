@@ -1,0 +1,13 @@
+{
+  "sr_lookback": 60,
+  "memory_dim": 6,
+  "gate_threshold": 0.5103087878252305,
+  "sequence_length": 5,
+  "decay_rate": 0.718913807750883,
+  "stoch_k_period": 14,
+  "stoch_oversold": 16,
+  "stop_loss": 0.08827383840462488,
+  "profit_target": 0.20489910314551626,
+  "max_hold_bars": 24,
+  "risk_percent": 0.3
+}

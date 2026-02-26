@@ -1,0 +1,12 @@
+{
+  "sr_lookback": 50,
+  "latent_lookback": 20,
+  "reconstruction_threshold": 1.5391202914985656,
+  "anomaly_window": 12,
+  "stoch_k_period": 14,
+  "stoch_oversold": 16,
+  "stop_loss": 0.07602314130532166,
+  "profit_target": 0.21517094550201046,
+  "max_hold_bars": 28,
+  "risk_percent": 0.2996535301292761
+}

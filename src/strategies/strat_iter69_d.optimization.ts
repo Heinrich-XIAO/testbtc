@@ -1,0 +1,17 @@
+import type { ParamConfig } from '../optimization/types';
+
+export const optimizationConfig = {
+  simulations: { min: 30, max: 80, stepSize: 25 },
+  depth: { min: 5, max: 12, stepSize: 2 },
+  exploration_constant: { min: 1.0, max: 2.0, stepSize: 0.3 },
+  score_threshold: { min: 0.45, max: 0.70, stepSize: 0.05 },
+  stoch_oversold: { min: 14, max: 18, stepSize: 2 },
+  stoch_k_period: { min: 14, max: 14, stepSize: 1 },
+  stop_loss: { min: 0.06, max: 0.10, stepSize: 0.02 },
+  profit_target: { min: 0.14, max: 0.22, stepSize: 0.02 },
+  max_hold_bars: { min: 20, max: 36, stepSize: 4 },
+  risk_percent: { min: 0.20, max: 0.30, stepSize: 0.05 },
+  sr_lookback: { min: 40, max: 60, stepSize: 10 },
+} as Record<string, ParamConfig>;
+
+export const outputFile = 'strat_iter69_d.params.json';

@@ -1,0 +1,20 @@
+{
+  "strike_count": 5,
+  "maturity_count": 2,
+  "learning_rate": 0.005,
+  "target_moneyness": 0.973042379522298,
+  "gradient_threshold": 0.014867571625360374,
+  "iv_regime_threshold": 0.30960668302442873,
+  "stoch_k_period": 14,
+  "stoch_oversold": 16,
+  "stoch_overbought": 86,
+  "stoch_rebound_delta": 5,
+  "sr_lookback": 45,
+  "support_buffer": 0.03,
+  "support_reclaim_buffer": 0.005281623981852916,
+  "resistance_exit_buffer": 0.995,
+  "stop_loss": 0.08030551164509671,
+  "profit_target": 0.20036199473365165,
+  "max_hold_bars": 24,
+  "risk_percent": 0.25807873054907987
+}

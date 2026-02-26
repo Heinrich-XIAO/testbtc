@@ -1,0 +1,13 @@
+{
+  "num_capsules": 4,
+  "routing_iterations": 4,
+  "consensus_threshold": 0.7449081038112474,
+  "capsule_dim": 3,
+  "stoch_oversold": 18,
+  "stoch_k_period": 14,
+  "stop_loss": 0.06608197312836663,
+  "profit_target": 0.20672231955585207,
+  "max_hold_bars": 24,
+  "risk_percent": 0.2653160854978911,
+  "sr_lookback": 40
+}

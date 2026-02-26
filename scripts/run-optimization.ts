@@ -4,6 +4,7 @@ import { loadStoredData } from '../src/backtest/engine';
 import { SimpleMAStrategy } from '../src/strategies/strat_simple_ma_01';
 import { SrStoch02Strategy } from '../src/strategies/strat_sr_stoch_02';
 import { SrStoch03Strategy } from '../src/strategies/strat_sr_stoch_03';
+import { StratIterStock001Strategy } from '../src/strategies/strat_iter_stock_001';
 import { StratIter201Strategy } from '../src/strategies/strat_iter2_01';
 import { StratIter202Strategy } from '../src/strategies/strat_iter2_02';
 import { StratIter203Strategy } from '../src/strategies/strat_iter2_03';
@@ -3483,6 +3484,21 @@ const hardcodedStrategies: Record<string, { class: any; params: Record<string, P
       risk_percent: { min: 0.20, max: 0.30, stepSize: 0.05 },
     },
     outputFile: 'strat_iter62_e.params.json',
+  },
+  strat_iter_stock_001: {
+    class: StratIterStock001Strategy,
+    params: {
+      cci_period: { min: 10, max: 20, stepSize: 2 },
+      cci_oversold: { min: -120, max: -70, stepSize: 10 },
+      cci_tighten: { min: -90, max: -50, stepSize: 10 },
+      sr_lookback: { min: 30, max: 60, stepSize: 5 },
+      near_support_pct: { min: 1.01, max: 1.05, stepSize: 0.01 },
+      stop_loss: { min: 0.06, max: 0.12, stepSize: 0.02 },
+      profit_target: { min: 0.12, max: 0.24, stepSize: 0.02 },
+      max_hold_bars: { min: 20, max: 40, stepSize: 4 },
+      risk_percent: { min: 0.15, max: 0.35, stepSize: 0.05 },
+    },
+    outputFile: 'strat_iter_stock_001.params.json',
   },
 };
 

@@ -1,0 +1,11 @@
+{
+  "sr_lookback": 50,
+  "rsi_period": 14,
+  "z_window": 20,
+  "z_threshold": -1.5,
+  "support_buffer": 0.015,
+  "stop_loss": 0.08,
+  "profit_target": 0.18,
+  "max_hold_bars": 28,
+  "risk_percent": 0.25
+}

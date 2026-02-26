@@ -1,5 +1,49 @@
 # ATTEMPTED.md
 
+## Iteration 65 Results
+
+### strat_iter65_d: Bayesian Online Changepoint Detection - SUCCESS
+- Small: +82.02% (116 trades, 33.6% win), Large: +119.55% (1518 trades, 29.9% win)
+- Verdict: Passes winner criteria (positive both, large >= small, >15 small trades).
+
+### strat_iter65_c: Wavelet Packet Energy Entropy - SUCCESS
+- Small: +17.57% (16 trades, 37.5% win), Large: +27.88% (284 trades, 30.3% win)
+- Verdict: Passes winner criteria (positive both, large >= small, >15 small trades).
+
+### strat_iter65_a: Quantum Walk Price Diffusion - FAILED (overfit)
+- Small: +12.81% (40 trades, 30% win), Large: -6.83% (1340 trades, 28.6% win)
+- Verdict: on small Positive but negative on large dataset - OVERFIT.
+
+### strat_iter65_b: Random Matrix Theory Eigenvalue Spread - WEAK
+- Small: -1.28% (150 trades, 32% win), Large: +1.63% (2043 trades, 29% win)
+- Verdict: Marginal positive on large but negative on small. Optimization too slow to tune properly.
+
+### strat_iter65_e: Agent-based Order Flow Imbalance - FAILED
+- Small: +0% (0 trades), Large: +0% (0 trades)
+- Verdict: No trades generated - strategy too restrictive.
+
+## Iteration 63 Results (In Progress)
+
+### strat_iter63_d: SOM Cluster Distance Gating - SUCCESS
+- Small: +80.18% (98 trades), Large: +286.79% (1169 trades)
+- Verdict: Passes winner criteria (positive both, large >= small, >15 small trades).
+
+### strat_iter63_b: Attractor Reconstruction - SUCCESS
+- Small: +83.44% (150 trades), Large: +130.48% (2067 trades)
+- Verdict: Passes winner criteria (positive both, large >= small, >15 small trades).
+
+### strat_iter63_e: IV Surface Gradient Descent - SUCCESS
+- Small: +45.57% (96 trades), Large: +44.57% (1277 trades)
+- Verdict: Passes winner criteria (positive both, large >= small, >15 small trades).
+
+### strat_iter63_c: Information Bottleneck Compression - SUCCESS
+- Small: +37.16% (26 trades), Large: +95.39% (512 trades)
+- Verdict: Passes winner criteria (positive both, large >= small, >15 small trades).
+
+### strat_iter63_a: Echo State Network Proxy - SUCCESS
+- Small: +35.20% (28 trades), Large: +25.86% (27 trades)
+- Verdict: Passes winner criteria (positive both, large >= small, >15 small trades).
+
 ## Iteration 62 Results (In Progress)
 
 ### strat_iter62_c: Symbolic Grammar Motif Model - SUCCESS

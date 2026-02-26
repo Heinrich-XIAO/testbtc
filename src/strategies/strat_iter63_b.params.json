@@ -1,0 +1,19 @@
+{
+  "embed_dim": 5,
+  "time_delay": 2,
+  "lyapunov_horizon": 5,
+  "correlation_threshold": 1.2894478231974027,
+  "lyapunov_threshold": -0.5238026573166228,
+  "stoch_k_period": 14,
+  "stoch_oversold": 18,
+  "stoch_overbought": 82,
+  "stoch_rebound_delta": 2,
+  "sr_lookback": 45,
+  "support_buffer": 0.03,
+  "support_reclaim_buffer": 0.0011398591862540933,
+  "resistance_exit_buffer": 0.9779936750378736,
+  "stop_loss": 0.06581781294133038,
+  "profit_target": 0.18546440840650907,
+  "max_hold_bars": 36,
+  "risk_percent": 0.3
+}

@@ -1,0 +1,19 @@
+{
+  "te_lookback": 30,
+  "te_bins": 3,
+  "te_lag": 4,
+  "te_threshold": 0.11534318824230792,
+  "te_direction": 0,
+  "lookback": 40,
+  "stoch_k_period": 14,
+  "stoch_oversold": 14,
+  "stoch_overbought": 82,
+  "stoch_rebound_delta": 2,
+  "sr_lookback": 45,
+  "support_buffer": 0.02186244466950758,
+  "support_reclaim_buffer": 0.005375332334746047,
+  "stop_loss": 0.0864025352669392,
+  "profit_target": 0.17441357731631002,
+  "max_hold_bars": 32,
+  "risk_percent": 0.2633864776881455
+}

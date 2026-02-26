@@ -1,0 +1,12 @@
+{
+  "sr_lookback": 60,
+  "propagation_depth": 5,
+  "propagation_weight": 0.7348623818660585,
+  "neighbor_threshold": 0.014824031413787356,
+  "stoch_k_period": 14,
+  "stoch_oversold": 18,
+  "stop_loss": 0.08391421777781187,
+  "profit_target": 0.1575737365183221,
+  "max_hold_bars": 24,
+  "risk_percent": 0.29124106180281356
+}

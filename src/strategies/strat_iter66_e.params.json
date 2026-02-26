@@ -1,0 +1,18 @@
+{
+  "kalman_q": 0.01,
+  "kalman_r": 0.1,
+  "chi2_window": 10,
+  "chi2_low": 0.01,
+  "chi2_high": 2.0,
+  "stoch_k_period": 14,
+  "stoch_oversold": 16,
+  "stoch_overbought": 84,
+  "stoch_rebound_delta": 3,
+  "sr_lookback": 50,
+  "support_buffer": 0.018,
+  "support_reclaim_buffer": 0.004,
+  "stop_loss": 0.08,
+  "profit_target": 0.18,
+  "max_hold_bars": 28,
+  "risk_percent": 0.25
+}

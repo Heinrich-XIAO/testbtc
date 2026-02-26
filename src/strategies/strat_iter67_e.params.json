@@ -1,0 +1,17 @@
+{
+  "stoch_weight": 0.5958535821700215,
+  "rsi_weight": 0.23744324843752898,
+  "mom_weight": 0.18769450503364504,
+  "sr_lookback": 60,
+  "stoch_k_period": 14,
+  "stoch_oversold": 16,
+  "rsi_period": 14,
+  "rsi_oversold": 30,
+  "mom_period": 5,
+  "mom_threshold": 0.010133968472898387,
+  "combined_threshold": 0.7291122085111519,
+  "stop_loss": 0.07370239764278076,
+  "profit_target": 0.16195425468941904,
+  "max_hold_bars": 24,
+  "risk_percent": 0.2603543046217154
+}

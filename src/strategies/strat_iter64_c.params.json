@@ -1,0 +1,21 @@
+{
+  "coin_lookback": 50,
+  "coin_z_threshold": 1.4,
+  "coin_z_exit": 0.7,
+  "coin_hedge_window": 30,
+  "fast_ma_period": 12,
+  "slow_ma_period": 27,
+  "spread_ma_period": 24,
+  "lookback": 40,
+  "stoch_k_period": 14,
+  "stoch_oversold": 14,
+  "stoch_overbought": 82,
+  "stoch_rebound_delta": 5,
+  "sr_lookback": 45,
+  "support_buffer": 0.01,
+  "support_reclaim_buffer": 0.0043308244245634266,
+  "stop_loss": 0.06,
+  "profit_target": 0.1736130934285827,
+  "max_hold_bars": 28,
+  "risk_percent": 0.3
+}

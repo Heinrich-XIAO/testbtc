@@ -1,0 +1,22 @@
+{
+  "mse_scale1": 1,
+  "mse_scale2": 2,
+  "mse_scale3": 3,
+  "mse_scale4": 4,
+  "mse_scale5": 5,
+  "mse_m": 2,
+  "mse_r": 0.15,
+  "mse_low": 0.10,
+  "mse_high": 0.80,
+  "stoch_k_period": 14,
+  "stoch_oversold": 16,
+  "stoch_overbought": 84,
+  "stoch_rebound_delta": 3,
+  "sr_lookback": 50,
+  "support_buffer": 0.018,
+  "support_reclaim_buffer": 0.004,
+  "stop_loss": 0.08,
+  "profit_target": 0.18,
+  "max_hold_bars": 28,
+  "risk_percent": 0.25
+}

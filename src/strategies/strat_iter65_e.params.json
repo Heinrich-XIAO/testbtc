@@ -1,0 +1,18 @@
+{
+  "orderflow_lookback": 24,
+  "orderflow_score_threshold": 0.5990620368313534,
+  "orderflow_delta_threshold": -3,
+  "momentum_lookback": 24,
+  "momentum_threshold": 0.010663784008415757,
+  "stoch_k_period": 14,
+  "stoch_oversold": 16,
+  "stoch_overbought": 82,
+  "stoch_rebound_delta": 2,
+  "sr_lookback": 50,
+  "support_buffer": 0.01705089967799037,
+  "support_reclaim_buffer": 0.004510363305465882,
+  "stop_loss": 0.08688725316059749,
+  "profit_target": 0.1549756737212178,
+  "max_hold_bars": 24,
+  "risk_percent": 0.20932856471294836
+}

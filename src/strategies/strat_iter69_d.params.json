@@ -1,0 +1,13 @@
+{
+  "simulations": 50,
+  "depth": 6,
+  "exploration_constant": 1.2597600402133158,
+  "score_threshold": 0.45638948495925236,
+  "stoch_oversold": 18,
+  "stoch_k_period": 14,
+  "stop_loss": 0.09457447230440444,
+  "profit_target": 0.15036044530074277,
+  "max_hold_bars": 32,
+  "risk_percent": 0.2836340246402269,
+  "sr_lookback": 50
+}

@@ -1,0 +1,13 @@
+{
+  "sr_lookback": 40,
+  "attention_heads": 2,
+  "attention_lookback": 16,
+  "momentum_threshold": 0.766799873834643,
+  "query_weight": 0.5842588774813677,
+  "stoch_k_period": 14,
+  "stoch_oversold": 16,
+  "stop_loss": 0.09094382206922719,
+  "profit_target": 0.2153350805415381,
+  "max_hold_bars": 28,
+  "risk_percent": 0.29761084904575097
+}
