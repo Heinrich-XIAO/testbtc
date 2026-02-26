@@ -17,7 +17,7 @@
 - **`strat_iter46_a`**: Implemented squeeze-to-release regime logic, requiring compressed range then expansion near support.
 - **`strat_iter46_b`**: Implemented downside exhaustion ladder with minimum down-close count and delayed stochastic trigger.
 - **`strat_iter46_c`**: Implemented sweep-and-reclaim candle strength entry using wick/body and close-location filters.
-- **Optimization workflow shared with all subagents**: DE optimization on `data/test-data.bson`, then backtest-only validation on `data/test-data-15min-large.bson`.
+- **Optimization workflow shared with all subagents**: DE optimization on `data/test-data.json`, then backtest-only validation on `data/test-data-15min-large.json`.
 
 ## Hopeless / Discarded
 

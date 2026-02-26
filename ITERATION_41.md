@@ -17,7 +17,7 @@
 - **`strat_iter41_a`**: Implemented volatility-compression entry near support with stochastic release and breakout confirmation.
 - **`strat_iter41_b`**: Implemented wick-based liquidity sweep reclaim signal with stochastic recovery gate.
 - **`strat_iter41_c`**: Implemented resistance-distance-scaled profit targeting with momentum-gated support entry.
-- **Optimization workflow shared with all subagents**: differential-evolution optimization on `data/test-data.bson` writes `*.params.json`; then `--backtest-only` reuses frozen params on `data/test-data-15min-large.bson`.
+- **Optimization workflow shared with all subagents**: differential-evolution optimization on `data/test-data.json` writes `*.params.json`; then `--backtest-only` reuses frozen params on `data/test-data-15min-large.json`.
 
 ## Hopeless / Discarded
 

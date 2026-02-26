@@ -1,6 +1,5 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { BSON } from 'bson';
 
 interface StockDataPoint {
   date: string;
@@ -12,7 +11,7 @@ interface StockDataPoint {
 }
 
 const DATA_DIR = 'data';
-const OUTPUT_FILE = 'data/stock-data.bson';
+const OUTPUT_FILE = 'data/stock-data.json';
 
 interface StockMarket {
   ticker: string;
@@ -61,8 +60,7 @@ const output = {
   }
 };
 
-const bsonData = BSON.serialize(output);
-fs.writeFileSync(OUTPUT_FILE, bsonData);
+fs.writeFileSync(OUTPUT_FILE, JSON.stringify(output));
 
 console.log(`Created ${OUTPUT_FILE}`);
 console.log(`Markets: ${markets.length}`);

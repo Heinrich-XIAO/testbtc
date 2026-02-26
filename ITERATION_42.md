@@ -17,7 +17,7 @@
 - **`strat_iter42_a`**: Implemented dual-horizon support comparison to require support levels stepping higher before entry.
 - **`strat_iter42_b`**: Implemented mean-reversion z-score entry with explicit count of recent support holds.
 - **`strat_iter42_c`**: Implemented breakout-state plus pullback-to-EMA continuation trigger with stochastic release.
-- **Optimization workflow shared with all subagents**: optimize on `data/test-data.bson`, persist params, then large-dataset validation via `--backtest-only`.
+- **Optimization workflow shared with all subagents**: optimize on `data/test-data.json`, persist params, then large-dataset validation via `--backtest-only`.
 
 ## Hopeless / Discarded
 

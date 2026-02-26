@@ -17,7 +17,7 @@
 - **`strat_iter39_a`**: Added bar-by-bar decay schedule for profit target from initial target down to floor.
 - **`strat_iter39_b`**: Added volatility-normalized dynamic resistance exit threshold to adapt exit aggressiveness.
 - **`strat_iter39_c`**: Added per-token cooldown lockout after stop-loss events to suppress immediate re-entries.
-- **Optimization workflow shared with all subagents**: DE optimize on `data/test-data.bson`, persist params, then validate with `--backtest-only` on `data/test-data-15min-large.bson`.
+- **Optimization workflow shared with all subagents**: DE optimize on `data/test-data.json`, persist params, then validate with `--backtest-only` on `data/test-data-15min-large.json`.
 
 ## Hopeless / Discarded
 

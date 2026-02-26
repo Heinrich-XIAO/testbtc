@@ -387,8 +387,8 @@
 ### Iter35 B: Break-even Stop Promotion - SUCCESS
 - **Logic**: Baseline stochastic support entry with standard exits (stop loss, profit target, resistance, max hold) plus dynamic break-even stop promotion after unrealized gain crosses a trigger.
 - **Result**:
-  - Small dataset (`data/test-data.bson`): +31.82% return, 348 trades, 39.4% win
-  - Large dataset (`data/test-data-15min-large.bson`): +36.37% return, 6479 trades, 38.9% win
+  - Small dataset (`data/test-data.json`): +31.82% return, 348 trades, 39.4% win
+  - Large dataset (`data/test-data-15min-large.json`): +36.37% return, 6479 trades, 38.9% win
 - **Verdict**: Passes iteration winner criteria (positive on both, large >= small, and >15 small-dataset trades).
 
 ## Iteration 34 Results
@@ -396,15 +396,15 @@
 ### Iter34 B: Z-Score Support Reversion - FAILED (overfit vs validation rule)
 - **Logic**: Enter on deep negative z-score (rolling mean/std) only when price is near support; exit at mean-reversion target, stop loss, or max hold.
 - **Result**:
-  - Small dataset (`data/test-data.bson`): +389.73% return, 700 trades, 29.6% win
-  - Large dataset (`data/test-data-15min-large.bson`): +303.80% return, 9229 trades, 32.3% win
+  - Small dataset (`data/test-data.json`): +389.73% return, 700 trades, 29.6% win
+  - Large dataset (`data/test-data-15min-large.json`): +303.80% return, 9229 trades, 32.3% win
 - **Verdict**: Positive on both datasets, but fails iteration winner rule because large return is lower than small return.
 
 ### Iter34 A: Donchian Breakout Retest - FAILED (overfit vs validation rule)
 - **Logic**: Detect breakout above short Donchian high, then require pullback retest near the breakout level before long entry; exit on stop, profit target, Donchian resistance, or max hold.
 - **Result**:
-  - Small dataset (`data/test-data.bson`): +148.23% return, 300 trades, 39.3% win
-  - Large dataset (`data/test-data-15min-large.bson`): +51.21% return, 3747 trades, 39.4% win
+  - Small dataset (`data/test-data.json`): +148.23% return, 300 trades, 39.3% win
+  - Large dataset (`data/test-data-15min-large.json`): +51.21% return, 3747 trades, 39.4% win
 - **Verdict**: Positive on both datasets, but fails iteration winner rule because large return is lower than small return.
 
 ## Iteration 24 Results (Lookback Variations)
@@ -621,8 +621,8 @@
 ### 336: Bollinger Bands Filter - FAILED
 - **Logic**: Add Bollinger Bands filter - only enter when close < lower_band * 1.05 (price near lower band/oversold)
 - **Result**: 
-  - Small dataset (test-data.bson): 336: -$86.69 (39 trades, 52.6% win) vs 302: $1046.59 (121 trades, 65% win)
-  - Large dataset (test-data-15min-large.bson): 336: $153.06 (605 trades, 71.1% win) vs 302: $1737.24 (992 trades, 69% win)
+  - Small dataset (test-data.json): 336: -$86.69 (39 trades, 52.6% win) vs 302: $1046.59 (121 trades, 65% win)
+  - Large dataset (test-data-15min-large.json): 336: $153.06 (605 trades, 71.1% win) vs 302: $1737.24 (992 trades, 69% win)
 - **Verdict**: -108% (small) / -91% (large) vs base, Bollinger filter too restrictive, filters out many profitable trades
 
 ### 334: RSI Filter - FAILED
@@ -794,7 +794,7 @@
 - **Test Return**: -$19.79 (Sharpe: 1.56)
 - **Full Return**: -$96.31 (Sharpe: 0.18)
 - **Trades**: 108
-- **Data**: polymarket-data.bson (sparse: 25 points max per token)
+- **Data**: polymarket-data.json (sparse: 25 points max per token)
 - **Verdict**: FAILED - Negative returns despite positive Sharpe (fee impact)
 
 ### ATR Breakout (v2 - Price Range Breakout)
@@ -836,7 +836,7 @@
 - **Test Return**: $65.07 (Sharpe: 0.38)
 - **Full Return**: $267.20 (Sharpe: 1.23)
 - **Trades**: 55
-- **Data**: test-data.bson (10 tokens, 738 points each)
+- **Data**: test-data.json (10 tokens, 738 points each)
 - **Split**: Time-based (70% train, 30% test)
 
 ### Simple MA (Baseline) - Token-based Split
@@ -1145,7 +1145,7 @@ Generated from 7 winning templates: mean_revert_rsi, williams_r, ma_envelope, ch
 - **Change**: Trailing stop = recent_volatility * multiplier (clamped 0.02-0.15)
 - **Parameters**: trailing_stop_multiplier=2.0 (default)
 
-### Results (test-data-15min-10k.bson)
+### Results (test-data-15min-10k.json)
 
 | Metric | Strategy 317 (Dynamic) | Strategy 302 (Fixed) | Comparison |
 |--------|------------------------|----------------------|------------|
@@ -1173,7 +1173,7 @@ Fixed trailing stops (0.07 in 302) work better than volatility-based stops for t
 - **Change**: Added RSI-based exit when RSI > 70 (overbought) with 3% minimum profit
 - **Parameters**: rsi_period=14, rsi_overbought=70, rsi_exit_min_profit=0.03
 
-### Results (test-data.bson)
+### Results (test-data.json)
 
 | Metric | Strategy 314 (RSI Exit) | Strategy 302 (Base) | Comparison |
 |--------|------------------------|----------------------|------------|
@@ -1200,7 +1200,7 @@ The existing stochastic overbought exit (k >= 82) is sufficient for exit timing.
 - **Change**: Added EMA(50) trend filter - only enter when price > EMA
 - **Parameters**: trend_ema_period=50
 
-### Results (test-data.bson)
+### Results (test-data.json)
 
 | Metric | Strategy 318 (EMA Trend) | Strategy 302 (Base) | Comparison |
 |--------|------------------------|----------------------|------------|
@@ -1227,7 +1227,7 @@ Adding an EMA trend filter to the 302 strategy hurts performance dramatically. T
 - **Change**: Multi-take-profit - closes 50% at first_tp_percent, trails remaining 50%
 - **Parameters**: first_tp_percent=0.08, second_tp_percent=0.15
 
-### Results (test-data.bson)
+### Results (test-data.json)
 
 | Metric | Strategy 319 (Multi TP) | Strategy 302 (Base) | Comparison |
 |--------|------------------------|----------------------|------------|
@@ -1238,7 +1238,7 @@ Adding an EMA trend filter to the 302 strategy hurts performance dramatically. T
 | Trades | 131 | 121 | +8% |
 | Win Rate | 58.1% | 65.0% | -6.9% |
 
-### Out-of-Sample Test (test-data-15min-large.bson)
+### Out-of-Sample Test (test-data-15min-large.json)
 
 | Metric | Strategy 319 (Multi TP) | Strategy 302 (Base) |
 |--------|------------------------|----------------------|
@@ -1259,11 +1259,11 @@ The partial exit logic (closing 50% at first TP) doesn't improve risk-adjusted r
 
 ### Strategy: strat_iter53_b
 - **Logic**: Fuzzy-logic controller with 3 memberships (oversoldness, support proximity, momentum recovery), weighted fuzzy AND/OR confidence for entry, and confidence-collapse exit plus standard exits.
-- **Optimization**: `scripts/run-optimization.ts` auto-tuned parameters on `data/test-data.bson`.
+- **Optimization**: `scripts/run-optimization.ts` auto-tuned parameters on `data/test-data.json`.
 
 ### Results
-- **Small (data/test-data.bson)**: Return **123.39%**, Win Rate **41.0%**, Trades **1384**
-- **Large (data/test-data-15min-large.bson)**: Return **199.42%**, Win Rate **43.0%**, Trades **24777**
+- **Small (data/test-data.json)**: Return **123.39%**, Win Rate **41.0%**, Trades **1384**
+- **Large (data/test-data-15min-large.json)**: Return **199.42%**, Win Rate **43.0%**, Trades **24777**
 
 ### Verdict: SUCCESSFUL
 - Positive return on both datasets.

@@ -7,7 +7,7 @@ import * as path from 'path';
 
 kleur.enabled = true;
 
-const DEFAULT_DATA_FILE = 'data/polymarket-data.bson';
+const DEFAULT_DATA_FILE = 'data/polymarket-data.json';
 
 function loadSavedParams(paramsFile: string): Record<string, number> | null {
   const paramsPath = path.join(process.cwd(), paramsFile);

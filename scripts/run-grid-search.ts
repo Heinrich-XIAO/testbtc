@@ -7,8 +7,8 @@ const maxHolds = [28, 32, 35];
 const resistanceExits = [true, false];
 const stochOversolds = [14, 16, 18];
 
-const smallDataPath = 'data/test-data.bson';
-const largeDataPath = 'data/test-data-15min-large.bson';
+const smallDataPath = 'data/test-data.json';
+const largeDataPath = 'data/test-data-15min-large.json';
 
 interface TestResult {
   lookback: number;

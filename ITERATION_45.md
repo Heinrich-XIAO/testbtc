@@ -17,7 +17,7 @@
 - **`strat_iter45_a`**: Implemented sign-change choppiness regime filter before support/stochastic reversion entry.
 - **`strat_iter45_b`**: Implemented stateful oversold persistence arming with delayed stochastic release trigger.
 - **`strat_iter45_c`**: Implemented shock-drop arming window followed by inside-bar bullish reversal confirmation.
-- **Optimization workflow shared with all subagents**: optimize with DE on `data/test-data.bson`, then backtest-only validation on `data/test-data-15min-large.bson`.
+- **Optimization workflow shared with all subagents**: optimize with DE on `data/test-data.json`, then backtest-only validation on `data/test-data-15min-large.json`.
 
 ## Hopeless / Discarded
 

@@ -3,7 +3,7 @@ import { BacktestEngine, loadStoredData } from '../src/backtest/engine';
 import * as path from 'path';
 
 async function main() {
-  const data = await loadStoredData(path.join(__dirname, '../data/test-data-15min-large.bson'));
+  const data = await loadStoredData(path.join(__dirname, '../data/test-data-15min-large.json'));
   console.log(`Loaded ${data.markets.length} markets, ${data.priceHistory.size} price histories`);
   
   const strategy = new StratIter22BStrategy({});

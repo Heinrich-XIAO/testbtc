@@ -446,14 +446,14 @@ function parseMarket(m: any): Market {
   };
 }
 
-export async function saveToBson(data: StoredData, filePath: string): Promise<void> {
-  const BSON = await import('bson');
+export async function saveToJson(data: StoredData, filePath: string): Promise<void> {
   const fs = await import('fs');
   const path = await import('path');
 
-  const MAX_BSON_SIZE = 16 * 1024 * 1024; // 16MB limit
+  const MAX_CHUNK_SIZE = 8 * 1024 * 1024; // 8MB target size per chunk
   const dir = path.dirname(filePath);
-  const baseName = path.basename(filePath, '.bson');
+  const baseName = path.parse(filePath).name;
+  const estimateSize = (obj: unknown): number => Buffer.byteLength(JSON.stringify(obj), 'utf8');
 
   // Write metadata separately
   const metadata = {
@@ -467,8 +467,8 @@ export async function saveToBson(data: StoredData, filePath: string): Promise<vo
   let currentSize = 0;
 
   for (const market of data.markets) {
-    const marketSize = BSON.calculateObjectSize(market);
-    if (currentSize + marketSize > MAX_BSON_SIZE / 2 && currentChunk.length > 0) {
+    const marketSize = estimateSize(market);
+    if (currentSize + marketSize > MAX_CHUNK_SIZE && currentChunk.length > 0) {
       marketChunks.push(currentChunk);
       currentChunk = [];
       currentSize = 0;
@@ -486,8 +486,8 @@ export async function saveToBson(data: StoredData, filePath: string): Promise<vo
   currentSize = 0;
 
   for (const [tokenId, history] of data.priceHistory) {
-    const entrySize = BSON.calculateObjectSize({ [tokenId]: history });
-    if (currentSize + entrySize > MAX_BSON_SIZE / 2 && currentPriceChunk.size > 0) {
+    const entrySize = estimateSize({ [tokenId]: history });
+    if (currentSize + entrySize > MAX_CHUNK_SIZE && currentPriceChunk.size > 0) {
       priceChunks.push(currentPriceChunk);
       currentPriceChunk = new Map();
       currentSize = 0;
@@ -506,29 +506,29 @@ export async function saveToBson(data: StoredData, filePath: string): Promise<vo
   const chunkFiles: string[] = [];
 
   // Write metadata chunk
-  const metadataFile = path.join(dir, `${baseName}.metadata.bson`);
-  fs.writeFileSync(metadataFile, Buffer.from(BSON.serialize(metadata)));
+  const metadataFile = path.join(dir, `${baseName}.metadata.json`);
+  fs.writeFileSync(metadataFile, JSON.stringify(metadata));
   chunkFiles.push(metadataFile);
 
   // Write market chunks
   for (let i = 0; i < marketChunks.length; i++) {
-    const chunkFile = path.join(dir, `${baseName}.markets.${i}.bson`);
-    fs.writeFileSync(chunkFile, Buffer.from(BSON.serialize({ markets: marketChunks[i] })));
+    const chunkFile = path.join(dir, `${baseName}.markets.${i}.json`);
+    fs.writeFileSync(chunkFile, JSON.stringify({ markets: marketChunks[i] }));
     chunkFiles.push(chunkFile);
   }
 
   // Write price history chunks
   for (let i = 0; i < priceChunks.length; i++) {
-    const chunkFile = path.join(dir, `${baseName}.prices.${i}.bson`);
-    fs.writeFileSync(chunkFile, Buffer.from(BSON.serialize({ priceHistory: Object.fromEntries(priceChunks[i]) })));
+    const chunkFile = path.join(dir, `${baseName}.prices.${i}.json`);
+    fs.writeFileSync(chunkFile, JSON.stringify({ priceHistory: Object.fromEntries(priceChunks[i]) }));
     chunkFiles.push(chunkFile);
   }
 
   // Write manifest file
   const manifest = {
-    metadata: `${baseName}.metadata.bson`,
-    markets: marketChunks.map((_, i) => `${baseName}.markets.${i}.bson`),
-    priceHistory: priceChunks.map((_, i) => `${baseName}.prices.${i}.bson`)
+    metadata: `${baseName}.metadata.json`,
+    markets: marketChunks.map((_, i) => `${baseName}.markets.${i}.json`),
+    priceHistory: priceChunks.map((_, i) => `${baseName}.prices.${i}.json`)
   };
   fs.writeFileSync(filePath, JSON.stringify(manifest));
 

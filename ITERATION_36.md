@@ -17,7 +17,7 @@
 - **`strat_iter36_a`**: Implemented VWAP deviation-and-reclaim entry combined with support proximity and stochastic recovery.
 - **`strat_iter36_b`**: Implemented EMA slope regime gate (bounded slope window) before allowing oversold support entries.
 - **`strat_iter36_c`**: Implemented hysteresis state machine (`arm_band` -> `trigger_band` -> `disarm_band`) to reduce noisy stochastic triggers.
-- **Optimization workflow shared with all subagents**: `run-optimization` uses DE random-search + evolution on `data/test-data.bson`, writes params JSON, then `--backtest-only` validates on `data/test-data-15min-large.bson` with frozen params.
+- **Optimization workflow shared with all subagents**: `run-optimization` uses DE random-search + evolution on `data/test-data.json`, writes params JSON, then `--backtest-only` validates on `data/test-data-15min-large.json` with frozen params.
 
 ## Hopeless / Discarded
 

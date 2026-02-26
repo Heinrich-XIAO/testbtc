@@ -4,7 +4,7 @@ import type { BacktestConfig } from '../src/types';
 import * as fs from 'fs';
 import * as path from 'path';
 
-const DEFAULT_DATA_FILE = 'data/polymarket-data.bson';
+const DEFAULT_DATA_FILE = 'data/polymarket-data.json';
 
 function loadSavedParams(): any | null {
   const paramsPath = path.join(process.cwd(), 'src', 'strategies', 'bollinger_bands.params.json');
@@ -23,7 +23,7 @@ function showHelp() {
 Usage: bun run scripts/run-backtest-bollinger.ts [options]
 
 Options:
-  --data <file>              Data file path (default: data/polymarket-data.bson)
+  --data <file>              Data file path (default: data/polymarket-data.json)
   --capital <n>              Initial capital in USD (default: 1000)
   --fee <percent>            Fee rate as percentage (default: 0)
   --period <n>               Bollinger Bands period (default: 20, or from params)

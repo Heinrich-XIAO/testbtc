@@ -22,8 +22,8 @@ When asked about a trading strategy, default to simple_ma.
 
 ## Dataset Policy
 
-- Default dataset: `data/test-data.bson`
-- Validation dataset: `data/test-data-15min-large.bson`
+- Default dataset: `data/test-data.json`
+- Validation dataset: `data/test-data-15min-large.json`
 - Always test on both datasets before declaring a winner
 
 # Iterations
@@ -139,8 +139,8 @@ Every `ITERATION_xx.md` must contain:
 ## Testing Requirements
 
 Every strategy must be tested on BOTH:
-1. **Small dataset**: `data/test-data.bson` (fast iteration)
-2. **Large dataset**: `data/test-data-15min-large.bson` (validation)
+1. **Small dataset**: `data/test-data.json` (fast iteration)
+2. **Large dataset**: `data/test-data-15min-large.json` (validation)
 
 A strategy is only considered a winner if:
 - Positive return on BOTH datasets

@@ -17,7 +17,7 @@
 - **`strat_iter40_a`**: Implemented additive multi-bar confirmation scoring (support, stochastic, momentum, candle strength).
 - **`strat_iter40_b`**: Implemented MACD zero-line retest trigger with support filter and signal-line defensive exit.
 - **`strat_iter40_c`**: Implemented momentum normalized by rolling range to avoid scale bias across tokens.
-- **Optimization workflow shared with all subagents**: optimize on `data/test-data.bson`, then freeze params and validate on `data/test-data-15min-large.bson`.
+- **Optimization workflow shared with all subagents**: optimize on `data/test-data.json`, then freeze params and validate on `data/test-data-15min-large.json`.
 
 ## Hopeless / Discarded
 

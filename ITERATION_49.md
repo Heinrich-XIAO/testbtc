@@ -17,7 +17,7 @@
 - **`strat_iter49_a`**: Implemented downside cluster detection followed by higher-low reversal trigger.
 - **`strat_iter49_b`**: Implemented resistance-distance-scaled take-profit bounds with baseline support/stochastic entry.
 - **`strat_iter49_c`**: Implemented dual-horizon support agreement gate before entry.
-- **Optimization workflow shared with all subagents**: DE optimization on `data/test-data.bson`, then backtest-only validation on `data/test-data-15min-large.bson`.
+- **Optimization workflow shared with all subagents**: DE optimization on `data/test-data.json`, then backtest-only validation on `data/test-data-15min-large.json`.
 
 ## Hopeless / Discarded
 

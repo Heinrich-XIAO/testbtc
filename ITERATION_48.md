@@ -17,7 +17,7 @@
 - **`strat_iter48_a`**: Implemented shock-percentile arm window followed by rebound confirmation entry.
 - **`strat_iter48_b`**: Implemented ATR-normalized discount gate around rolling mean with support/stochastic reclaim.
 - **`strat_iter48_c`**: Implemented z-score deep entry with release threshold crossover.
-- **Optimization workflow shared with all subagents**: DE optimization on `data/test-data.bson`, then backtest-only validation on `data/test-data-15min-large.bson`.
+- **Optimization workflow shared with all subagents**: DE optimization on `data/test-data.json`, then backtest-only validation on `data/test-data-15min-large.json`.
 
 ## Hopeless / Discarded
 

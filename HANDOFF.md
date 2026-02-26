@@ -57,7 +57,7 @@ take_profit: 0.090
 1. Explore higher risk (42-45%) based on v17 findings
 2. Test longer lookback (45-55) - v17_020's lookback=45 was optimal
 3. Focus on tighter take profit (8-10%)
-4. Run top v17 performers on `data/test-data-15min-large.bson`
+4. Run top v17 performers on `data/test-data-15min-large.json`
 
 ## Running the Next Iteration
 

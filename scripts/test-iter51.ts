@@ -32,8 +32,8 @@ async function main() {
   ];
   
   const datasets = [
-    { file: 'data/test-data.bson', name: 'Small' },
-    { file: 'data/test-data-15min-large.bson', name: 'Large' },
+    { file: 'data/test-data.json', name: 'Small' },
+    { file: 'data/test-data-15min-large.json', name: 'Large' },
   ];
   
   for (const strat of strategies) {

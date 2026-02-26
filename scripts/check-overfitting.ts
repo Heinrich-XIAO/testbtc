@@ -26,7 +26,7 @@ const HYBRID_HIGH_RISK_PARAMS: Partial<SRNoTrendFilter302Params> = {
 
 function parseArgs(): { dataFile: string; ignoreParams: boolean; hybrid: boolean } {
   const args = process.argv.slice(2);
-  let dataFile = 'data/test-data.bson';
+  let dataFile = 'data/test-data.json';
   let ignoreParams = false;
   let hybrid = false;
   

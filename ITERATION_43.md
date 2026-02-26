@@ -17,7 +17,7 @@
 - **`strat_iter43_a`**: Implemented volatility-regime transition entry using rising ATR-short/ATR-long ratio with support reversion trigger.
 - **`strat_iter43_b`**: Implemented divergence proxy requiring fresh price low while stochastic low improves.
 - **`strat_iter43_c`**: Implemented duration-aware reclaim logic after a bounded number of under-support closes.
-- **Optimization workflow shared with all subagents**: optimize on `data/test-data.bson`, then validate frozen params on `data/test-data-15min-large.bson` using `--backtest-only`.
+- **Optimization workflow shared with all subagents**: optimize on `data/test-data.json`, then validate frozen params on `data/test-data-15min-large.json` using `--backtest-only`.
 
 ## Hopeless / Discarded
 

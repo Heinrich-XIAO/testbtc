@@ -17,7 +17,7 @@
 - **`strat_iter47_a`**: Implemented EMA slope sign-flip entry confirmation on top of support/stochastic setup.
 - **`strat_iter47_b`**: Implemented stochastic velocity burst gate (delta-K acceleration) for entry quality.
 - **`strat_iter47_c`**: Implemented support-dwell accumulation then breakout trigger logic.
-- **Optimization workflow shared with all subagents**: DE optimization on `data/test-data.bson`, then backtest-only validation on `data/test-data-15min-large.bson`.
+- **Optimization workflow shared with all subagents**: DE optimization on `data/test-data.json`, then backtest-only validation on `data/test-data-15min-large.json`.
 
 ## Hopeless / Discarded
 

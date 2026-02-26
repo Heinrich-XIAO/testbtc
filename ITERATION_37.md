@@ -17,7 +17,7 @@
 - **`strat_iter37_a`**: Added ATR-multiple trailing stop anchored to post-entry peak while retaining hard-stop floor.
 - **`strat_iter37_b`**: Added recency-weighted support-touch score using exponential age decay.
 - **`strat_iter37_c`**: Added failed-breakdown detection window and reclaim-based fade entry.
-- **Optimization workflow shared with all subagents**: DE optimization on `data/test-data.bson`, persisted params, then validation-only backtest on `data/test-data-15min-large.bson`.
+- **Optimization workflow shared with all subagents**: DE optimization on `data/test-data.json`, persisted params, then validation-only backtest on `data/test-data-15min-large.json`.
 
 ## Hopeless / Discarded
 

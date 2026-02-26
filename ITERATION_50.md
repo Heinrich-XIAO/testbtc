@@ -17,7 +17,7 @@
 - **`strat_iter50_a`**: Implemented bounded under-support duration + reclaim + stoch recovery entry.
 - **`strat_iter50_b`**: Implemented narrow-range regime filter with body-strength impulse trigger.
 - **`strat_iter50_c`**: Implemented pressure-flip reversal using candle pressure transition and stochastic recovery.
-- **Optimization workflow shared with all subagents**: DE optimization on `data/test-data.bson`, then backtest-only validation on `data/test-data-15min-large.bson`.
+- **Optimization workflow shared with all subagents**: DE optimization on `data/test-data.json`, then backtest-only validation on `data/test-data-15min-large.json`.
 
 ## Hopeless / Discarded
 

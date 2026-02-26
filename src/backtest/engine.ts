@@ -344,48 +344,34 @@ export class BacktestEngine {
 export function loadStoredData(filePath: string): StoredData {
   const fs = require('fs');
   const path = require('path');
-  const BSON = require('bson');
-
-  // Check if it's a manifest file (new chunked format)
   const content = fs.readFileSync(filePath, 'utf8');
-  let manifest: { metadata: string; markets: string[]; priceHistory: string[] } | null = null;
-  
-  try {
-    manifest = JSON.parse(content);
-  } catch {
-    // Not JSON, assume old BSON format
-  }
+  const parsed = JSON.parse(content) as any;
 
-  if (manifest && manifest.metadata) {
-    // New chunked format - load from manifest
+  // Chunked manifest format
+  if (parsed && typeof parsed.metadata === 'string' && Array.isArray(parsed.markets) && Array.isArray(parsed.priceHistory)) {
+    const manifest = parsed as { metadata: string; markets: string[]; priceHistory: string[] };
     const dir = path.dirname(filePath);
-    
-    // Load metadata
-    const metadataBuffer = fs.readFileSync(path.join(dir, manifest.metadata));
-    const metadata = BSON.deserialize(metadataBuffer);
-    
-    // Load markets from chunks
+
+    const metadata = JSON.parse(fs.readFileSync(path.join(dir, manifest.metadata), 'utf8'));
+
     const markets: Market[] = [];
     for (const chunkFile of manifest.markets) {
-      const chunkBuffer = fs.readFileSync(path.join(dir, chunkFile));
-      const chunk = BSON.deserialize(chunkBuffer);
+      const chunk = JSON.parse(fs.readFileSync(path.join(dir, chunkFile), 'utf8'));
       if (chunk.markets) {
         markets.push(...chunk.markets);
       }
     }
-    
-    // Load price history from chunks
+
     const priceHistory = new Map<string, PricePoint[]>();
     for (const chunkFile of manifest.priceHistory) {
-      const chunkBuffer = fs.readFileSync(path.join(dir, chunkFile));
-      const chunk = BSON.deserialize(chunkBuffer);
+      const chunk = JSON.parse(fs.readFileSync(path.join(dir, chunkFile), 'utf8'));
       if (chunk.priceHistory) {
         for (const [key, value] of Object.entries(chunk.priceHistory)) {
           priceHistory.set(key, value as PricePoint[]);
         }
       }
     }
-    
+
     return {
       markets,
       priceHistory,
@@ -398,9 +384,7 @@ export function loadStoredData(filePath: string): StoredData {
     };
   }
 
-  // Old format - single BSON file
-  const buffer = fs.readFileSync(filePath);
-  const raw = BSON.deserialize(buffer);
+  const raw = parsed;
 
   const priceHistory = new Map<string, PricePoint[]>();
   if (raw.priceHistory) {

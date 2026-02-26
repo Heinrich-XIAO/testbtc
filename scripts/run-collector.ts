@@ -1,10 +1,10 @@
 import { Command } from 'commander';
 import kleur from 'kleur';
-import { collectData, saveToBson } from '../src/collector';
+import { collectData, saveToJson } from '../src/collector';
 
 kleur.enabled = true;
 
-const DEFAULT_OUTPUT = 'data/polymarket-data.bson';
+const DEFAULT_OUTPUT = 'data/polymarket-data.json';
 
 const program = new Command();
 
@@ -45,7 +45,7 @@ program
 
     try {
       const data = await collectData({ limit, active: activeOnly, interval: 'max', months, minPoints, fidelity, minVolume });
-      await saveToBson(data, options.output);
+      await saveToJson(data, options.output);
       console.log(kleur.green('\n✓ Collection complete!'));
     } catch (error) {
       console.error(kleur.red('Error collecting data:'), error);

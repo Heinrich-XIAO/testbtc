@@ -135,7 +135,7 @@ const strategy = new SRNoTrendFilter302Strategy(params);
 ## Test Methodology
 - **Iterations**: 1 (minimal for speed)
 - **Attempts**: 1
-- **Data**: data/test-data.bson
+- **Data**: data/test-data.json
 - **Split**: 70% train, 30% test (time-based)
 - **Concurrency**: 4 parallel tests
 - **Total variants tested**: ~420 across 11 iterations
