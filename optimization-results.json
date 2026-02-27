@@ -1,0 +1,38 @@
+[
+  {
+    "strategy": "strat_iter100_a",
+    "return": 0,
+    "trades": 0,
+    "winRate": 0,
+    "sharpe": 0,
+    "maxDrawdown": 0,
+    "timestamp": "2026-02-27T22:06:16.295Z"
+  },
+  {
+    "strategy": "strat_iter100_b",
+    "return": 0,
+    "trades": 0,
+    "winRate": 0,
+    "sharpe": 0,
+    "maxDrawdown": 0,
+    "timestamp": "2026-02-27T22:08:16.585Z"
+  },
+  {
+    "strategy": "strat_iter100_c",
+    "return": 0,
+    "trades": 0,
+    "winRate": 0,
+    "sharpe": 0,
+    "maxDrawdown": 0,
+    "timestamp": "2026-02-27T22:10:16.863Z"
+  },
+  {
+    "strategy": "strat_iter100_d",
+    "return": 0,
+    "trades": 0,
+    "winRate": 0,
+    "sharpe": 0,
+    "maxDrawdown": 0,
+    "timestamp": "2026-02-27T22:12:17.130Z"
+  }
+]

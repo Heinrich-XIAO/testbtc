@@ -1,0 +1,250 @@
+[
+  {
+    "strategy": "StratIterStock001",
+    "return": 384.1321053446836,
+    "trades": 64935,
+    "winRate": 26.121506121506123,
+    "sharpe": 0.06246365356974293,
+    "maxDrawdown": 10000
+  },
+  {
+    "strategy": "StratIterStock002",
+    "return": -30.776112558476484,
+    "trades": 283,
+    "winRate": 22.261484098939928,
+    "sharpe": 2.2548112979790402,
+    "maxDrawdown": 9357.680576486287
+  },
+  {
+    "strategy": "StratIterStock003",
+    "return": 261.9738426249851,
+    "trades": 15695,
+    "winRate": 24.625676967187,
+    "sharpe": 0.14128823383211508,
+    "maxDrawdown": 9999.999999999887
+  },
+  {
+    "strategy": "StratIterStock004",
+    "return": 255.4842739430742,
+    "trades": 13870,
+    "winRate": 25.681326604181688,
+    "sharpe": 0.20330119851360692,
+    "maxDrawdown": 9999.999999998003
+  },
+  {
+    "strategy": "StratIterStock005",
+    "return": 451.1620982865784,
+    "trades": 63424,
+    "winRate": 25.042570635721496,
+    "sharpe": 0.06319058109967175,
+    "maxDrawdown": 10000
+  },
+  {
+    "strategy": "StratIterStock006",
+    "return": 310.12494900211027,
+    "trades": 33177,
+    "winRate": 25.457395183410192,
+    "sharpe": 0.1153683486654236,
+    "maxDrawdown": 9999.999991783296
+  },
+  {
+    "strategy": "StratIterStock007",
+    "return": -93.27481820677622,
+    "trades": 1709,
+    "winRate": 25.74605032182563,
+    "sharpe": 0.546977862957911,
+    "maxDrawdown": 9999.90624711013
+  },
+  {
+    "strategy": "StratIterStock008",
+    "return": -35.74486101010132,
+    "trades": 1120,
+    "winRate": 25.535714285714285,
+    "sharpe": 0.7262897824654553,
+    "maxDrawdown": 9998.523249321668
+  },
+  {
+    "strategy": "StratIterStock009",
+    "return": 0,
+    "trades": 0,
+    "winRate": 0,
+    "sharpe": 0,
+    "maxDrawdown": 0
+  },
+  {
+    "strategy": "StratIterStock010",
+    "return": 816.9015666300661,
+    "trades": 126294,
+    "winRate": 24.328154940060493,
+    "sharpe": 0.07127823203617706,
+    "maxDrawdown": 10000
+  },
+  {
+    "strategy": "StratIterStock011",
+    "return": 798.4938421208119,
+    "trades": 130033,
+    "winRate": 24.860612306106912,
+    "sharpe": 0.08178723457000911,
+    "maxDrawdown": 10000
+  },
+  {
+    "strategy": "StratIterStock012",
+    "return": 950.464653206405,
+    "trades": 103638,
+    "winRate": 25.122059476253884,
+    "sharpe": 0.05206542471205627,
+    "maxDrawdown": 10000
+  },
+  {
+    "strategy": "StratIterStock013",
+    "return": 1205.5736317255241,
+    "trades": 161141,
+    "winRate": 25.367224976883602,
+    "sharpe": 0.05342364491115866,
+    "maxDrawdown": 10000
+  },
+  {
+    "strategy": "StratIterStock014",
+    "return": 895.5272638243837,
+    "trades": 43648,
+    "winRate": 24.2279142228739,
+    "sharpe": 0.11394791866693722,
+    "maxDrawdown": 9999.999999999984
+  },
+  {
+    "strategy": "StratIterStock015",
+    "return": 684.2129367499124,
+    "trades": 54470,
+    "winRate": 23.477143381677987,
+    "sharpe": 0.19394169150396667,
+    "maxDrawdown": 9999.999964289942
+  },
+  {
+    "strategy": "StratIterStock016",
+    "return": 644.8277926483406,
+    "trades": 40085,
+    "winRate": 25.19895222651865,
+    "sharpe": 0.30718964253812703,
+    "maxDrawdown": 9999.99947157605
+  },
+  {
+    "strategy": "StratIterStock017",
+    "return": 801.5962974559279,
+    "trades": 129403,
+    "winRate": 23.902073367696268,
+    "sharpe": 0.05359892607683755,
+    "maxDrawdown": 10000
+  },
+  {
+    "strategy": "StratIterStock018",
+    "return": 637.0348113403206,
+    "trades": 141128,
+    "winRate": 24.319766453148915,
+    "sharpe": 0.05934030400274542,
+    "maxDrawdown": 10000
+  },
+  {
+    "strategy": "StratIterStock019",
+    "return": 693.5520767162604,
+    "trades": 106701,
+    "winRate": 24.916355048218854,
+    "sharpe": 0.07033567809932914,
+    "maxDrawdown": 10000
+  },
+  {
+    "strategy": "StratIterStock020",
+    "return": 330.0301381308627,
+    "trades": 61721,
+    "winRate": 26.07540383337924,
+    "sharpe": 0.10276941799738964,
+    "maxDrawdown": 10000
+  },
+  {
+    "strategy": "StratIterStock021",
+    "return": 0,
+    "trades": 0,
+    "winRate": 0,
+    "sharpe": 0,
+    "maxDrawdown": 0
+  },
+  {
+    "strategy": "StratIterStock022",
+    "return": 553.8126592989763,
+    "trades": 120308,
+    "winRate": 24.505436047478142,
+    "sharpe": 0.0637789768830264,
+    "maxDrawdown": 10000
+  },
+  {
+    "strategy": "StratIterStock023",
+    "return": 610.1224772438902,
+    "trades": 70379,
+    "winRate": 24.964833259921285,
+    "sharpe": 0.08392826104671856,
+    "maxDrawdown": 9999.999978052865
+  },
+  {
+    "strategy": "StratIterStock024",
+    "return": 648.7784640977227,
+    "trades": 30268,
+    "winRate": 24.54737676754328,
+    "sharpe": 0.1268359634913229,
+    "maxDrawdown": 9999.999983379956
+  },
+  {
+    "strategy": "StratIterStock025",
+    "return": 639.51907478323,
+    "trades": 59418,
+    "winRate": 23.5383217206907,
+    "sharpe": 0.09384902929123708,
+    "maxDrawdown": 10000
+  },
+  {
+    "strategy": "StratIterStock026",
+    "return": 585.470144151248,
+    "trades": 52224,
+    "winRate": 24.51746323529412,
+    "sharpe": 0.08882590799062275,
+    "maxDrawdown": 9999.999999999094
+  },
+  {
+    "strategy": "StratIterStock027",
+    "return": 809.209590670821,
+    "trades": 47504,
+    "winRate": 23.423290670259348,
+    "sharpe": 0.2366088104773116,
+    "maxDrawdown": 9999.999988562811
+  },
+  {
+    "strategy": "StratIterStock028",
+    "return": 338.4291470542573,
+    "trades": 34864,
+    "winRate": 24.61278109224415,
+    "sharpe": 0.2651574155462656,
+    "maxDrawdown": 9999.999661452855
+  },
+  {
+    "strategy": "StratIterStock029",
+    "return": 587.4885633614913,
+    "trades": 85753,
+    "winRate": 24.99854232504985,
+    "sharpe": 0.07124725002300818,
+    "maxDrawdown": 9999.999999999996
+  },
+  {
+    "strategy": "StratIterStock030",
+    "return": 432.537752178986,
+    "trades": 26583,
+    "winRate": 24.195914682315767,
+    "sharpe": 0.2357375333179113,
+    "maxDrawdown": 9999.99803712034
+  },
+  {
+    "strategy": "StratIterStock031",
+    "return": 670.4621536267261,
+    "trades": 25559,
+    "winRate": 23.807660706600416,
+    "sharpe": 0.10370291587254449,
+    "maxDrawdown": 9999.99999995159
+  }
+]
