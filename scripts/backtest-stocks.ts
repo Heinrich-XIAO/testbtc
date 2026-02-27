@@ -30,7 +30,7 @@ program
   .description('Backtest all stock-specific strategies')
   .option('-d, --data <file>', 'Data file path', DEFAULT_DATA_FILE)
   .option('-c, --capital <number>', 'Initial capital in USD', '1000')
-  .option('-f, --fee <percent>', 'Fee rate as percentage', '0')
+  .option('-f, --fee <percent>', 'Fee rate as percentage', '0.1')
   .action(async (options) => {
     console.log(kleur.cyan('Stock Backtest Runner - Stock Strategies'));
     console.log(kleur.cyan('========================================='));

@@ -6,7 +6,7 @@ import * as path from 'path';
 kleur.enabled = true;
 
 const DATASET = 'data/stock-data.json';
-const RESULTS_FILE = 'backtest-results.json';
+const RESULTS_FILE = 'backtest-results-iter.json';
 
 interface Result {
   strategy: string;
@@ -32,11 +32,14 @@ function getTestedStrategies(): string[] {
   return loadResults().map(r => r.strategy);
 }
 
-function discoverStockStrategies(): string[] {
+function discoverIterStrategies(): string[] {
   const strategiesDir = 'src/strategies';
   const files = fs.readdirSync(strategiesDir);
   return files
-    .filter(f => f.startsWith('strat_iter_stock_') && f.endsWith('.ts') && !f.includes('.optimization'))
+    .filter(f => {
+      // Match strat_iter followed by number, but NOT _stock
+      return f.match(/^strat_iter\d+.*\.ts$/) && !f.includes('_stock') && !f.includes('.optimization');
+    })
     .map(f => f.replace('.ts', ''))
     .sort();
 }
@@ -86,14 +89,14 @@ async function testStrategy(strategyFile: string, data: any): Promise<Result[]> 
 }
 
 async function main() {
-  console.log(kleur.cyan('Testing All Stock Strategies (with 0.1% fees)'));
-  console.log(kleur.cyan('==============================================\n'));
+  console.log(kleur.cyan('Testing Non-Stock Iter Strategies (with 0.1% fees)'));
+  console.log(kleur.cyan('===================================================\n'));
 
-  const strategies = discoverStockStrategies();
+  const strategies = discoverIterStrategies();
   const tested = getTestedStrategies();
   const remaining = strategies.filter(s => !tested.includes(s));
 
-  console.log(`Total stock strategies: ${strategies.length}`);
+  console.log(`Total iter strategies: ${strategies.length}`);
   console.log(`Already tested: ${tested.length}`);
   console.log(`Remaining: ${remaining.length}\n`);
 
@@ -106,17 +109,20 @@ async function main() {
   const data = loadStoredData(DATASET);
   console.log(kleur.gray(`Loaded ${data.markets.length} markets\n`));
 
-  // Test all remaining
-  for (let i = 0; i < remaining.length; i++) {
-    const strategyFile = remaining[i];
-    process.stdout.write(`[${i + 1}/${remaining.length}] ${strategyFile.padEnd(30)} `);
+  // Test batch of 20
+  const BATCH_SIZE = 20;
+  const batch = remaining.slice(0, BATCH_SIZE);
+
+  for (let i = 0; i < batch.length; i++) {
+    const strategyFile = batch[i];
+    process.stdout.write(`[${i + 1}/${batch.length}] ${strategyFile.padEnd(30)} `);
     
     const fileResults = await testStrategy(strategyFile, data);
     
     if (fileResults.length > 0) {
       const bestInFile = fileResults.reduce((a, b) => a.return > b.return ? a : b);
       const color = bestInFile.return > 1000 ? kleur.green : bestInFile.return > 0 ? kleur.yellow : kleur.gray;
-      console.log(color(`$${bestInFile.return.toFixed(2).padStart(10)} | ${bestInFile.trades.toString().padStart(5)} trades (${fileResults.length} strategies)`));
+      console.log(color(`$${bestInFile.return.toFixed(2).padStart(10)} | ${bestInFile.trades.toString().padStart(5)} trades`));
       
       const results = loadResults();
       results.push(...fileResults);
@@ -127,6 +133,11 @@ async function main() {
   }
 
   showResults();
+  
+  const remainingAfter = remaining.length - BATCH_SIZE;
+  if (remainingAfter > 0) {
+    console.log(kleur.yellow(`\n${remainingAfter} strategies remaining. Run again to continue.`));
+  }
 }
 
 function showResults() {

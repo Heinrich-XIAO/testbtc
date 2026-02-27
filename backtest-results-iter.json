@@ -1,0 +1,66 @@
+[
+  {
+    "strategy": "StratIter100A",
+    "return": 0,
+    "trades": 0,
+    "winRate": 0,
+    "sharpe": 0,
+    "maxDrawdown": 0
+  },
+  {
+    "strategy": "StratIter100B",
+    "return": 0,
+    "trades": 0,
+    "winRate": 0,
+    "sharpe": 0,
+    "maxDrawdown": 0
+  },
+  {
+    "strategy": "StratIter100C",
+    "return": 0,
+    "trades": 0,
+    "winRate": 0,
+    "sharpe": 0,
+    "maxDrawdown": 0
+  },
+  {
+    "strategy": "StratIter100D",
+    "return": 0,
+    "trades": 0,
+    "winRate": 0,
+    "sharpe": 0,
+    "maxDrawdown": 0
+  },
+  {
+    "strategy": "StratIter100E",
+    "return": 0,
+    "trades": 0,
+    "winRate": 0,
+    "sharpe": 0,
+    "maxDrawdown": 0
+  },
+  {
+    "strategy": "StratIter101A",
+    "return": 0,
+    "trades": 0,
+    "winRate": 0,
+    "sharpe": 0,
+    "maxDrawdown": 0
+  },
+  {
+    "strategy": "StratIter101B",
+    "return": 79.67298846897893,
+    "trades": 2,
+    "winRate": 50,
+    "sharpe": 0,
+    "maxDrawdown": 2487.5
+  },
+  {
+    "strategy": "StratIter101C",
+    "return": 0,
+    "trades": 0,
+    "winRate": 0,
+    "sharpe": 0,
+    "maxDrawdown": 0
+  }
+]
