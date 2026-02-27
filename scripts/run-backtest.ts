@@ -7,7 +7,7 @@ import * as path from 'path';
 
 kleur.enabled = true;
 
-const DEFAULT_DATA_FILE = 'data/polymarket-data.json';
+const DEFAULT_DATA_FILE = 'data/stock-data.json';
 
 function loadSavedParams(paramsFile: string): Record<string, number> | null {
   const paramsPath = path.join(process.cwd(), paramsFile);
@@ -1355,7 +1355,7 @@ const program = new Command();
 
 program
   .name('backtest')
-  .description('Polymarket Backtest Runner')
+  .description('Stock Backtest Runner')
   .option('-s, --strategy <name>', 'Strategy to use (all, simple_ma, bollinger, rsi, breakout, ma_vol, support, momentum, range, mean_revert, dual_ma, strat_sr_no_trend_filter_302, strat_sr_no_trend_lookup_55_378, strat_sr_no_trend_combo_366, strat_sr_no_trend_combo_wide_380, strat_sr_no_trend_base_30_365, strat_sr_no_trend_late_exit_355, strat_sr_no_trend_slow_stoch_360, strat_sr_no_trend_tight_bounce_354, strat_sr_no_trend_adx_341, strat_sr_no_trend_vwap_338, strat_sr_no_trend_wider_bounce_327, strat_sr_no_trend_tight_stop_328, strat_sr_no_trend_volatility_316, strat_sr_no_trend_dynamic_trail_317, strat_sr_no_trend_no_momentum_315, strat_sr_no_trend_volume_313, strat_sr_no_trend_tight_stoch_324, strat_sr_no_trend_wide_res_370, strat_sr_no_trend_vol_6_374, strat_iter34_a, strat_iter34_c, strat_iter34_b, strat_iter35_a, strat_iter35_b, strat_iter35_c)', 'all')
   .option('-d, --data <file>', 'Data file path', DEFAULT_DATA_FILE)
   .option('-c, --capital <number>', 'Initial capital in USD', '1000')
@@ -1367,8 +1367,8 @@ program
   .option('-t, --trailing-stop', 'Enable trailing stop')
   .option('-v, --verbose', 'Show detailed trade history for each strategy')
   .action(async (options) => {
-    console.log(kleur.cyan('Polymarket Backtest Runner'));
-    console.log(kleur.cyan('=========================='));
+    console.log(kleur.cyan('Stock Backtest Runner'));
+    console.log(kleur.cyan('========================'));
     console.log(`Data file:       ${options.data}`);
     console.log(`Initial capital: $${options.capital}`);
     console.log(`Fee rate:        ${options.fee}%`);

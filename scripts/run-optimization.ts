@@ -23,13 +23,15 @@ function discoverStrategyConfigs(): Record<string, any> {
       try {
         const configModule = require(path.join(strategiesDir, file));
         if (configModule.optimizationConfig && configModule.outputFile) {
-          let StrategyClass: any = null;
-          try {
-            const strategyModule = require(path.join(strategiesDir, `${baseName}.ts`));
-            const className = baseName.replace(/_([a-z])/g, (_, c) => c.toUpperCase())
-              .split('').map((c: string, i: number) => i === 0 ? c.toUpperCase() : c).join('') + 'Strategy';
-            StrategyClass = strategyModule[className] || strategyModule.default;
-          } catch (e) { /* ignore */ }
+          let StrategyClass: any = configModule.StrategyClass || null;
+          if (!StrategyClass) {
+            try {
+              const strategyModule = require(path.join(strategiesDir, `${baseName}.ts`));
+              const className = baseName.replace(/_([a-z])/g, (_, c) => c.toUpperCase())
+                .split('').map((c: string, i: number) => i === 0 ? c.toUpperCase() : c).join('') + 'Strategy';
+              StrategyClass = strategyModule[className] || strategyModule.default;
+            } catch (e) { /* ignore */ }
+          }
           if (StrategyClass) {
             configs[baseName] = {
               class: StrategyClass,
@@ -53,6 +55,7 @@ const availableStrategyNames = Object.keys(strategies).sort();
 const defaultStrategyName = availableStrategyNames.includes('simple_ma')
   ? 'simple_ma'
   : (availableStrategyNames[0] ?? '');
+
 async function loadDataset(datasetPath: string): Promise<StoredData> {
   const absolutePath = path.resolve(datasetPath);
   console.log(kleur.gray(`Loading dataset from: ${absolutePath}`));
@@ -64,12 +67,13 @@ async function loadDataset(datasetPath: string): Promise<StoredData> {
 async function runOptimization(
   strategyName: string,
   data: StoredData,
-  options: { generations: number; population: number; fidelity: number }
+  options: { generations: number; population: number }
 ): Promise<OptimizationResult> {
   const strategyConfig = strategies[strategyName];
   if (!strategyConfig) throw new Error(`Unknown strategy: ${strategyName}`);
 
   console.log(kleur.cyan(`\nOptimizing ${strategyName}...`));
+  console.log(kleur.gray(`Generations: ${options.generations}, Population: ${options.population}`));
 
   const optimizer = new DifferentialEvolutionOptimizer(
     data,
@@ -113,8 +117,10 @@ async function main() {
   program
     .name('run-optimization')
     .argument('[strategy]', 'Strategy name', defaultStrategyName)
-    .option('-d, --dataset <path>', 'Path to dataset', 'data/test-data.json')
-    .option('-g, --generations <number>', 'Number of generations', '20')
+    .option('-d, --dataset <path>', 'Path to dataset', 'data/stock-data.json')
+    .option('-g, --generations <number>', 'Number of generations', '5')
+    .option('-p, --population <number>', 'Population size', '10')
+    .option('--fast', 'Fast mode (3 generations, 8 population)', false)
     .option('--backtest-only', 'Run backtest only', false)
     .parse(process.argv);
 
@@ -123,6 +129,14 @@ async function main() {
 
   if (!strategyName) {
     throw new Error('No strategies discovered. Add strategy and .optimization.ts files in src/strategies.');
+  }
+
+  // Fast mode overrides
+  let generations = parseInt(options.generations);
+  let population = parseInt(options.population);
+  if (options.fast) {
+    generations = 3;
+    population = 8;
   }
 
   try {
@@ -134,7 +148,7 @@ async function main() {
       if (fs.existsSync(paramsPath)) params = JSON.parse(fs.readFileSync(paramsPath, 'utf-8'));
       await runBacktest(strategyName, data, params);
     } else {
-      await runOptimization(strategyName, data, { generations: parseInt(options.generations), population: 15, fidelity: 1 });
+      await runOptimization(strategyName, data, { generations, population });
       await runBacktest(strategyName, data);
     }
   } catch (error) {
