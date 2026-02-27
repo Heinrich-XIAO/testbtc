@@ -1,0 +1,37 @@
+[
+  {
+    "strategy": "Higher Timeframe (Weekly)",
+    "return": -23.13871388198504,
+    "trades": 2,
+    "winRate": 0,
+    "params": {}
+  },
+  {
+    "strategy": "Volume Confirmation",
+    "return": 0,
+    "trades": 0,
+    "winRate": 0,
+    "params": {}
+  },
+  {
+    "strategy": "Multi-Bar Confirmation",
+    "return": 0,
+    "trades": 0,
+    "winRate": 0,
+    "params": {}
+  },
+  {
+    "strategy": "Volatility Filter",
+    "return": 39.58335602195348,
+    "trades": 2,
+    "winRate": 50,
+    "params": {}
+  },
+  {
+    "strategy": "Trend Following",
+    "return": 0,
+    "trades": 0,
+    "winRate": 0,
+    "params": {}
+  }
+]

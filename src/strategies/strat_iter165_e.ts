@@ -1,0 +1,206 @@
+import type { Strategy, StrategyParams, BacktestContext, Bar } from '../types';
+import * as fs from 'fs';
+import * as path from 'path';
+
+export interface StratIter165EParams extends StrategyParams {
+  ma_period: number;
+  slope_threshold: number;
+  stoch_oversold: number;
+  stoch_overbought: number;
+  stoch_period: number;
+  stop_loss: number;
+  profit_target: number;
+  max_hold_bars: number;
+  risk_percent: number;
+}
+
+const defaultParams: StratIter165EParams = {
+  ma_period: 50,
+  slope_threshold: 0.002,
+  stoch_oversold: 20,
+  stoch_overbought: 80,
+  stoch_period: 14,
+  stop_loss: 0.08,
+  profit_target: 0.15,
+  max_hold_bars: 25,
+  risk_percent: 0.25,
+};
+
+function loadSavedParams(): Partial<StratIter165EParams> | null {
+  const paramsPath = path.join(__dirname, 'strat_iter165_e.params.json');
+  if (!fs.existsSync(paramsPath)) return null;
+  try {
+    const content = fs.readFileSync(paramsPath, 'utf-8');
+    return JSON.parse(content);
+  } catch {
+    return null;
+  }
+}
+
+export class StratIter165EStrategy implements Strategy {
+  params: StratIter165EParams;
+  private priceHistory: Map<string, number[]> = new Map();
+  private highHistory: Map<string, number[]> = new Map();
+  private lowHistory: Map<string, number[]> = new Map();
+  private kValues: Map<string, number[]> = new Map();
+  private entryPrice: Map<string, number> = new Map();
+  private entryBar: Map<string, number> = new Map();
+  private barCount: Map<string, number> = new Map();
+  private positionType: Map<string, 'LONG' | 'SHORT'> = new Map();
+
+  constructor(params: Partial<StratIter165EParams> = {}) {
+    const savedParams = loadSavedParams();
+    this.params = { ...defaultParams, ...savedParams, ...params } as StratIter165EParams;
+  }
+
+  onInit(_ctx: BacktestContext): void {}
+
+  private calculateMA(history: number[], period: number): number | null {
+    if (history.length < period) return null;
+    const slice = history.slice(-period);
+    return slice.reduce((a, b) => a + b, 0) / period;
+  }
+
+  private calculateMASlope(history: number[], period: number): number | null {
+    if (history.length < period + 5) return null;
+    const currentMA = this.calculateMA(history, period);
+    if (currentMA === null) return null;
+    const prevMA = this.calculateMA(history.slice(0, -5), period);
+    if (prevMA === null) return null;
+    return (currentMA - prevMA) / prevMA;
+  }
+
+  private calculateStochasticK(closes: number[], highs: number[], lows: number[], period: number): number | null {
+    if (closes.length < period || highs.length < period || lows.length < period) return null;
+    const highSlice = highs.slice(-period);
+    const lowSlice = lows.slice(-period);
+    const highest = Math.max(...highSlice);
+    const lowest = Math.min(...lowSlice);
+    if (highest === lowest) return 50;
+    const close = closes[closes.length - 1];
+    return ((close - lowest) / (highest - lowest)) * 100;
+  }
+
+  onNext(ctx: BacktestContext, bar: Bar): void {
+    if (!this.priceHistory.has(bar.tokenId)) {
+      this.priceHistory.set(bar.tokenId, []);
+      this.highHistory.set(bar.tokenId, []);
+      this.lowHistory.set(bar.tokenId, []);
+      this.kValues.set(bar.tokenId, []);
+      this.barCount.set(bar.tokenId, 0);
+    }
+
+    const history = this.priceHistory.get(bar.tokenId)!;
+    const highs = this.highHistory.get(bar.tokenId)!;
+    const lows = this.lowHistory.get(bar.tokenId)!;
+    const kVals = this.kValues.get(bar.tokenId)!;
+    const barNum = (this.barCount.get(bar.tokenId) || 0) + 1;
+    this.barCount.set(bar.tokenId, barNum);
+
+    history.push(bar.close);
+    highs.push(bar.high);
+    lows.push(bar.low);
+    if (history.length > 200) history.shift();
+    if (highs.length > 200) highs.shift();
+    if (lows.length > 200) lows.shift();
+
+    const k = this.calculateStochasticK(history, highs, lows, this.params.stoch_period);
+    if (k !== null) {
+      kVals.push(k);
+      if (kVals.length > 100) kVals.shift();
+    }
+
+    const maSlope = this.calculateMASlope(history, this.params.ma_period);
+
+    const position = ctx.getPosition(bar.tokenId);
+
+    if (position && position.size !== 0) {
+      const entry = this.entryPrice.get(bar.tokenId);
+      const entryBarNum = this.entryBar.get(bar.tokenId);
+      const pType = this.positionType.get(bar.tokenId);
+
+      if (entry !== undefined && entryBarNum !== undefined && pType !== undefined) {
+        if (pType === 'LONG') {
+          if (bar.low <= entry * (1 - this.params.stop_loss)) {
+            ctx.close(bar.tokenId);
+            this.entryPrice.delete(bar.tokenId);
+            this.entryBar.delete(bar.tokenId);
+            this.positionType.delete(bar.tokenId);
+            return;
+          }
+
+          if (bar.high >= entry * (1 + this.params.profit_target)) {
+            ctx.close(bar.tokenId);
+            this.entryPrice.delete(bar.tokenId);
+            this.entryBar.delete(bar.tokenId);
+            this.positionType.delete(bar.tokenId);
+            return;
+          }
+        } else {
+          if (bar.high >= entry * (1 + this.params.stop_loss)) {
+            ctx.close(bar.tokenId);
+            this.entryPrice.delete(bar.tokenId);
+            this.entryBar.delete(bar.tokenId);
+            this.positionType.delete(bar.tokenId);
+            return;
+          }
+
+          if (bar.low <= entry * (1 - this.params.profit_target)) {
+            ctx.close(bar.tokenId);
+            this.entryPrice.delete(bar.tokenId);
+            this.entryBar.delete(bar.tokenId);
+            this.positionType.delete(bar.tokenId);
+            return;
+          }
+        }
+
+        if (barNum - entryBarNum >= this.params.max_hold_bars) {
+          ctx.close(bar.tokenId);
+          this.entryPrice.delete(bar.tokenId);
+          this.entryBar.delete(bar.tokenId);
+          this.positionType.delete(bar.tokenId);
+          return;
+        }
+      }
+    } else if (bar.close > 0.05 && bar.close < 0.95 && kVals.length >= 2 && maSlope !== null) {
+      const prevK = kVals[kVals.length - 2];
+      const currK = kVals[kVals.length - 1];
+
+      const kCrossAboveOversold = prevK < this.params.stoch_oversold && currK >= this.params.stoch_oversold;
+      const kCrossBelowOverbought = prevK > this.params.stoch_overbought && currK <= this.params.stoch_overbought;
+
+      const upTrend = maSlope > this.params.slope_threshold;
+      const downTrend = maSlope < -this.params.slope_threshold;
+
+      // LONG entry: uptrend confirmed + stochastic oversold cross
+      if (kCrossAboveOversold && upTrend) {
+        const cash = ctx.getCapital() * this.params.risk_percent * 0.995;
+        const size = cash / bar.close;
+        if (size > 0 && cash <= ctx.getCapital()) {
+          const result = ctx.buy(bar.tokenId, size);
+          if (result.success) {
+            this.entryPrice.set(bar.tokenId, bar.close);
+            this.entryBar.set(bar.tokenId, barNum);
+            this.positionType.set(bar.tokenId, 'LONG');
+          }
+        }
+      }
+
+      // SHORT entry: downtrend confirmed + stochastic overbought cross
+      if (kCrossBelowOverbought && downTrend) {
+        const cash = ctx.getCapital() * this.params.risk_percent * 0.995;
+        const size = cash / bar.close;
+        if (size > 0 && cash <= ctx.getCapital()) {
+          const result = ctx.sell(bar.tokenId, size);
+          if (result.success) {
+            this.entryPrice.set(bar.tokenId, bar.close);
+            this.entryBar.set(bar.tokenId, barNum);
+            this.positionType.set(bar.tokenId, 'SHORT');
+          }
+        }
+      }
+    }
+  }
+
+  onComplete(_ctx: BacktestContext): void {}
+}
