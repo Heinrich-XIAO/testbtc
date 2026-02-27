@@ -4,7 +4,6 @@
   "type": "module",
   "scripts": {
     "collect": "bun run scripts/run-collector.ts",
-    "collect:crypto": "bun run scripts/collect-crypto.ts",
     "backtest": "bun run scripts/run-backtest.ts",
     "backtest:stocks": "bun run scripts/backtest-stocks.ts",
     "optimize": "bun run scripts/run-optimization.ts",
