@@ -1,0 +1,1157 @@
+[
+  {
+    "file": "strat_iter168_a",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter168_b",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter168_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter168_d",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter168_e",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter169_a",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter169_b",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter169_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter169_d",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter169_e",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter170_a",
+    "return": 144.88340621707994,
+    "returnPct": -85.51165937829201,
+    "trades": 4,
+    "winRate": 50
+  },
+  {
+    "file": "strat_iter170_b",
+    "return": 144.88340621707994,
+    "returnPct": -85.51165937829201,
+    "trades": 4,
+    "winRate": 50
+  },
+  {
+    "file": "strat_iter170_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter170_d",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter170_e",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter171_a",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter171_b",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter171_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter171_d",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter171_e",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter172_a",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter172_b",
+    "return": 60.96547664516288,
+    "returnPct": -93.90345233548372,
+    "trades": 2,
+    "winRate": 50
+  },
+  {
+    "file": "strat_iter172_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter172_d",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter172_e",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter173_a",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter173_b",
+    "return": 60.96547664516288,
+    "returnPct": -93.90345233548372,
+    "trades": 2,
+    "winRate": 50
+  },
+  {
+    "file": "strat_iter173_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter173_d",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter173_e",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter174_a",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter174_b",
+    "return": 60.96547664516288,
+    "returnPct": -93.90345233548372,
+    "trades": 2,
+    "winRate": 50
+  },
+  {
+    "file": "strat_iter174_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter174_d",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter174_e",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter175_a",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter175_b",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter175_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter175_d",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter175_e",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter176_a",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter176_b",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter176_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter176_d",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter176_e",
+    "return": -32.288705162200586,
+    "returnPct": -103.22887051622006,
+    "trades": 2,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter177_a",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter177_b",
+    "return": 60.96547664516288,
+    "returnPct": -93.90345233548372,
+    "trades": 2,
+    "winRate": 50
+  },
+  {
+    "file": "strat_iter177_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter177_d",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter177_e",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter178_a",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter178_b",
+    "return": 60.96547664516288,
+    "returnPct": -93.90345233548372,
+    "trades": 2,
+    "winRate": 50
+  },
+  {
+    "file": "strat_iter178_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter178_d",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter178_e",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter179_a",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter179_b",
+    "return": 60.96547664516288,
+    "returnPct": -93.90345233548372,
+    "trades": 2,
+    "winRate": 50
+  },
+  {
+    "file": "strat_iter179_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter179_d",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter179_e",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter180_a",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter180_b",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter180_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter180_d",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter180_e",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter181_a",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter181_b",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter181_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter181_d",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter181_e",
+    "return": -32.288705162200586,
+    "returnPct": -103.22887051622006,
+    "trades": 2,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter182_a",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter182_b",
+    "return": 60.96547664516288,
+    "returnPct": -93.90345233548372,
+    "trades": 2,
+    "winRate": 50
+  },
+  {
+    "file": "strat_iter182_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter182_d",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter182_e",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter183_a",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter183_b",
+    "return": 60.96547664516288,
+    "returnPct": -93.90345233548372,
+    "trades": 2,
+    "winRate": 50
+  },
+  {
+    "file": "strat_iter183_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter183_d",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter183_e",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter184_a",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter184_b",
+    "return": 60.96547664516288,
+    "returnPct": -93.90345233548372,
+    "trades": 2,
+    "winRate": 50
+  },
+  {
+    "file": "strat_iter184_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter184_d",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter184_e",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter185_a",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter185_b",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter185_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter185_d",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter185_e",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter186_a",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter186_b",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter186_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter186_d",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter186_e",
+    "return": -32.288705162200586,
+    "returnPct": -103.22887051622006,
+    "trades": 2,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter187_a",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter187_b",
+    "return": 60.96547664516288,
+    "returnPct": -93.90345233548372,
+    "trades": 2,
+    "winRate": 50
+  },
+  {
+    "file": "strat_iter187_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter187_d",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter187_e",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter188_a",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter188_b",
+    "return": 60.96547664516288,
+    "returnPct": -93.90345233548372,
+    "trades": 2,
+    "winRate": 50
+  },
+  {
+    "file": "strat_iter188_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter188_d",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter188_e",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter189_a",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter189_b",
+    "return": 60.96547664516288,
+    "returnPct": -93.90345233548372,
+    "trades": 2,
+    "winRate": 50
+  },
+  {
+    "file": "strat_iter189_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter189_d",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter189_e",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter190_a",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter190_b",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter190_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter190_d",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter190_e",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter191_a",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter191_b",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter191_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter191_d",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter191_e",
+    "return": -32.288705162200586,
+    "returnPct": -103.22887051622006,
+    "trades": 2,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter192_a",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter192_b",
+    "return": 60.96547664516288,
+    "returnPct": -93.90345233548372,
+    "trades": 2,
+    "winRate": 50
+  },
+  {
+    "file": "strat_iter192_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter192_d",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter192_e",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter193_a",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter193_b",
+    "return": 60.96547664516288,
+    "returnPct": -93.90345233548372,
+    "trades": 2,
+    "winRate": 50
+  },
+  {
+    "file": "strat_iter193_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter193_d",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter193_e",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter194_a",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter194_b",
+    "return": 60.96547664516288,
+    "returnPct": -93.90345233548372,
+    "trades": 2,
+    "winRate": 50
+  },
+  {
+    "file": "strat_iter194_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter194_d",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter194_e",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter195_a",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter195_b",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter195_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter195_d",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter195_e",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter196_a",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter196_b",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter196_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter196_d",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter196_e",
+    "return": -32.288705162200586,
+    "returnPct": -103.22887051622006,
+    "trades": 2,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter197_a",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter197_b",
+    "return": 60.96547664516288,
+    "returnPct": -93.90345233548372,
+    "trades": 2,
+    "winRate": 50
+  },
+  {
+    "file": "strat_iter197_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter197_d",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter197_e",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter198_a",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter198_b",
+    "return": 60.96547664516288,
+    "returnPct": -93.90345233548372,
+    "trades": 2,
+    "winRate": 50
+  },
+  {
+    "file": "strat_iter198_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter198_d",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter198_e",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter199_a",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter199_b",
+    "return": 60.96547664516288,
+    "returnPct": -93.90345233548372,
+    "trades": 2,
+    "winRate": 50
+  },
+  {
+    "file": "strat_iter199_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter199_d",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter199_e",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter200_a",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter200_b",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter200_c",
+    "return": 0,
+    "returnPct": -100,
+    "trades": 0,
+    "winRate": 0
+  },
+  {
+    "file": "strat_iter200_d",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  },
+  {
+    "file": "strat_iter200_e",
+    "return": 36.41610004240647,
+    "returnPct": -96.35838999575935,
+    "trades": 4,
+    "winRate": 25
+  }
+]
