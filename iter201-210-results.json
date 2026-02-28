@@ -1,0 +1,272 @@
+[
+  {
+    "file": "strat_iter207_d",
+    "return": 1100.176943403931,
+    "trades": 111135,
+    "winRate": 25.691276375579253
+  },
+  {
+    "file": "strat_iter203_e",
+    "return": 945.4947599281377,
+    "trades": 158723,
+    "winRate": 25.056230035974625
+  },
+  {
+    "file": "strat_iter203_d",
+    "return": 936.2259630635128,
+    "trades": 159405,
+    "winRate": 25.067595119350084
+  },
+  {
+    "file": "strat_iter202_d",
+    "return": 907.657682754485,
+    "trades": 156206,
+    "winRate": 25.644981626826112
+  },
+  {
+    "file": "strat_iter202_e",
+    "return": 881.3865865521036,
+    "trades": 152853,
+    "winRate": 25.850326784557716
+  },
+  {
+    "file": "strat_iter203_c",
+    "return": 878.8116692543315,
+    "trades": 160750,
+    "winRate": 25.094867807153964
+  },
+  {
+    "file": "strat_iter205_d",
+    "return": 856.687331252378,
+    "trades": 161727,
+    "winRate": 25.12567474818676
+  },
+  {
+    "file": "strat_iter205_e",
+    "return": 850.3653305732159,
+    "trades": 161727,
+    "winRate": 25.12567474818676
+  },
+  {
+    "file": "strat_iter205_c",
+    "return": 821.3686528621108,
+    "trades": 161727,
+    "winRate": 25.12567474818676
+  },
+  {
+    "file": "strat_iter201_c",
+    "return": 820.2210415805673,
+    "trades": 111682,
+    "winRate": 24.91180315538762
+  },
+  {
+    "file": "strat_iter201_b",
+    "return": 779.2464131595837,
+    "trades": 161727,
+    "winRate": 25.12567474818676
+  },
+  {
+    "file": "strat_iter202_c",
+    "return": 779.2464131595837,
+    "trades": 161727,
+    "winRate": 25.12567474818676
+  },
+  {
+    "file": "strat_iter204_c",
+    "return": 779.2464131595837,
+    "trades": 161727,
+    "winRate": 25.12567474818676
+  },
+  {
+    "file": "strat_iter203_a",
+    "return": 760.2942966112355,
+    "trades": 173299,
+    "winRate": 25.813189920311135
+  },
+  {
+    "file": "strat_iter203_b",
+    "return": 748.7389736030996,
+    "trades": 164145,
+    "winRate": 25.213073806695302
+  },
+  {
+    "file": "strat_iter202_b",
+    "return": 744.2541746905831,
+    "trades": 171490,
+    "winRate": 23.9489183042743
+  },
+  {
+    "file": "strat_iter205_b",
+    "return": 721.9629722016016,
+    "trades": 161727,
+    "winRate": 25.12567474818676
+  },
+  {
+    "file": "strat_iter208_e",
+    "return": 719.4158043069008,
+    "trades": 152737,
+    "winRate": 25.34880218938437
+  },
+  {
+    "file": "strat_iter206_a",
+    "return": 697.8145464322404,
+    "trades": 126877,
+    "winRate": 20.563222648707015
+  },
+  {
+    "file": "strat_iter207_b",
+    "return": 696.2475814296424,
+    "trades": 135614,
+    "winRate": 25.544560296134616
+  },
+  {
+    "file": "strat_iter202_a",
+    "return": 692.6364119342747,
+    "trades": 188057,
+    "winRate": 21.193574288646527
+  },
+  {
+    "file": "strat_iter201_e",
+    "return": 679.8300581104106,
+    "trades": 47089,
+    "winRate": 24.41546858077258
+  },
+  {
+    "file": "strat_iter204_e",
+    "return": 663.5630698384628,
+    "trades": 127106,
+    "winRate": 24.185325633723036
+  },
+  {
+    "file": "strat_iter208_b",
+    "return": 645.5023114093956,
+    "trades": 130941,
+    "winRate": 24.80124636286572
+  },
+  {
+    "file": "strat_iter204_d",
+    "return": 645.1975412711724,
+    "trades": 141178,
+    "winRate": 24.568983836008442
+  },
+  {
+    "file": "strat_iter201_d",
+    "return": 622.7854577494593,
+    "trades": 72494,
+    "winRate": 24.66273070874831
+  },
+  {
+    "file": "strat_iter209_a",
+    "return": 609.376153727759,
+    "trades": 144911,
+    "winRate": 25.699912360000276
+  },
+  {
+    "file": "strat_iter206_b",
+    "return": 599.9023554807675,
+    "trades": 76376,
+    "winRate": 18.293704828742012
+  },
+  {
+    "file": "strat_iter205_a",
+    "return": 592.6491644162604,
+    "trades": 161727,
+    "winRate": 25.12567474818676
+  },
+  {
+    "file": "strat_iter206_e",
+    "return": 580.0834197600595,
+    "trades": 61742,
+    "winRate": 23.07829354410288
+  },
+  {
+    "file": "strat_iter206_d",
+    "return": 578.0707580674193,
+    "trades": 133359,
+    "winRate": 24.8577148898837
+  },
+  {
+    "file": "strat_iter206_c",
+    "return": 576.2139254572578,
+    "trades": 45994,
+    "winRate": 21.07231378005827
+  },
+  {
+    "file": "strat_iter209_b",
+    "return": 568.3178635027657,
+    "trades": 110460,
+    "winRate": 22.678797754843384
+  },
+  {
+    "file": "strat_iter209_c",
+    "return": 544.2712884587761,
+    "trades": 154609,
+    "winRate": 25.94156873144513
+  },
+  {
+    "file": "strat_iter207_a",
+    "return": 499.26968456400255,
+    "trades": 168740,
+    "winRate": 25.593220338983052
+  },
+  {
+    "file": "strat_iter209_d",
+    "return": 488.36015073238354,
+    "trades": 143278,
+    "winRate": 26.93295551305853
+  },
+  {
+    "file": "strat_iter207_c",
+    "return": 486.2313397101111,
+    "trades": 131764,
+    "winRate": 25.306608785404205
+  },
+  {
+    "file": "strat_iter201_a",
+    "return": 485.01590438725475,
+    "trades": 207365,
+    "winRate": 25.212547922744914
+  },
+  {
+    "file": "strat_iter209_e",
+    "return": 465.554009941676,
+    "trades": 156584,
+    "winRate": 24.383078730904817
+  },
+  {
+    "file": "strat_iter204_b",
+    "return": 442.28491767143146,
+    "trades": 196302,
+    "winRate": 25.832136198306692
+  },
+  {
+    "file": "strat_iter207_e",
+    "return": 426.485426279261,
+    "trades": 207365,
+    "winRate": 25.212547922744914
+  },
+  {
+    "file": "strat_iter208_d",
+    "return": 376.640426925567,
+    "trades": 191638,
+    "winRate": 26.121646020100396
+  },
+  {
+    "file": "strat_iter208_a",
+    "return": 305.98792697246654,
+    "trades": 261705,
+    "winRate": 25.658661469975737
+  },
+  {
+    "file": "strat_iter208_c",
+    "return": 293.89348291044394,
+    "trades": 90363,
+    "winRate": 25.004703252437395
+  },
+  {
+    "file": "strat_iter204_a",
+    "return": 290.2866826525003,
+    "trades": 262092,
+    "winRate": 25.65587656242846
+  }
+]

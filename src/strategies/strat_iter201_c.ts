@@ -1,0 +1,69 @@
+import type { Strategy, StrategyParams, BacktestContext, Bar } from '../types';
+import * as fs from 'fs';
+import * as path from 'path';
+
+type TokenSeries = { closes: number[]; highs: number[]; lows: number[]; };
+
+function loadSavedParams<T extends StrategyParams>(fileName: string): Partial<T> | null {
+  const paramsPath = path.join(__dirname, fileName);
+  if (!fs.existsSync(paramsPath)) return null;
+  try { return JSON.parse(fs.readFileSync(paramsPath, 'utf-8')); } catch { return null; }
+}
+
+function capPush(values: number[], value: number, max = 500): void { values.push(value); if (values.length > max) values.shift(); }
+
+abstract class BaseIterStrategy<P extends StrategyParams> implements Strategy {
+  params: P;
+  protected series: Map<string, TokenSeries> = new Map();
+  protected bars: Map<string, number> = new Map();
+  protected entryPrice: Map<string, number> = new Map();
+  protected entryBar: Map<string, number> = new Map();
+
+  constructor(fileName: string, defaults: P, params: Partial<P>) {
+    const saved = loadSavedParams<P>(fileName);
+    this.params = { ...defaults, ...saved, ...params } as P;
+  }
+
+  onInit(_ctx: BacktestContext): void {}
+
+  protected nextBar(bar: Bar): { series: TokenSeries; barNum: number } {
+    if (!this.series.has(bar.tokenId)) { this.series.set(bar.tokenId, { closes: [], highs: [], lows: [] }); this.bars.set(bar.tokenId, 0); }
+    const s = this.series.get(bar.tokenId)!;
+    capPush(s.closes, bar.close); capPush(s.highs, bar.high); capPush(s.lows, bar.low);
+    const barNum = (this.bars.get(bar.tokenId) || 0) + 1;
+    this.bars.set(bar.tokenId, barNum);
+    return { series: s, barNum };
+  }
+
+  protected open(ctx: BacktestContext, bar: Bar, barNum: number, riskPercent: number): boolean {
+    const cash = ctx.getCapital() * riskPercent * 0.995;
+    const size = cash / bar.close;
+    if (size <= 0 || cash > ctx.getCapital()) return false;
+    const result = ctx.buy(bar.tokenId, size);
+    if (result.success) { this.entryPrice.set(bar.tokenId, bar.close); this.entryBar.set(bar.tokenId, barNum); return true; }
+    return false;
+  }
+
+  protected close(ctx: BacktestContext, tokenId: string): void { ctx.close(tokenId); this.entryPrice.delete(tokenId); this.entryBar.delete(tokenId); }
+  onComplete(_ctx: BacktestContext): void {}
+  abstract onNext(ctx: BacktestContext, bar: Bar): void;
+}
+
+export interface StratIter201CParams extends StrategyParams { drop_pct: number; stop_loss: number; profit_target: number; max_hold: number; risk: number; }
+export class StratIter201CStrategy extends BaseIterStrategy<StratIter201CParams> {
+  constructor(params: Partial<StratIter201CParams> = {}) {
+    super('strat_iter201_c.params.json', { drop_pct: 0.03, stop_loss: 0.08, profit_target: 0.18, max_hold: 15, risk: 0.25 }, params);
+  }
+  onNext(ctx: BacktestContext, bar: Bar): void {
+    const { series, barNum } = this.nextBar(bar);
+    if (series.closes.length < 3) return;
+    const pos = ctx.getPosition(bar.tokenId);
+    if (pos && pos.size > 0) {
+      const e = this.entryPrice.get(bar.tokenId)!; const eb = this.entryBar.get(bar.tokenId)!;
+      if (bar.low <= e * (1 - this.params.stop_loss) || bar.high >= e * (1 + this.params.profit_target) || barNum - eb >= this.params.max_hold) this.close(ctx, bar.tokenId);
+      return;
+    }
+    const curr = series.closes[series.closes.length - 1]; const prev = series.closes[series.closes.length - 2];
+    const drop = prev - curr; if (drop > 0 && drop / prev > this.params.drop_pct) this.open(ctx, bar, barNum, this.params.risk);
+  }
+}
